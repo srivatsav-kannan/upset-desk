@@ -2,7 +2,7 @@
 
 Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
-> **Status:** Baseline v0 is done. It replays the 2024 presidential vote on the 2026 district map. See [Roadmap](#roadmap).
+> **Status:** Baseline v1 is done: the 2024 presidential vote on the 2026 map, plus a uniform swing from the current generic ballot. See [Roadmap](#roadmap).
 
 ## The challenge
 
@@ -97,6 +97,7 @@ Requires Python 3.9+ and only the standard library.
 ```bash
 python3 forecast.py            # uses cached data in data/raw/
 python3 forecast.py --refresh  # re-downloads the source data first
+python3 forecast.py --swing 0  # overrides the national swing (0 = pure 2024 replay)
 ```
 
 ## Baseline v0: 2024 replayed on the 2026 map
@@ -125,9 +126,29 @@ python3 forecast.py --refresh  # re-downloads the source data first
 
 **Senate.** A straight 2024 replay gives Democrats 12 of the 35 races. GA, MI and NC go R because Trump carried them. Kalshi currently has Democrats favored in about 18. That gap is the national environment and candidate effects, which this baseline deliberately leaves out.
 
-**Known limits.** No candidates, no incumbency, no national swing (it's a constant in `forecast.py`). σ comes from presidential-to-presidential shifts, so it misses House candidate effects. Comparing districts by number across maps is crude where districts were renumbered, so state-level totals are the reliable comparison.
+### Baseline v1: adding the national environment
+
+**Method.** Every race's 2024 margin is shifted by one uniform national swing:
+
+> swing = (mean of the published generic-ballot averages) − (2024 presidential national margin)
+
+The generic-ballot averages come from Decision Desk HQ, FiftyPlusOne, NBC, RealClearPolitics and Silver Bulletin. Their values are read from [Wikipedia's aggregate table](https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections#Generic_congressional_ballot_aggregate_polls) and pinned to a revision ID in [`results/national_environment.csv`](results/national_environment.csv). We compute the mean ourselves. The 2024 presidential national margin is summed from all 435 districts.
+
+As of Oct 21, 2026, the generic ballot is **D+8.72** and the 2024 presidential margin was **D−1.65**, so the applied swing is **D+10.37**.
+
+| | 2024 replay | With D+10.4 swing |
+|---|---|---|
+| House D seats (2026 lines) | 201 | **237** (expected value 246) |
+| Seats that flip from the replay | | 36 (25 R-held, 11 D-held) |
+| House races within 3 points | | 33 |
+| Senate D wins of 35 | 12 | **15** (GA, MI, NC flip) |
+
+Even at D+10, the closest Senate seats all stay narrowly R: OH −0.8, FL −2.7, AK −2.8, IA −2.9, TX −3.3. Kalshi currently has Democrats favored in OH, AK and TX. Those gaps are candidate effects that a uniform swing can't see, and they are the races where the decision rule will matter most.
+
+**Known limits.** No candidates or incumbency. A uniform swing assumes every district moves the same amount, but midterm swings are larger in suburban and educated districts. The generic ballot still has 7% undecided, and a raw D−R margin treats undecideds as splitting evenly. σ comes from presidential-to-presidential shifts, so it misses House candidate effects. Comparing districts by number across maps is crude where districts were renumbered, so state-level totals are the reliable comparison.
 
 Outputs:
+- [`results/national_environment.csv`](results/national_environment.csv)
 - [`results/house_2024_on_2026_map.csv`](results/house_2024_on_2026_map.csv)
 - [`results/redistricting_by_state.csv`](results/redistricting_by_state.csv)
 - [`results/seats_by_national_swing.csv`](results/seats_by_national_swing.csv)
@@ -140,6 +161,7 @@ Data: [The Downballot's presidential results by congressional district](https://
 
 - [ ] Confirm the open questions with the organizers (below)
 - [x] Baseline v0: 2024 presidential results on the 2026 map ([Baseline v0](#baseline-v0-2024-replayed-on-the-2026-map))
+- [x] Baseline v1: uniform national swing from the generic ballot ([Baseline v1](#baseline-v1-adding-the-national-environment))
 - [ ] Ingest: Kalshi daily snapshot, MIT results, Ballotpedia candidates
 - [ ] Phase 0 baselines + scoring function + backtest harness
 - [ ] Phase 1 fundamentals model
