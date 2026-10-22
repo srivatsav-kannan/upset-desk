@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Secrets
+.env
+
+# Large / regenerable data (commit small curated files explicitly)
+data/raw/**/*.zip
+data/raw/**/*.parquet
+data/raw/**/large/
+data/processed/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
