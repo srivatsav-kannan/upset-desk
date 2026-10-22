@@ -60,6 +60,7 @@ The plan is deterministic first and AI later. Each phase has to beat the previou
 ### Special cases to handle
 
 - **Mid-decade redistricting.** New maps for 2026 in TX, CA (Prop 50), NC, OH, UT and others, and the status of MO and VA is contested. District lean must be recomputed on the **new lines**. Old-district results don't carry over directly.
+  - **Missouri mismatch, still open.** The Census Bureau's 2026 district lines (TIGER/Line `cd120`, released 2026-10-06) match The Downballot's 2026 sheet in every state except Missouri. Census has Missouri's new 2025 map, but The Downballot, and so our predictions, keep Missouri on its 2022 lines. If the new map is in effect for November, our 8 Missouri predictions are for the wrong districts. Found while building the [visualizer](visualizer/), which draws Missouri on its old lines so the shapes match the predictions.
 - **Top-two primaries (CA, WA).** Some generals pit two candidates from the same party against each other. The party pick is then trivial and the candidate pick is what matters.
 - **Ranked-choice / top-four (AK, ME).** NE-SEN has a strong independent (Osborn).
 - **GA runoff rules, and uncontested seats.** Uncontested seats are effectively locked.
@@ -78,6 +79,7 @@ The plan is deterministic first and AI later. Each phase has to beat the previou
 | Candidates | [Ballotpedia](https://ballotpedia.org) | Who is on the ballot, incumbents, open seats, uncontested races. |
 | Expert ratings | [Sabato's Crystal Ball](https://centerforpolitics.org/crystalball), [Inside Elections](https://insideelections.com), Cook | Current ratings, plus historical ratings (from Wikipedia race pages) for the backtest. |
 | Demographics | [Census ACS](https://data.census.gov) | Income, education and age by district. Lowest priority: mostly captured by lean already. |
+| Map shapes | [Census TIGER/Line 2026](https://www2.census.gov/geo/tiger/TIGER2026/CD/) congressional districts (`cd120`) | The 2026 lines, public domain. Used only by the [visualizer](visualizer/). |
 
 The slides warn that "sometimes, too much data is noise". Ranked by expected value, the order is district lean → incumbency/open seat → national environment → polls → money → ratings → everything else.
 
@@ -94,6 +96,7 @@ models/<name>/            # one folder per model (see models/README.md)
   submission/             #   favorite_*.csv and ev_*.csv in the official template format
 data/raw/                 # downloaded source files, cached with retrieval date, never edited by hand
 submission/templates/     # the official templates
+visualizer/               # React + TypeScript map of every model's predictions.csv (see visualizer/README.md)
 ```
 
 ## How to run
@@ -108,6 +111,12 @@ python3 forecast.py --swing 0              # uniform_swing: overrides the nation
 ```
 
 A full run takes 30–50 seconds, most of it the uniform-swing House backtest.
+
+**Map of the predictions.** The [visualizer](visualizer/) needs Node.js 20+. It reads every `models/*/predictions.csv`, so run the pipeline first:
+
+```bash
+cd visualizer && npm install && npm run dev
+```
 
 ## Models
 
@@ -135,13 +144,15 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [x] Kalshi snapshot + model-vs-market comparison + expected-points pick
 - [x] Backtest tail calibration (σ) on historical House results, 2010–2024 ([Backtest](models/uniform_swing/README.md#backtest-is-σ-calibrated-in-the-tails))
 - [x] One folder per model, with a shared predictions format and decision step ([models/](models/))
+- [x] Interactive map of each model's predictions on the 2026 lines ([visualizer/](visualizer/))
+- [ ] Resolve the Missouri map mismatch (see [Special cases](#special-cases-to-handle))
 - [ ] Switch to Student-t + incumbency once 2026 incumbents and retirements are ingested
 - [ ] Ingest: Ballotpedia candidates, incumbency, retirements
 - [ ] Phase 0 baselines + scoring function + backtest harness
 - [ ] Phase 1 fundamentals model
 - [ ] Phase 2 polls + simulation
 - [ ] Phase 3 decision layer, then the final run after the Nov 1 Kalshi pull
-- [ ] Write-up + visualization (bonus award)
+- [ ] Write-up + visualization for the bonus award (the visualizer is a starting point)
 
 ## Open questions for the organizers
 

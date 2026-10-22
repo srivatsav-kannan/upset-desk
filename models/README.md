@@ -23,6 +23,8 @@ models/<name>/
 
 `python3 forecast.py` finds every folder that has a `model.py`. For each one, it runs the model and then [`decide.py`](../decide.py) on the model's `predictions.csv`. A folder with only a README is skipped.
 
+The [visualizer](../visualizer/) maps every `predictions.csv` it finds, so a new model appears there with no extra work. It colors each race by `projected_margin`, falling back to `win_probability` when that's blank, and names the model after the first heading of its README.
+
 ## `predictions.csv` format
 
 One row per race, in the order of [`submission/templates/full_congress_track_template.csv`](../submission/templates/full_congress_track_template.csv) (470 rows). `common.validate_predictions` checks it.

@@ -15,6 +15,10 @@ data/raw/**/*.parquet
 data/raw/**/large/
 data/processed/
 
+# Visualizer (Node)
+visualizer/node_modules/
+visualizer/dist/
+
 # OS / editor
 .DS_Store
 .idea/

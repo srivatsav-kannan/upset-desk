@@ -1,0 +1,197 @@
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { FocusEvent, MouseEvent, PointerEvent } from "react";
+import { select } from "d3-selection";
+import "d3-transition";
+import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
+import type { Chamber } from "../data/models";
+import type { BBox, UsGeometry } from "./geo";
+import type { Region } from "./regions";
+import { BUCKET_LABEL, PARTY_NAME, bucketOf, fillOf, formatMargin, formatProbability } from "./scale";
+import { Tooltip, type TooltipAnchor } from "./Tooltip";
+
+const MAX_ZOOM = 24;
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function ariaLabel(r: Region): string {
+  if (!r.race) return `${r.title}: no race`;
+  const { race } = r;
+  return `${r.title}: ${formatMargin(race)}, ${PARTY_NAME[race.winner]} ${formatProbability(race.winProbability)} to win, ${BUCKET_LABEL[bucketOf(race)]} ${race.winner}`;
+}
+
+/** The colored shapes. Memoized so hovering and zooming never re-render 435 paths. */
+const Regions = memo(function Regions({ regions }: { regions: Region[] }) {
+  return (
+    <g className="regions">
+      {regions.map((r) => (
+        <path
+          key={r.id}
+          data-id={r.id}
+          d={r.d}
+          className={r.race ? "region" : "region no-race"}
+          style={{ fill: fillOf(r.race) }}
+          tabIndex={r.race ? 0 : -1}
+          role="img"
+          aria-label={ariaLabel(r)}
+        />
+      ))}
+      {regions
+        .filter((r) => r.race?.winner === "I")
+        .map((r) => (
+          <path key={`${r.id}-hatch`} d={r.d} className="hatch" />
+        ))}
+    </g>
+  );
+});
+
+const StateBorders = memo(function StateBorders({ geo }: { geo: UsGeometry }) {
+  return (
+    <g className="state-borders" aria-hidden="true">
+      {geo.states.map((s) => (
+        <path key={s.id} d={s.d} />
+      ))}
+    </g>
+  );
+});
+
+interface Props {
+  geo: UsGeometry;
+  chamber: Chamber;
+  regions: Region[];
+  modelName: string;
+}
+
+export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const [transform, setTransform] = useState<ZoomTransform>(zoomIdentity);
+  const [anchor, setAnchor] = useState<TooltipAnchor | null>(null);
+  const byId = useMemo(() => new Map(regions.map((r) => [r.id, r])), [regions]);
+  const { width: W, height: H } = geo;
+
+  // d3-zoom supplies the gesture math (wheel, drag, pinch, double-click); React renders the transform.
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const behavior = zoom<SVGSVGElement, unknown>()
+      .scaleExtent([1, MAX_ZOOM])
+      .extent([[0, 0], [W, H]])
+      .translateExtent([[0, 0], [W, H]])
+      .on("zoom", (e: { transform: ZoomTransform }) => {
+        setTransform(e.transform);
+        setAnchor(null); // the shapes just moved under the pointer; the next move re-targets
+      });
+    // Double-click is left alone: in the House view a single click already zooms to the state.
+    select(svg).call(behavior).on("dblclick.zoom", null);
+    zoomRef.current = behavior;
+    return () => {
+      select(svg).on(".zoom", null);
+    };
+  }, [W, H]);
+
+  const zoomTo = useCallback(
+    (t: ZoomTransform) => {
+      const svg = svgRef.current;
+      const behavior = zoomRef.current;
+      if (!svg || !behavior) return;
+      select(svg).transition().duration(reducedMotion() ? 0 : 550).call(behavior.transform, t);
+    },
+    [],
+  );
+
+  const fitBox = useCallback(
+    ([x0, y0, x1, y1]: BBox) => {
+      const k = Math.min(MAX_ZOOM, 0.88 / Math.max((x1 - x0) / W, (y1 - y0) / H));
+      zoomTo(zoomIdentity.translate(W / 2 - (k * (x0 + x1)) / 2, H / 2 - (k * (y0 + y1)) / 2).scale(k));
+    },
+    [W, H, zoomTo],
+  );
+
+  const zoomBy = (factor: number) => {
+    const svg = svgRef.current;
+    const behavior = zoomRef.current;
+    if (svg && behavior) select(svg).transition().duration(reducedMotion() ? 0 : 250).call(behavior.scaleBy, factor);
+  };
+
+  // A tooltip for a state makes no sense once the shapes underneath it change.
+  useEffect(() => {
+    setAnchor(null);
+  }, [chamber]);
+
+  const regionAt = (target: EventTarget | null) => {
+    const id = target instanceof Element ? target.getAttribute("data-id") : null;
+    return id ? byId.get(id) : undefined;
+  };
+
+  const onPointerMove = (e: PointerEvent<SVGSVGElement>) => {
+    const region = regionAt(e.target);
+    if (region) setAnchor({ region, x: e.clientX, y: e.clientY });
+    else if (e.pointerType !== "touch") setAnchor(null);
+  };
+
+  const onPointerDown = (e: PointerEvent<SVGSVGElement>) => {
+    // Touch has no hover: a tap shows the tooltip, a tap on empty space clears it.
+    const region = regionAt(e.target);
+    setAnchor(region ? { region, x: e.clientX, y: e.clientY } : null);
+  };
+
+  // Keyboard focus shows the same tooltip as hover. Focus that comes from a click is skipped,
+  // so the tooltip stays at the pointer instead of jumping to the shape's center.
+  const onFocus = (e: FocusEvent<SVGSVGElement>) => {
+    const region = regionAt(e.target);
+    if (!region || !(e.target instanceof Element) || !e.target.matches(":focus-visible")) return;
+    const box = e.target.getBoundingClientRect();
+    setAnchor({ region, x: box.left + box.width / 2, y: box.top + box.height / 2 });
+  };
+
+  // In the House view a click on a state zooms into it (only from the full-country view).
+  const onClick = (e: MouseEvent<SVGSVGElement>) => {
+    const region = regionAt(e.target);
+    if (region && chamber === "House" && transform.k < 1.5) fitBox(region.stateBBox);
+  };
+
+  const active = anchor ? byId.get(anchor.region.id) : undefined;
+  const zoomed = transform.k > 1.01;
+
+  return (
+    <div className="map-frame">
+      <svg
+        ref={svgRef}
+        className={`map map-${chamber.toLowerCase()}`}
+        viewBox={`0 0 ${W} ${H}`}
+        preserveAspectRatio="xMidYMid meet"
+        role="group"
+        aria-label={`Map of 2026 ${chamber} races, colored by projected margin. ${modelName}.`}
+        onPointerMove={onPointerMove}
+        onPointerDown={onPointerDown}
+        onPointerLeave={(e) => e.pointerType !== "touch" && setAnchor(null)}
+        onFocus={onFocus}
+        onBlur={() => setAnchor(null)}
+        onKeyDown={(e) => e.key === "Escape" && setAnchor(null)}
+        onClick={onClick}
+      >
+        <defs>
+          <pattern id="hatch" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
+            <line x1="0" y1="0" x2="0" y2="4" />
+          </pattern>
+        </defs>
+        <g transform={transform.toString()}>
+          <Regions regions={regions} />
+          {chamber === "House" && <StateBorders geo={geo} />}
+          {active && <path className="hover-ring" d={active.d} />}
+        </g>
+      </svg>
+      <div className="zoom-controls">
+        <button type="button" onClick={() => zoomBy(1.6)} aria-label="Zoom in">
+          +
+        </button>
+        <button type="button" onClick={() => zoomBy(1 / 1.6)} aria-label="Zoom out" disabled={!zoomed}>
+          −
+        </button>
+        <button type="button" onClick={() => zoomTo(zoomIdentity)} disabled={!zoomed}>
+          Reset
+        </button>
+      </div>
+      {anchor && <Tooltip anchor={anchor} chamber={chamber} modelName={modelName} />}
+    </div>
+  );
+}

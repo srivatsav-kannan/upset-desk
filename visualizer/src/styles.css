@@ -1,0 +1,544 @@
+/*
+ * Color roles. Party arms are a diverging scale: D (blue) and R (red), four ordered steps each
+ * (tilt, lean, likely, safe), plus a neutral for "no race". Blue steps come from the dataviz
+ * reference ramp; red steps match each blue step's OKLCH lightness at the reference red's hue.
+ * Validated: each arm passes the ordinal checks in both modes, and D vs R at every step clears
+ * CVD dE >= 13.1 and normal-vision dE >= 17.7. Tilt sits near 2:1 on the surface, so the table
+ * view is the required relief channel. Light: weakest margin lightest. Dark: the anchor flips,
+ * so the weakest margin sits nearest the surface and the safest is brightest.
+ */
+:root {
+  color-scheme: light;
+  --surface: #fcfcfb;
+  --surface-raised: #ffffff;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --hairline: #e1e0d9;
+  --control-border: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.1);
+  --hover-wash: rgba(11, 11, 11, 0.05);
+  --focus: #2a78d6;
+  --shadow: 0 4px 16px rgba(11, 11, 11, 0.12);
+  --no-race: #e1e0d9;
+  --d-tilt: #86b6ef;
+  --d-lean: #5598e7;
+  --d-likely: #2a78d6;
+  --d-safe: #184f95;
+  --r-tilt: #ea9a93;
+  --r-lean: #dd716a;
+  --r-likely: #c74845;
+  --r-safe: #892b2a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface: #1a1a19;
+    --surface-raised: #242423;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --hairline: #2c2c2a;
+    --control-border: #4a4a46;
+    --border: rgba(255, 255, 255, 0.1);
+    --hover-wash: rgba(255, 255, 255, 0.06);
+    --focus: #3987e5;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --no-race: #383835;
+    --d-tilt: #184f95;
+    --d-lean: #256abf;
+    --d-likely: #3987e5;
+    --d-safe: #86b6ef;
+    --r-tilt: #892b2a;
+    --r-lean: #b13f3c;
+    --r-likely: #d75853;
+    --r-safe: #ea9a93;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #1a1a19;
+  --surface-raised: #242423;
+  --text-primary: #f0efec;
+  --text-secondary: #c3c2b7;
+  --hairline: #2c2c2a;
+  --control-border: #4a4a46;
+  --border: rgba(255, 255, 255, 0.1);
+  --hover-wash: rgba(255, 255, 255, 0.06);
+  --focus: #3987e5;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --no-race: #383835;
+  --d-tilt: #184f95;
+  --d-lean: #256abf;
+  --d-likely: #3987e5;
+  --d-safe: #86b6ef;
+  --r-tilt: #892b2a;
+  --r-lean: #b13f3c;
+  --r-likely: #d75853;
+  --r-safe: #ea9a93;
+}
+
+/* ---------------------------------------------------------------- layout */
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text-primary);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.map-view,
+.map-frame {
+  position: relative;
+  height: 100%;
+}
+
+.status {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.empty {
+  max-width: 560px;
+  margin: 48px auto;
+  padding: 0 16px;
+  color: var(--text-secondary);
+}
+
+.error {
+  color: var(--text-primary);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 13px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- controls (one row above the map) */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 12px 16px;
+}
+
+.controls h1 {
+  margin: 0 6px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+select,
+button {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+select {
+  max-width: 100%;
+}
+
+.model-picker {
+  min-width: 0;
+  max-width: 100%;
+}
+
+button:hover:not(:disabled) {
+  background-image: linear-gradient(var(--hover-wash), var(--hover-wash));
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segmented button {
+  height: 30px;
+  border: 0;
+  border-radius: 0;
+}
+
+.segmented button + button {
+  border-left: 1px solid var(--control-border);
+}
+
+.segmented button[aria-pressed="true"],
+.table-toggle[aria-pressed="true"] {
+  background: var(--text-primary);
+  color: var(--surface);
+}
+
+/* ---------------------------------------------------------------- map */
+
+.map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+
+.map:active {
+  cursor: grabbing;
+}
+
+/* The surface-colored gap separates touching fills; no dark borders around marks. */
+.region {
+  stroke: var(--surface);
+  stroke-width: 0.6px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill 160ms ease;
+}
+
+.map-senate .region {
+  stroke-width: 1px;
+}
+
+.region:focus {
+  outline: none;
+}
+
+.state-borders path {
+  fill: none;
+  stroke: var(--surface);
+  stroke-width: 1.75px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.hover-ring {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.hatch {
+  fill: url(#hatch);
+  pointer-events: none;
+}
+
+#hatch line {
+  stroke: var(--surface);
+  stroke-width: 1.4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .region {
+    transition: none;
+  }
+}
+
+.zoom-controls {
+  position: absolute;
+  right: 16px;
+  bottom: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.zoom-controls button {
+  min-width: 32px;
+  padding: 0 10px;
+  background: var(--surface-raised);
+}
+
+/* ---------------------------------------------------------------- tooltip */
+
+.tooltip {
+  position: fixed;
+  z-index: 10;
+  min-width: 180px;
+  max-width: 260px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.tooltip-title {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.tooltip-value {
+  margin: 1px 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip-num {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip-meta {
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.line-key {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* ---------------------------------------------------------------- legend */
+
+footer {
+  padding: 6px 16px 14px;
+}
+
+.legend-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+}
+
+.legend-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 64px;
+}
+
+.legend-total-d {
+  align-items: flex-start;
+}
+
+.legend-total-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.legend-total strong {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.legend-scale {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(30px, 56px)) 6px repeat(4, minmax(30px, 56px));
+  column-gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend-scale .swatch:nth-child(5) {
+  grid-column: 6;
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swatch-color {
+  display: block;
+  width: 100%;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.swatch-label {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.swatch-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend-note {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.legend-extra {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-extra .swatch-color {
+  width: 14px;
+  height: 10px;
+}
+
+.swatch-hatched {
+  background: repeating-linear-gradient(45deg, var(--d-lean) 0 3px, var(--surface) 3px 4.5px);
+}
+
+/* ---------------------------------------------------------------- table view */
+
+.table-view {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: 0 16px 16px;
+}
+
+.table-view table {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table-view caption {
+  padding: 4px 0 8px;
+  color: var(--text-secondary);
+  text-align: left;
+}
+
+.table-view th,
+.table-view td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table-view thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.table-view tbody th {
+  font-weight: 400;
+}
+
+.table-view .line-key {
+  margin-right: 8px;
+}
+
+.table-view .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- phones */
+
+@media (max-width: 640px) {
+  .controls {
+    padding: 10px 16px;
+  }
+
+  .controls h1 {
+    width: 100%;
+  }
+
+  .model-picker {
+    flex: 1 1 100%;
+  }
+
+  .model-picker select {
+    width: 100%;
+  }
+
+  .legend-bar {
+    gap: 8px;
+  }
+
+  .legend-total {
+    min-width: 0;
+  }
+
+  .legend-total strong {
+    font-size: 18px;
+  }
+
+  .legend-scale {
+    grid-template-columns: repeat(4, minmax(24px, 1fr)) 4px repeat(4, minmax(24px, 1fr));
+    flex: 1;
+  }
+
+  .swatch-label {
+    font-size: 10px;
+  }
+}
