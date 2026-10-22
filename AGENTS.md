@@ -4,18 +4,34 @@ Guidance for AI coding agents (Claude Code, Codex, Cursor, etc.) and humans work
 
 ## The goal in one line
 
-Produce `submission/*.csv` predictions for the 2026 House and Senate races. Our score is −log₂(Kalshi's Nov 1 probability for our pick) for each correct pick, so **we choose picks by expected points, not just by which candidate is most likely to win**.
+Produce submission CSVs, in the official template format, for the 2026 House and Senate races. Our score is −log₂(Kalshi's Nov 1 probability for our pick) for each correct pick, so **we choose picks by expected points, not just by which candidate is most likely to win**.
 
 ## Layout
 
-**The whole pipeline lives in one file: [`forecast.py`](forecast.py).** That covers ingest, model, results and submission. Extend it; don't split it into packages. Every run writes to `results/` and `submission/`. **Commit every result**: code changes and the outputs they produce go in the same commit.
+**One folder per model, plus three shared files at the root.** `python3 forecast.py` runs everything.
+
+| Path | What goes there |
+|---|---|
+| [`forecast.py`](forecast.py) | The runner. It finds every `models/<name>/model.py`, calls its `run(args)`, then runs `decide.run()` on that model's folder. Keep it thin. |
+| [`common.py`](common.py) | The shared data layer: downloads, the raw-data cache, parsers for any source more than one model can use (Downballot, 538, Wikipedia), and CSV writing and validation. It also defines the predictions format, `PREDICTION_FIELDS`. |
+| [`decide.py`](decide.py) | The decision step and **the only code that touches Kalshi**: its ingest, the expected-points pick, the strategy summary, and the `favorite_*` / `ev_*` submission CSVs. |
+| `models/<name>/` | One model. See [`models/README.md`](models/README.md) for the folder layout and the `predictions.csv` format. Code that only this model uses stays here (e.g. `models/uniform_swing/backtest.py`). Import shared code with `from common import ...` and sibling files with `from . import ...`. Run through `forecast.py`, not directly. |
+
+**Adding a model:**
+1. Create `models/<name>/model.py` with `run(args)`. Add `add_arguments(parser)` if the model has its own flags, and prefix their help text with the model name.
+2. Have `run` write `models/<name>/predictions.csv`: 470 rows in full-congress template order, with unrounded `p_d`.
+3. Write its own diagnostics and backtest to `models/<name>/results/`.
+4. Write `models/<name>/README.md` (method, data, results, limits), and add a row to the Models tables in `models/README.md` and `README.md`.
+5. Never write into another model's folder.
+
+**Commit every result**: code changes and the outputs they produce go in the same commit.
 
 ## Hard rules
 
 1. **Reproducible.** Judges must be able to regenerate our CSVs from code. Every random process takes an explicit seed. No manual edits to outputs.
 2. **Raw data is immutable.** Downloads go to `data/raw/<source>/` with the retrieval date in the filename (e.g. `kalshi_2026-10-21.json`). Never edit them. Hand fixes go in `data/overrides/*.csv`, and every row needs a `source` column (a URL) and a `note`.
 3. **No leakage in backtests.** When predicting cycle *Y*, only use information that existed before Election Day *Y*. That means pre-election polls, ratings and fundraising. Never use final results or post-election data as features.
-4. **Kalshi is not a model feature.** Market prices may only be used in the decision step (the expected-points pick) and for evaluation. The model's probabilities must stay an independent opinion.
+4. **Kalshi is not a model feature.** Market prices may only be used in [`decide.py`](decide.py) (the expected-points pick) and for evaluation. Nothing under `models/` reads Kalshi. The model's probabilities must stay an independent opinion.
 5. **Keep secrets out of git.** API keys (e.g. `FEC_API_KEY`) live in `.env`, which is gitignored. Load them from the environment.
 6. **Deterministic before AI.** Don't add ML/LLM components until the deterministic baseline exists. Then add them only if they improve the backtest score. Report the before/after numbers in the PR.
 
@@ -25,8 +41,8 @@ Produce `submission/*.csv` predictions for the 2026 House and Senate races. Our 
 - **Race IDs** must match the templates exactly: `XX-SEN` for Senate, `XX-NN` (zero-padded) for House, `XX-AL` for at-large seats. OH-SEN and FL-SEN are the special elections. Read the canonical list from `submission/templates/`. Don't hardcode it.
 - **Parties:** use `D`, `R`, `I` internally. Map to whatever string the organizers require only when writing the submission.
 - **Margins** are Democratic share minus Republican share of the two-party vote, in points (positive = D).
-- **Network calls** live only in the ingest functions. They must cache to `data/raw/` and back off on HTTP 429. The Kalshi API rate-limits aggressively.
-- **Notebooks** are for exploration. Anything the pipeline needs moves into `forecast.py`.
+- **Network calls** go through `common.http_get` and `common.cached`, which cache to `data/raw/` and back off on HTTP 429. Write ingest functions in `common.py`, or in `decide.py` for Kalshi, which rate-limits aggressively. With `--refresh`, each source downloads once per run even when several models use it.
+- **Notebooks** are for exploration. Anything the pipeline needs moves into `common.py` or the model's folder.
 
 ## Scoring helpers (implement once, reuse everywhere)
 
@@ -54,5 +70,7 @@ Every model change should report the following, using leave-one-cycle-out CV on 
 ## Before you open a PR
 
 - The pipeline runs end to end, or the part you touched does.
-- The submission validator in `forecast.py` passes: race IDs match the template in order, every party is D/R/I, and probabilities are in [0, 1]. `candidate_name` stays blank until candidate data is ingested.
+- The validators in `common.py` pass. `validate_predictions` checks each model's `predictions.csv`, and `validate_submission` checks every submission CSV. Both require race IDs in template order, every party D/R/I, and probabilities in [0, 1].
+- `candidate_name` comes from the Kalshi market's candidate where there is one, and is otherwise blank until candidate data is ingested.
+- If you changed a shared file (`common.py`, `decide.py`, `forecast.py`), every model's outputs are either unchanged or the change is explained.
 - The README is updated if you changed data sources, method or run instructions.
