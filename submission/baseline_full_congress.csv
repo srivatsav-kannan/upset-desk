@@ -1,471 +1,471 @@
 race_id,chamber,predicted_winner_party,candidate_name,win_probability
-AK-SEN,Senate,R,,0.6488
-AL-SEN,Senate,R,,0.9974
-AR-SEN,Senate,R,,0.9974
-CO-SEN,Senate,D,,0.9984
-DE-SEN,Senate,D,,0.9997
-FL-SEN,Senate,R,,0.6468
-GA-SEN,Senate,D,,0.8708
-IA-SEN,Senate,R,,0.6551
-ID-SEN,Senate,R,,0.9998
-IL-SEN,Senate,D,,0.9984
-KS-SEN,Senate,R,,0.7862
-KY-SEN,Senate,R,,0.9973
-LA-SEN,Senate,R,,0.946
-MA-SEN,Senate,D,,1.0
-ME-SEN,Senate,D,,0.9916
-MI-SEN,Senate,D,,0.8921
-MN-SEN,Senate,D,,0.9784
-MS-SEN,Senate,R,,0.9581
-MT-SEN,Senate,R,,0.9067
-NC-SEN,Senate,D,,0.8384
-NE-SEN,Senate,R,,0.9205
-NH-SEN,Senate,D,,0.9656
-NJ-SEN,Senate,D,,0.9878
-NM-SEN,Senate,D,,0.9882
-OH-SEN,Senate,R,,0.5462
-OK-SEN,Senate,R,,0.9995
-OR-SEN,Senate,D,,0.9997
-RI-SEN,Senate,D,,0.9996
-SC-SEN,Senate,R,,0.8498
-SD-SEN,Senate,R,,0.9953
-TN-SEN,Senate,R,,0.9962
-TX-SEN,Senate,R,,0.6768
-VA-SEN,Senate,D,,0.9873
-WV-SEN,Senate,R,,1.0
-WY-SEN,Senate,R,,1.0
-AK-AL,House,R,,0.6488
-AL-01,House,R,,0.9998
-AL-02,House,R,,0.7083
-AL-03,House,R,,1.0
-AL-04,House,R,,1.0
-AL-05,House,R,,0.9952
-AL-06,House,R,,0.9996
-AL-07,House,D,,1.0
-AR-01,House,R,,1.0
-AR-02,House,R,,0.7619
-AR-03,House,R,,0.9776
-AR-04,House,R,,1.0
-AZ-01,House,D,,0.8423
-AZ-02,House,R,,0.7372
-AZ-03,House,D,,1.0
-AZ-04,House,D,,0.9907
-AZ-05,House,R,,0.9077
-AZ-06,House,D,,0.9082
-AZ-07,House,D,,1.0
-AZ-08,House,R,,0.7946
-AZ-09,House,R,,0.9979
-CA-01,House,D,,0.9991
-CA-02,House,D,,1.0
-CA-03,House,D,,0.9977
+AK-SEN,Senate,R,Republican party,0.649
+AL-SEN,Senate,R,Barry Moore,0.9974
+AR-SEN,Senate,R,Tom Cotton,0.9974
+CO-SEN,Senate,D,John Hickenlooper,0.9984
+DE-SEN,Senate,D,Chris Coons,0.9997
+FL-SEN,Senate,R,Ashley Moody,0.647
+GA-SEN,Senate,D,Jon Ossoff,0.8708
+IA-SEN,Senate,R,Ashley Hinson,0.6552
+ID-SEN,Senate,R,Jim Risch,0.9998
+IL-SEN,Senate,D,Juliana Stratton,0.9984
+KS-SEN,Senate,R,Roger Marshall,0.7861
+KY-SEN,Senate,R,Andy Barr,0.9973
+LA-SEN,Senate,R,Julia Letlow,0.946
+MA-SEN,Senate,D,Ed Markey,1.0
+ME-SEN,Senate,D,Troy Jackson,0.9916
+MI-SEN,Senate,D,Abdul El-Sayed,0.8921
+MN-SEN,Senate,D,Peggy Flanagan,0.9784
+MS-SEN,Senate,R,Cindy Hyde-Smith,0.9582
+MT-SEN,Senate,R,Kurt Alme,0.9067
+NC-SEN,Senate,D,Roy Cooper,0.8384
+NE-SEN,Senate,R,Pete Ricketts,0.9206
+NH-SEN,Senate,D,Chris Pappas,0.9656
+NJ-SEN,Senate,D,Cory Booker,0.9878
+NM-SEN,Senate,D,Ben Ray Luján,0.9881
+OH-SEN,Senate,R,Jon Husted,0.5462
+OK-SEN,Senate,R,Kevin Hern,0.9995
+OR-SEN,Senate,D,Jeff Merkley,0.9997
+RI-SEN,Senate,D,Jack Reed,0.9996
+SC-SEN,Senate,R,Darline Graham,0.8496
+SD-SEN,Senate,R,Mike Rounds,0.9953
+TN-SEN,Senate,R,Bill Hagerty,0.9962
+TX-SEN,Senate,R,Ken Paxton,0.6768
+VA-SEN,Senate,D,Mark Warner,0.9873
+WV-SEN,Senate,R,Shelley Moore Capito,1.0
+WY-SEN,Senate,R,Harriet Hageman,1.0
+AK-AL,House,R,Nick Begich III,0.649
+AL-01,House,R,Jerry Carl,0.9998
+AL-02,House,R,Rhett Marques,0.7083
+AL-03,House,R,Mike Rogers,1.0
+AL-04,House,R,Robert Aderholt,1.0
+AL-05,House,R,Dale Strong,0.9952
+AL-06,House,R,Gary Palmer,0.9996
+AL-07,House,D,Terri Sewell,1.0
+AR-01,House,R,Rick Crawford,1.0
+AR-02,House,R,French Hill,0.7621
+AR-03,House,R,Steve Womack,0.9776
+AR-04,House,R,Bruce Westerman,1.0
+AZ-01,House,D,Amish Shah,0.8424
+AZ-02,House,R,Eli Crane,0.737
+AZ-03,House,D,Yassamin Ansari,1.0
+AZ-04,House,D,Greg Stanton,0.9907
+AZ-05,House,R,Mark Lamb,0.9076
+AZ-06,House,D,JoAnna Mendoza,0.9081
+AZ-07,House,D,Adelita Grijalva,1.0
+AZ-08,House,R,Abe Hamadeh,0.7945
+AZ-09,House,R,Paul Gosar,0.9979
+CA-01,House,D,Mike McGuire,0.9991
+CA-02,House,D,Jared Huffman,1.0
+CA-03,House,D,Ami Bera,0.9977
 CA-04,House,D,,0.9997
-CA-05,House,R,,0.9232
-CA-06,House,D,,0.9953
+CA-05,House,R,Tom McClintock,0.9232
+CA-06,House,D,Richard Pan,0.9952
 CA-07,House,D,,0.9993
-CA-08,House,D,,1.0
-CA-09,House,D,,0.9987
-CA-10,House,D,,1.0
+CA-08,House,D,John Garamendi,1.0
+CA-09,House,D,Josh Harder,0.9987
+CA-10,House,D,Mark DeSaulnier,1.0
 CA-11,House,D,,1.0
 CA-12,House,D,,1.0
-CA-13,House,D,,0.9312
+CA-13,House,D,Adam Gray,0.9313
 CA-14,House,D,,1.0
-CA-15,House,D,,1.0
-CA-16,House,D,,1.0
-CA-17,House,D,,1.0
-CA-18,House,D,,1.0
-CA-19,House,D,,1.0
-CA-20,House,R,,0.9987
-CA-21,House,D,,0.988
-CA-22,House,D,,0.8804
-CA-23,House,R,,0.8937
-CA-24,House,D,,1.0
-CA-25,House,D,,0.9873
-CA-26,House,D,,0.9998
-CA-27,House,D,,0.9973
-CA-28,House,D,,1.0
+CA-15,House,D,Kevin Mullin,1.0
+CA-16,House,D,Sam Liccardo,1.0
+CA-17,House,D,Ro Khanna,1.0
+CA-18,House,D,Zoe Lofgren,1.0
+CA-19,House,D,Jimmy Panetta,1.0
+CA-20,House,R,Vince Fong,0.9987
+CA-21,House,D,Jim Costa,0.988
+CA-22,House,D,Randy Villegas,0.8804
+CA-23,House,R,Jay Obernolte,0.8937
+CA-24,House,D,Salud Carbajal,1.0
+CA-25,House,D,Raul Ruiz,0.9874
+CA-26,House,D,Jacqui Irwin,0.9998
+CA-27,House,D,George Whitesides,0.9973
+CA-28,House,D,Judy Chu,1.0
 CA-29,House,D,,1.0
-CA-30,House,D,,1.0
-CA-31,House,D,,0.9991
-CA-32,House,D,,1.0
-CA-33,House,D,,0.9973
+CA-30,House,D,Laura Friedman,1.0
+CA-31,House,D,Gil Cisneros,0.9991
+CA-32,House,D,Brad Sherman,1.0
+CA-33,House,D,Pete Aguilar,0.9973
 CA-34,House,D,,1.0
-CA-35,House,D,,0.994
-CA-36,House,D,,1.0
+CA-35,House,D,Norma Torres,0.994
+CA-36,House,D,Ted Lieu,1.0
 CA-37,House,D,,1.0
-CA-38,House,D,,0.9991
-CA-39,House,D,,0.997
-CA-40,House,R,,0.6012
-CA-41,House,D,,0.9997
-CA-42,House,D,,0.9994
-CA-43,House,D,,1.0
-CA-44,House,D,,1.0
-CA-45,House,D,,0.976
-CA-46,House,D,,0.9999
-CA-47,House,D,,0.9976
-CA-48,House,D,,0.9714
-CA-49,House,D,,0.9991
-CA-50,House,D,,1.0
-CA-51,House,D,,1.0
-CA-52,House,D,,0.9999
-CO-01,House,D,,1.0
-CO-02,House,D,,1.0
-CO-03,House,D,,0.5355
-CO-04,House,R,,0.8618
-CO-05,House,D,,0.5707
-CO-06,House,D,,1.0
-CO-07,House,D,,0.9998
-CO-08,House,D,,0.8811
-CT-01,House,D,,1.0
-CT-02,House,D,,0.9938
-CT-03,House,D,,0.9996
-CT-04,House,D,,1.0
-CT-05,House,D,,0.9863
-DE-AL,House,D,,0.9997
-FL-01,House,R,,0.9999
-FL-02,House,R,,0.854
-FL-03,House,R,,0.9311
-FL-04,House,R,,0.5805
-FL-05,House,R,,0.9367
-FL-06,House,R,,0.9968
-FL-07,House,R,,0.6143
-FL-08,House,R,,0.7902
-FL-09,House,R,,0.8467
-FL-10,House,D,,1.0
-FL-11,House,R,,0.7686
-FL-12,House,R,,0.7559
-FL-13,House,R,,0.6581
-FL-14,House,R,,0.5075
-FL-15,House,R,,0.9049
-FL-16,House,R,,0.6769
-FL-17,House,R,,0.9473
-FL-18,House,R,,0.8183
-FL-19,House,R,,0.9969
-FL-20,House,D,,1.0
-FL-21,House,R,,0.7931
-FL-22,House,D,,0.5053
-FL-23,House,D,,0.9996
-FL-24,House,D,,1.0
-FL-25,House,D,,0.5674
-FL-26,House,R,,0.866
-FL-27,House,R,,0.7195
-FL-28,House,R,,0.9814
-GA-01,House,R,,0.7736
-GA-02,House,D,,0.9935
-GA-03,House,R,,0.9962
-GA-04,House,D,,1.0
-GA-05,House,D,,1.0
-GA-06,House,D,,1.0
-GA-07,House,R,,0.9467
-GA-08,House,R,,0.9974
-GA-09,House,R,,0.9995
-GA-10,House,R,,0.9249
-GA-11,House,R,,0.9634
-GA-12,House,R,,0.6996
-GA-13,House,D,,1.0
-GA-14,House,R,,0.9999
-HI-01,House,D,,1.0
-HI-02,House,D,,1.0
-IA-01,House,D,,0.604
-IA-02,House,D,,0.5212
-IA-03,House,D,,0.7952
-IA-04,House,R,,0.9982
-ID-01,House,R,,1.0
-ID-02,House,R,,0.9881
-IL-01,House,D,,1.0
-IL-02,House,D,,1.0
-IL-03,House,D,,1.0
-IL-04,House,D,,1.0
-IL-05,House,D,,1.0
-IL-06,House,D,,0.9858
-IL-07,House,D,,1.0
-IL-08,House,D,,0.9915
-IL-09,House,D,,1.0
-IL-10,House,D,,1.0
-IL-11,House,D,,0.9987
-IL-12,House,R,,1.0
-IL-13,House,D,,0.998
-IL-14,House,D,,0.9842
-IL-15,House,R,,1.0
-IL-16,House,R,,0.9554
-IL-17,House,D,,0.9816
-IN-01,House,D,,0.9316
-IN-02,House,R,,0.9871
-IN-03,House,R,,0.998
-IN-04,House,R,,0.9956
-IN-05,House,R,,0.813
-IN-06,House,R,,0.9989
-IN-07,House,D,,1.0
-IN-08,House,R,,0.9998
-IN-09,House,R,,0.9965
-KS-01,House,R,,0.9981
-KS-02,House,R,,0.9006
-KS-03,House,D,,0.9772
-KS-04,House,R,,0.9629
-KY-01,House,R,,1.0
-KY-02,House,R,,1.0
-KY-03,House,D,,1.0
-KY-04,House,R,,0.9997
-KY-05,House,R,,1.0
-KY-06,House,R,,0.74
-LA-01,House,R,,0.9999
-LA-02,House,D,,1.0
-LA-03,House,R,,0.9998
-LA-04,House,R,,0.9995
-LA-05,House,R,,0.9995
-LA-06,House,R,,0.9968
-MA-01,House,D,,0.9995
-MA-02,House,D,,1.0
-MA-03,House,D,,1.0
-MA-04,House,D,,1.0
-MA-05,House,D,,1.0
-MA-06,House,D,,1.0
-MA-07,House,D,,1.0
-MA-08,House,D,,1.0
-MA-09,House,D,,0.9983
-MD-01,House,R,,0.8169
-MD-02,House,D,,1.0
-MD-03,House,D,,1.0
-MD-04,House,D,,1.0
-MD-05,House,D,,1.0
-MD-06,House,D,,0.9872
-MD-07,House,D,,1.0
-MD-08,House,D,,1.0
-ME-01,House,D,,1.0
-ME-02,House,D,,0.5725
-MI-01,House,R,,0.9328
-MI-02,House,R,,0.9968
-MI-03,House,D,,0.9941
-MI-04,House,D,,0.748
-MI-05,House,R,,0.9893
-MI-06,House,D,,1.0
-MI-07,House,D,,0.8954
-MI-08,House,D,,0.8769
-MI-09,House,R,,0.9988
-MI-10,House,D,,0.7015
-MI-11,House,D,,0.9999
-MI-12,House,D,,1.0
-MI-13,House,D,,1.0
-MN-01,House,R,,0.5891
-MN-02,House,D,,0.9874
-MN-03,House,D,,1.0
-MN-04,House,D,,1.0
-MN-05,House,D,,1.0
-MN-06,House,R,,0.9005
-MN-07,House,R,,0.9998
-MN-08,House,R,,0.7058
-MO-01,House,D,,1.0
-MO-02,House,D,,0.6335
-MO-03,House,R,,0.988
-MO-04,House,R,,1.0
-MO-05,House,D,,1.0
-MO-06,House,R,,1.0
-MO-07,House,R,,1.0
-MO-08,House,R,,1.0
-MS-01,House,R,,0.9999
-MS-02,House,D,,1.0
-MS-03,House,R,,0.9953
-MS-04,House,R,,1.0
-MT-01,House,R,,0.5646
-MT-02,House,R,,0.996
-NC-01,House,R,,0.5643
-NC-02,House,D,,1.0
-NC-03,House,R,,0.6738
-NC-04,House,D,,1.0
-NC-05,House,R,,0.8468
-NC-06,House,R,,0.8259
-NC-07,House,R,,0.6832
-NC-08,House,R,,0.8933
-NC-09,House,R,,0.7751
-NC-10,House,R,,0.8452
-NC-11,House,D,,0.5479
-NC-12,House,D,,1.0
-NC-13,House,R,,0.8
-NC-14,House,R,,0.742
-ND-AL,House,R,,0.9999
-NE-01,House,R,,0.6438
-NE-02,House,D,,0.9809
-NE-03,House,R,,1.0
-NH-01,House,D,,0.9563
-NH-02,House,D,,0.9731
-NJ-01,House,D,,1.0
-NJ-02,House,R,,0.6183
-NJ-03,House,D,,0.9952
-NJ-04,House,R,,0.9968
-NJ-05,House,D,,0.9497
-NJ-06,House,D,,0.9898
-NJ-07,House,D,,0.8981
-NJ-08,House,D,,1.0
-NJ-09,House,D,,0.899
-NJ-10,House,D,,1.0
-NJ-11,House,D,,0.9958
-NJ-12,House,D,,1.0
-NM-01,House,D,,0.9993
-NM-02,House,D,,0.8817
-NM-03,House,D,,0.9843
-NV-01,House,D,,0.9595
-NV-02,House,R,,0.6887
-NV-03,House,D,,0.9085
-NV-04,House,D,,0.9602
-NY-01,House,D,,0.5181
-NY-02,House,R,,0.6883
-NY-03,House,D,,0.8001
-NY-04,House,D,,0.9463
-NY-05,House,D,,1.0
-NY-06,House,D,,0.9898
-NY-07,House,D,,1.0
-NY-08,House,D,,1.0
-NY-09,House,D,,1.0
-NY-10,House,D,,1.0
-NY-11,House,R,,0.9734
-NY-12,House,D,,1.0
-NY-13,House,D,,1.0
-NY-14,House,D,,1.0
-NY-15,House,D,,1.0
-NY-16,House,D,,1.0
-NY-17,House,D,,0.9345
-NY-18,House,D,,0.9709
-NY-19,House,D,,0.9535
-NY-20,House,D,,0.9996
-NY-21,House,R,,0.9223
-NY-22,House,D,,0.9936
-NY-23,House,R,,0.9292
-NY-24,House,R,,0.9605
-NY-25,House,D,,1.0
-NY-26,House,D,,1.0
-OH-01,House,D,,0.8587
-OH-02,House,R,,1.0
-OH-03,House,D,,1.0
-OH-04,House,R,,1.0
-OH-05,House,R,,0.9677
-OH-06,House,R,,0.9996
-OH-07,House,R,,0.5377
-OH-08,House,R,,0.7659
-OH-09,House,R,,0.5113
-OH-10,House,D,,0.6396
-OH-11,House,D,,1.0
-OH-12,House,R,,0.9968
-OH-13,House,D,,0.9705
-OH-14,House,R,,0.9162
-OH-15,House,D,,0.5197
-OK-01,House,R,,0.9384
-OK-02,House,R,,1.0
-OK-03,House,R,,1.0
-OK-04,House,R,,0.9992
-OK-05,House,R,,0.8451
-OR-01,House,D,,1.0
-OR-02,House,R,,0.9897
-OR-03,House,D,,1.0
-OR-04,House,D,,0.999
-OR-05,House,D,,0.9955
-OR-06,House,D,,0.9987
-PA-01,House,D,,0.9302
-PA-02,House,D,,1.0
-PA-03,House,D,,1.0
-PA-04,House,D,,0.9999
-PA-05,House,D,,1.0
-PA-06,House,D,,0.9987
-PA-07,House,D,,0.839
-PA-08,House,D,,0.6022
-PA-09,House,R,,0.9999
-PA-10,House,D,,0.7613
-PA-11,House,R,,0.9355
-PA-12,House,D,,1.0
-PA-13,House,R,,1.0
-PA-14,House,R,,0.9993
-PA-15,House,R,,0.9999
-PA-16,House,R,,0.9566
-PA-17,House,D,,0.9859
-RI-01,House,D,,1.0
-RI-02,House,D,,0.9911
-SC-01,House,R,,0.6421
-SC-02,House,R,,0.6875
-SC-03,House,R,,1.0
-SC-04,House,R,,0.9659
-SC-05,House,R,,0.9567
-SC-06,House,D,,1.0
-SC-07,House,R,,0.9863
-SD-AL,House,R,,0.9953
-TN-01,House,R,,1.0
-TN-02,House,R,,0.9994
-TN-03,House,R,,0.9998
-TN-04,House,R,,0.9694
-TN-05,House,R,,0.9604
-TN-06,House,R,,0.9871
-TN-07,House,R,,0.9517
-TN-08,House,R,,0.9115
-TN-09,House,R,,0.9316
-TX-01,House,R,,1.0
-TX-02,House,R,,0.9576
-TX-03,House,R,,0.9644
-TX-04,House,R,,0.9762
-TX-05,House,R,,0.9399
-TX-06,House,R,,0.9586
-TX-07,House,D,,1.0
-TX-08,House,R,,0.9915
-TX-09,House,R,,0.9034
-TX-10,House,R,,0.955
-TX-11,House,R,,0.9995
-TX-12,House,R,,0.969
-TX-13,House,R,,1.0
-TX-14,House,R,,0.9728
-TX-15,House,R,,0.8499
-TX-16,House,D,,0.9999
-TX-17,House,R,,0.9405
-TX-18,House,D,,1.0
-TX-19,House,R,,1.0
-TX-20,House,D,,1.0
-TX-21,House,R,,0.9435
-TX-22,House,R,,0.9499
-TX-23,House,R,,0.7308
-TX-24,House,R,,0.787
-TX-25,House,R,,0.9708
-TX-26,House,R,,0.9685
-TX-27,House,R,,0.9332
-TX-28,House,R,,0.5006
-TX-29,House,D,,1.0
-TX-30,House,D,,1.0
-TX-31,House,R,,0.9441
-TX-32,House,R,,0.8471
-TX-33,House,D,,1.0
-TX-34,House,D,,0.5128
-TX-35,House,R,,0.5048
-TX-36,House,R,,0.9783
-TX-37,House,D,,1.0
-TX-38,House,R,,0.9274
-UT-01,House,D,,1.0
-UT-02,House,R,,0.995
-UT-03,House,R,,1.0
-UT-04,House,R,,0.9989
-VA-01,House,D,,0.7735
-VA-02,House,D,,0.9191
-VA-03,House,D,,1.0
-VA-04,House,D,,1.0
-VA-05,House,R,,0.6041
-VA-06,House,R,,0.969
-VA-07,House,D,,0.9663
-VA-08,House,D,,1.0
-VA-09,House,R,,1.0
-VA-10,House,D,,0.9952
-VA-11,House,D,,1.0
-VT-AL,House,D,,1.0
-WA-01,House,D,,1.0
-WA-02,House,D,,1.0
-WA-03,House,D,,0.8357
-WA-04,House,R,,0.9227
-WA-05,House,R,,0.5228
-WA-06,House,D,,1.0
-WA-07,House,D,,1.0
-WA-08,House,D,,0.9872
-WA-09,House,D,,1.0
-WA-10,House,D,,1.0
-WI-01,House,D,,0.7912
-WI-02,House,D,,1.0
-WI-03,House,D,,0.6595
-WI-04,House,D,,1.0
-WI-05,House,R,,0.9482
-WI-06,House,R,,0.8004
-WI-07,House,R,,0.9531
-WI-08,House,R,,0.7918
-WV-01,House,R,,1.0
-WV-02,House,R,,1.0
-WY-AL,House,R,,1.0
+CA-38,House,D,Hilda Solis,0.9991
+CA-39,House,D,Mark Takano,0.997
+CA-40,House,R,,0.6014
+CA-41,House,D,Linda Sánchez,0.9997
+CA-42,House,D,Robert Garcia,0.9994
+CA-43,House,D,Maxine Waters,1.0
+CA-44,House,D,Nanette Barragán,1.0
+CA-45,House,D,Derek Tran,0.976
+CA-46,House,D,Lou Correa,0.9999
+CA-47,House,D,Dave Min,0.9976
+CA-48,House,D,Marni von Wilpert,0.9714
+CA-49,House,D,Mike Levin,0.9991
+CA-50,House,D,Scott Peters,1.0
+CA-51,House,D,Sara Jacobs,1.0
+CA-52,House,D,Juan Vargas,0.9999
+CO-01,House,D,Melat Kiros,1.0
+CO-02,House,D,Joe Neguse,1.0
+CO-03,House,D,Dwayne Romero,0.5352
+CO-04,House,R,Lauren Boebert,0.8619
+CO-05,House,D,Jessica Killin,0.5707
+CO-06,House,D,Jason Crow,1.0
+CO-07,House,D,Brittany Pettersen,0.9998
+CO-08,House,D,Manny Rutinel,0.881
+CT-01,House,D,Luke Bronin,1.0
+CT-02,House,D,Joe Courtney,0.9938
+CT-03,House,D,Rosa DeLauro,0.9996
+CT-04,House,D,Jim Himes,1.0
+CT-05,House,D,Jahana Hayes,0.9863
+DE-AL,House,D,Sarah McBride,0.9997
+FL-01,House,R,Jimmy Patronis,0.9999
+FL-02,House,R,Austin Rogers,0.8541
+FL-03,House,R,Kat Cammack,0.9311
+FL-04,House,R,Aaron Bean,0.5805
+FL-05,House,R,John Rutherford,0.9368
+FL-06,House,R,Randy Fine,0.9968
+FL-07,House,R,Ryan Elijah,0.6141
+FL-08,House,R,Mike Haridopolos,0.7901
+FL-09,House,R,Dan Green,0.8467
+FL-10,House,D,Maxwell Frost,1.0
+FL-11,House,R,Joe Strada,0.7684
+FL-12,House,R,Gus Bilirakis,0.756
+FL-13,House,R,Anna Paulina Luna,0.6582
+FL-14,House,R,Mike Beltran,0.5077
+FL-15,House,R,Laurel Lee,0.9049
+FL-16,House,R,Sydney Gruters,0.6768
+FL-17,House,R,Greg Steube,0.9473
+FL-18,House,R,Scott Franklin,0.8184
+FL-19,House,R,Jim Schwartzel,0.9969
+FL-20,House,D,Debbie Wasserman Schultz,1.0
+FL-21,House,R,Brian Mast,0.7929
+FL-22,House,D,Pia Dandiya,0.5055
+FL-23,House,D,Lois Frankel,0.9996
+FL-24,House,D,Oliver Gilbert,1.0
+FL-25,House,D,Jared Moskowitz,0.5675
+FL-26,House,R,Mario Díaz-Balart,0.8661
+FL-27,House,R,Maria Elvira Salazar,0.7196
+FL-28,House,R,Carlos Giménez,0.9814
+GA-01,House,R,Jim Kingston,0.7734
+GA-02,House,D,Sanford Bishop,0.9935
+GA-03,House,R,Brian Jack,0.9962
+GA-04,House,D,Hank Johnson,1.0
+GA-05,House,D,Nikema Williams,1.0
+GA-06,House,D,Lucy McBath,1.0
+GA-07,House,R,Rich McCormick,0.9467
+GA-08,House,R,Austin Scott,0.9974
+GA-09,House,R,Andrew Clyde,0.9995
+GA-10,House,R,Houston Gaines,0.9248
+GA-11,House,R,John Cowan,0.9634
+GA-12,House,R,Rick Allen,0.6997
+GA-13,House,D,Jasmine Clark,1.0
+GA-14,House,R,Clay Fuller,0.9999
+HI-01,House,D,Ed Case,1.0
+HI-02,House,D,Jill Tokuda,1.0
+IA-01,House,D,Christina Bohannan,0.6041
+IA-02,House,D,Lindsay James,0.5209
+IA-03,House,D,Sarah Trone Garriott,0.7953
+IA-04,House,R,Chris McGowan,0.9982
+ID-01,House,R,Russ Fulcher,1.0
+ID-02,House,R,Mike Simpson,0.9881
+IL-01,House,D,Jonathan Jackson,1.0
+IL-02,House,D,Donna Miller,1.0
+IL-03,House,D,Delia Ramirez,1.0
+IL-04,House,D,Patty Garcia,1.0
+IL-05,House,D,Mike Quigley,1.0
+IL-06,House,D,Sean Casten,0.9858
+IL-07,House,D,La Shawn Ford,1.0
+IL-08,House,D,Melissa Bean,0.9915
+IL-09,House,D,Daniel Biss,1.0
+IL-10,House,D,Brad Schneider,1.0
+IL-11,House,D,Bill Foster,0.9987
+IL-12,House,R,Mike Bost,1.0
+IL-13,House,D,Nikki Budzinski,0.998
+IL-14,House,D,Lauren Underwood,0.9842
+IL-15,House,R,Mary Miller,1.0
+IL-16,House,R,Darin LaHood,0.9554
+IL-17,House,D,Eric Sorensen,0.9816
+IN-01,House,D,Frank Mrvan,0.9316
+IN-02,House,R,Rudy Yakym,0.9871
+IN-03,House,R,Marlin Stutzman,0.998
+IN-04,House,R,Jim Baird,0.9956
+IN-05,House,R,Victoria Spartz,0.8128
+IN-06,House,R,Jefferson Shreve,0.9989
+IN-07,House,D,André Carson,1.0
+IN-08,House,R,Mark Messmer,0.9998
+IN-09,House,R,Erin Houchin,0.9965
+KS-01,House,R,Tracey Mann,0.9981
+KS-02,House,R,Derek Schmidt,0.9006
+KS-03,House,D,Sharice Davids,0.9772
+KS-04,House,R,Ron Estes,0.9629
+KY-01,House,R,James Comer,1.0
+KY-02,House,R,Brett Guthrie,1.0
+KY-03,House,D,Morgan McGarvey,1.0
+KY-04,House,R,Ed Gallrein,0.9997
+KY-05,House,R,Hal Rogers,1.0
+KY-06,House,R,Ralph Alvarado,0.7402
+LA-01,House,R,Republican party,0.9999
+LA-02,House,D,Democratic party,1.0
+LA-03,House,R,Republican party,0.9998
+LA-04,House,R,Republican party,0.9995
+LA-05,House,R,Republican party,0.9995
+LA-06,House,R,Republican party,0.9968
+MA-01,House,D,Richard Neal,0.9995
+MA-02,House,D,Jim McGovern,1.0
+MA-03,House,D,Lori Trahan,1.0
+MA-04,House,D,Jake Auchincloss,1.0
+MA-05,House,D,Katherine Clark,1.0
+MA-06,House,D,Dan Koh,1.0
+MA-07,House,D,Ayanna Pressley,1.0
+MA-08,House,D,Stephen Lynch,1.0
+MA-09,House,D,Bill Keating,0.9983
+MD-01,House,R,Andy Harris,0.8169
+MD-02,House,D,Johnny Olszewski,1.0
+MD-03,House,D,Sarah Elfreth,1.0
+MD-04,House,D,Glenn Ivey,1.0
+MD-05,House,D,Adrian Boafo,1.0
+MD-06,House,D,April McClain Delaney,0.9872
+MD-07,House,D,Kweisi Mfume,1.0
+MD-08,House,D,Jamie Raskin,1.0
+ME-01,House,D,Chellie Pingree,1.0
+ME-02,House,D,Matt Dunlap,0.5724
+MI-01,House,R,Jack Bergman,0.9327
+MI-02,House,R,John Moolenaar,0.9968
+MI-03,House,D,Hillary Scholten,0.9941
+MI-04,House,D,Sean McCann,0.7482
+MI-05,House,R,Tim Walberg,0.9893
+MI-06,House,D,Debbie Dingell,1.0
+MI-07,House,D,William Lawrence,0.8954
+MI-08,House,D,Kristen McDonald Rivet,0.8768
+MI-09,House,R,Lisa McClain,0.9988
+MI-10,House,D,Christina Hines,0.7017
+MI-11,House,D,Jeremy Moss,0.9999
+MI-12,House,D,Rashida Tlaib,1.0
+MI-13,House,D,Donavan McKinney,1.0
+MN-01,House,R,Brad Finstad,0.5891
+MN-02,House,D,Matt Little,0.9874
+MN-03,House,D,Kelly Morrison,1.0
+MN-04,House,D,Betty McCollum,1.0
+MN-05,House,D,Ilhan Omar,1.0
+MN-06,House,R,Tom Emmer,0.9006
+MN-07,House,R,Michelle Fischbach,0.9998
+MN-08,House,R,Pete Stauber,0.706
+MO-01,House,D,Wesley Bell,1.0
+MO-02,House,D,Fred Wellman,0.6335
+MO-03,House,R,Bob Onder,0.9881
+MO-04,House,R,Mark Alford,1.0
+MO-05,House,D,Emanuel Cleaver,1.0
+MO-06,House,R,Chris Stigall,1.0
+MO-07,House,R,Eric Burlison,1.0
+MO-08,House,R,Jason Smith,1.0
+MS-01,House,R,Trent Kelly,0.9999
+MS-02,House,D,Bennie Thompson,1.0
+MS-03,House,R,Michael Guest,0.9953
+MS-04,House,R,Mike Ezell,1.0
+MT-01,House,R,Aaron Flint,0.5648
+MT-02,House,R,Troy Downing,0.9959
+NC-01,House,R,Laurie Buckhout,0.5642
+NC-02,House,D,Deborah Ross,1.0
+NC-03,House,R,Greg Murphy,0.6738
+NC-04,House,D,Valerie Foushee,1.0
+NC-05,House,R,Virginia Foxx,0.8467
+NC-06,House,R,Addison McDowell,0.8259
+NC-07,House,R,David Rouzer,0.6832
+NC-08,House,R,Mark Harris,0.8934
+NC-09,House,R,Richard Hudson,0.7751
+NC-10,House,R,Pat Harrigan,0.8451
+NC-11,House,D,Jamie Ager,0.5478
+NC-12,House,D,Alma Adams,1.0
+NC-13,House,R,Brad Knott,0.7999
+NC-14,House,R,Tim Moore,0.742
+ND-AL,House,R,Julie Fedorchak,0.9999
+NE-01,House,R,Mike Flood,0.6439
+NE-02,House,D,Denise Powell,0.9809
+NE-03,House,R,Adrian Smith,1.0
+NH-01,House,D,Stefany Shaheen,0.9563
+NH-02,House,D,Maggie Goodlander,0.9731
+NJ-01,House,D,Donald Norcross,1.0
+NJ-02,House,R,Jeff Van Drew,0.6184
+NJ-03,House,D,Herb Conaway,0.9952
+NJ-04,House,R,Chris Smith,0.9968
+NJ-05,House,D,Josh Gottheimer,0.9498
+NJ-06,House,D,Frank Pallone,0.9899
+NJ-07,House,D,Rebecca Bennett,0.8982
+NJ-08,House,D,Rob Menendez,1.0
+NJ-09,House,D,Nellie Pou,0.8991
+NJ-10,House,D,LaMonica McIver,1.0
+NJ-11,House,D,Analilia Mejia,0.9958
+NJ-12,House,D,Adam Hamawy,1.0
+NM-01,House,D,Melanie Stansbury,0.9993
+NM-02,House,D,Gabe Vasquez,0.8818
+NM-03,House,D,Teresa Leger Fernández,0.9843
+NV-01,House,D,Dina Titus,0.9595
+NV-02,House,R,David Flippo,0.6886
+NV-03,House,D,Susie Lee,0.9086
+NV-04,House,D,Steven Horsford,0.9602
+NY-01,House,D,Chris Gallant,0.5182
+NY-02,House,R,Andrew Garbarino,0.6881
+NY-03,House,D,Tom Suozzi,0.7999
+NY-04,House,D,Laura Gillen,0.9463
+NY-05,House,D,Gregory Meeks,1.0
+NY-06,House,D,Grace Meng,0.9898
+NY-07,House,D,Claire Valdez,1.0
+NY-08,House,D,Hakeem Jeffries,1.0
+NY-09,House,D,Yvette Clarke,1.0
+NY-10,House,D,Brad Lander,1.0
+NY-11,House,R,Nicole Malliotakis,0.9735
+NY-12,House,D,Micah Lasher,1.0
+NY-13,House,D,Darializa Avila Chevalier,1.0
+NY-14,House,D,Alexandria Ocasio-Cortez,1.0
+NY-15,House,D,Ritchie Torres,1.0
+NY-16,House,D,George Latimer,1.0
+NY-17,House,D,Cait Conley,0.9345
+NY-18,House,D,Pat Ryan,0.9709
+NY-19,House,D,Josh Riley,0.9535
+NY-20,House,D,Paul Tonko,0.9996
+NY-21,House,R,Anthony Constantino,0.9222
+NY-22,House,D,John Mannion,0.9936
+NY-23,House,R,Nick Langworthy,0.9292
+NY-24,House,R,Claudia Tenney,0.9605
+NY-25,House,D,Joseph Morelle,1.0
+NY-26,House,D,Tim Kennedy,1.0
+OH-01,House,D,Greg Landsman,0.8588
+OH-02,House,R,David Taylor,1.0
+OH-03,House,D,Joyce Beatty,1.0
+OH-04,House,R,Jim Jordan,1.0
+OH-05,House,R,Bob Latta,0.9677
+OH-06,House,R,Michael Rulli,0.9996
+OH-07,House,R,Max Miller,0.5374
+OH-08,House,R,Warren Davidson,0.7659
+OH-09,House,R,Derek Merrin,0.5116
+OH-10,House,D,Kristina Knickerbocker,0.6398
+OH-11,House,D,Shontel Brown,1.0
+OH-12,House,R,Troy Balderson,0.9968
+OH-13,House,D,Emilia Sykes,0.9705
+OH-14,House,R,David Joyce,0.9162
+OH-15,House,D,Don Leonard,0.5198
+OK-01,House,R,Mark Tedford,0.9385
+OK-02,House,R,Josh Brecheen,1.0
+OK-03,House,R,Frank Lucas,1.0
+OK-04,House,R,Tom Cole,0.9992
+OK-05,House,R,Stephanie Bice,0.8451
+OR-01,House,D,Suzanne Bonamici,1.0
+OR-02,House,R,Cliff Bentz,0.9897
+OR-03,House,D,Maxine Dexter,1.0
+OR-04,House,D,Val Hoyle,0.999
+OR-05,House,D,Janelle Bynum,0.9955
+OR-06,House,D,Andrea Salinas,0.9987
+PA-01,House,D,Bob Harvie,0.9302
+PA-02,House,D,Brendan Boyle,1.0
+PA-03,House,D,Chris Rabb,1.0
+PA-04,House,D,Madeleine Dean,0.9999
+PA-05,House,D,Mary Gay Scanlon,1.0
+PA-06,House,D,Chrissy Houlahan,0.9987
+PA-07,House,D,Bob Brooks,0.8391
+PA-08,House,D,Paige Cognetti,0.6019
+PA-09,House,R,Dan Meuser,0.9999
+PA-10,House,D,Janelle Stelson,0.7612
+PA-11,House,R,Lloyd Smucker,0.9355
+PA-12,House,D,Summer Lee,1.0
+PA-13,House,R,John Joyce,1.0
+PA-14,House,R,Guy Reschenthaler,0.9993
+PA-15,House,R,Glenn Thompson,0.9999
+PA-16,House,R,Mike Kelly,0.9565
+PA-17,House,D,Chris Deluzio,0.9859
+RI-01,House,D,Gabe Amo,1.0
+RI-02,House,D,Seth Magaziner,0.9911
+SC-01,House,R,Jenny Costa Honeycutt,0.6424
+SC-02,House,R,Joe Wilson,0.6876
+SC-03,House,R,Sheri Biggs,1.0
+SC-04,House,R,William Timmons,0.9659
+SC-05,House,R,Wes Climer,0.9567
+SC-06,House,D,Jim Clyburn,1.0
+SC-07,House,R,Russell Fry,0.9863
+SD-AL,House,R,Marty Jackley,0.9953
+TN-01,House,R,Diana Harshbarger,1.0
+TN-02,House,R,Tim Burchett,0.9994
+TN-03,House,R,Chuck Fleischmann,0.9998
+TN-04,House,R,Scott DesJarlais,0.9694
+TN-05,House,R,Charlie Hatcher,0.9605
+TN-06,House,R,Johnny Garrett,0.9871
+TN-07,House,R,Matt Van Epps,0.9518
+TN-08,House,R,David Kustoff,0.9115
+TN-09,House,R,Brent Taylor,0.9316
+TX-01,House,R,Nathaniel Moran,1.0
+TX-02,House,R,Steve Toth,0.9575
+TX-03,House,R,Keith Self,0.9644
+TX-04,House,R,Pat Fallon,0.9762
+TX-05,House,R,Lance Gooden,0.9399
+TX-06,House,R,Jake Ellzey,0.9587
+TX-07,House,D,Lizzie Fletcher,1.0
+TX-08,House,R,Jessica Steinmann,0.9915
+TX-09,House,R,Alex Mealer,0.9035
+TX-10,House,R,Chris Gober,0.955
+TX-11,House,R,August Pfluger,0.9995
+TX-12,House,R,Craig Goldman,0.969
+TX-13,House,R,Ronny Jackson,1.0
+TX-14,House,R,Randy Weber,0.9729
+TX-15,House,R,Monica De La Cruz,0.85
+TX-16,House,D,Veronica Escobar,0.9999
+TX-17,House,R,Pete Sessions,0.9406
+TX-18,House,D,Christian Menefee,1.0
+TX-19,House,R,Tom Sell,1.0
+TX-20,House,D,Joaquin Castro,1.0
+TX-21,House,R,Mark Teixeira,0.9435
+TX-22,House,R,Trever Nehls,0.9499
+TX-23,House,R,Brandon Herrera,0.7307
+TX-24,House,R,Beth Van Duyne,0.7869
+TX-25,House,R,Roger Williams,0.9708
+TX-26,House,R,Brandon Gill,0.9684
+TX-27,House,R,Michael Cloud,0.9333
+TX-28,House,R,Tano Tijerina,0.5006
+TX-29,House,D,Sylvia Garcia,1.0
+TX-30,House,D,Frederick Haynes III,1.0
+TX-31,House,R,John Carter,0.9441
+TX-32,House,R,Jace Yarbrough,0.847
+TX-33,House,D,Colin Allred,1.0
+TX-34,House,D,Vicente Gonzalez,0.5127
+TX-35,House,R,Carlos De La Cruz,0.505
+TX-36,House,R,Brian Babin,0.9783
+TX-37,House,D,Greg Casar,1.0
+TX-38,House,R,Jon Bonck,0.9275
+UT-01,House,D,Ben McAdams,1.0
+UT-02,House,R,Blake Moore,0.995
+UT-03,House,R,Celeste Maloy,1.0
+UT-04,House,R,Mike Kennedy,0.9989
+VA-01,House,D,Shannon Taylor,0.7734
+VA-02,House,D,Elaine Luria,0.919
+VA-03,House,D,Bobby Scott,1.0
+VA-04,House,D,Jennifer McClellan,1.0
+VA-05,House,R,John McGuire,0.6041
+VA-06,House,R,Ben Cline,0.969
+VA-07,House,D,Eugene Vindman,0.9662
+VA-08,House,D,Don Beyer,1.0
+VA-09,House,R,Morgan Griffith,1.0
+VA-10,House,D,Suhas Subramanyam,0.9952
+VA-11,House,D,James Walkinshaw,1.0
+VT-AL,House,D,Becca Balint,1.0
+WA-01,House,D,Suzan DelBene,1.0
+WA-02,House,D,Rick Larsen,1.0
+WA-03,House,D,Marie Gluesenkamp Perez,0.8357
+WA-04,House,R,Amanda McKinney,0.9226
+WA-05,House,R,Michael Baumgartner,0.5226
+WA-06,House,D,Emily Randall,1.0
+WA-07,House,D,Pramila Jayapal,1.0
+WA-08,House,D,Kim Schrier,0.9872
+WA-09,House,D,Adam Smith,1.0
+WA-10,House,D,Marilyn Strickland,1.0
+WI-01,House,D,Mitchell Berman,0.7913
+WI-02,House,D,Mark Pocan,1.0
+WI-03,House,D,Rebecca Cooke,0.6597
+WI-04,House,D,Gwen Moore,1.0
+WI-05,House,R,Scott Fitzgerald,0.9482
+WI-06,House,R,Glenn Grothman,0.8003
+WI-07,House,R,Michael Alfonso,0.9531
+WI-08,House,R,Tony Wied,0.7917
+WV-01,House,R,Carol Miller,1.0
+WV-02,House,R,Riley Moore,1.0
+WY-AL,House,R,Chuck Gray,1.0

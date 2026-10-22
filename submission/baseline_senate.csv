@@ -1,36 +1,36 @@
 race_id,chamber,predicted_winner_party,candidate_name,win_probability
-AK-SEN,Senate,R,,0.6488
-AL-SEN,Senate,R,,0.9974
-AR-SEN,Senate,R,,0.9974
-CO-SEN,Senate,D,,0.9984
-DE-SEN,Senate,D,,0.9997
-FL-SEN,Senate,R,,0.6468
-GA-SEN,Senate,D,,0.8708
-IA-SEN,Senate,R,,0.6551
-ID-SEN,Senate,R,,0.9998
-IL-SEN,Senate,D,,0.9984
-KS-SEN,Senate,R,,0.7862
-KY-SEN,Senate,R,,0.9973
-LA-SEN,Senate,R,,0.946
-MA-SEN,Senate,D,,1.0
-ME-SEN,Senate,D,,0.9916
-MI-SEN,Senate,D,,0.8921
-MN-SEN,Senate,D,,0.9784
-MS-SEN,Senate,R,,0.9581
-MT-SEN,Senate,R,,0.9067
-NC-SEN,Senate,D,,0.8384
-NE-SEN,Senate,R,,0.9205
-NH-SEN,Senate,D,,0.9656
-NJ-SEN,Senate,D,,0.9878
-NM-SEN,Senate,D,,0.9882
-OH-SEN,Senate,R,,0.5462
-OK-SEN,Senate,R,,0.9995
-OR-SEN,Senate,D,,0.9997
-RI-SEN,Senate,D,,0.9996
-SC-SEN,Senate,R,,0.8498
-SD-SEN,Senate,R,,0.9953
-TN-SEN,Senate,R,,0.9962
-TX-SEN,Senate,R,,0.6768
-VA-SEN,Senate,D,,0.9873
-WV-SEN,Senate,R,,1.0
-WY-SEN,Senate,R,,1.0
+AK-SEN,Senate,R,Republican party,0.649
+AL-SEN,Senate,R,Barry Moore,0.9974
+AR-SEN,Senate,R,Tom Cotton,0.9974
+CO-SEN,Senate,D,John Hickenlooper,0.9984
+DE-SEN,Senate,D,Chris Coons,0.9997
+FL-SEN,Senate,R,Ashley Moody,0.647
+GA-SEN,Senate,D,Jon Ossoff,0.8708
+IA-SEN,Senate,R,Ashley Hinson,0.6552
+ID-SEN,Senate,R,Jim Risch,0.9998
+IL-SEN,Senate,D,Juliana Stratton,0.9984
+KS-SEN,Senate,R,Roger Marshall,0.7861
+KY-SEN,Senate,R,Andy Barr,0.9973
+LA-SEN,Senate,R,Julia Letlow,0.946
+MA-SEN,Senate,D,Ed Markey,1.0
+ME-SEN,Senate,D,Troy Jackson,0.9916
+MI-SEN,Senate,D,Abdul El-Sayed,0.8921
+MN-SEN,Senate,D,Peggy Flanagan,0.9784
+MS-SEN,Senate,R,Cindy Hyde-Smith,0.9582
+MT-SEN,Senate,R,Kurt Alme,0.9067
+NC-SEN,Senate,D,Roy Cooper,0.8384
+NE-SEN,Senate,R,Pete Ricketts,0.9206
+NH-SEN,Senate,D,Chris Pappas,0.9656
+NJ-SEN,Senate,D,Cory Booker,0.9878
+NM-SEN,Senate,D,Ben Ray Luján,0.9881
+OH-SEN,Senate,R,Jon Husted,0.5462
+OK-SEN,Senate,R,Kevin Hern,0.9995
+OR-SEN,Senate,D,Jeff Merkley,0.9997
+RI-SEN,Senate,D,Jack Reed,0.9996
+SC-SEN,Senate,R,Darline Graham,0.8496
+SD-SEN,Senate,R,Mike Rounds,0.9953
+TN-SEN,Senate,R,Bill Hagerty,0.9962
+TX-SEN,Senate,R,Ken Paxton,0.6768
+VA-SEN,Senate,D,Mark Warner,0.9873
+WV-SEN,Senate,R,Shelley Moore Capito,1.0
+WY-SEN,Senate,R,Harriet Hageman,1.0

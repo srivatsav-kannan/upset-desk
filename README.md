@@ -2,7 +2,7 @@
 
 Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
-> **Status:** Baseline v1 is done: the 2024 presidential vote on the 2026 map, plus a uniform swing from the current generic ballot. See [Roadmap](#roadmap).
+> **Status:** Baseline v1 (the 2024 vote on the 2026 map, plus a generic-ballot swing) is compared against Kalshi race by race, with the expected-points pick rule applied. See [Model vs Kalshi](#model-vs-kalshi-and-the-expected-points-pick).
 
 ## The challenge
 
@@ -147,7 +147,41 @@ Even at D+10, the closest Senate seats all stay narrowly R: OH −0.8, FL −2.7
 
 **Known limits.** No candidates or incumbency. A uniform swing assumes every district moves the same amount, but midterm swings are larger in suburban and educated districts. The generic ballot still has 7% undecided, and a raw D−R margin treats undecideds as splitting evenly. σ comes from presidential-to-presidential shifts, so it misses House candidate effects. Comparing districts by number across maps is crude where districts were renumbered, so state-level totals are the reliable comparison.
 
+### Model vs Kalshi, and the expected-points pick
+
+**Kalshi ingest.** `forecast.py` snapshots every open 2026 House and Senate winner market from Kalshi's public API into `data/raw/kalshi/`. It maps each event to a race from the event *title*, because tickers can't be trusted: `SENATELA-26` is actually the Kentucky race.
+- **Price:** the bid/ask midpoint when both sides are quoted, otherwise the last trade, normalised to sum to 1 within each race.
+- **Coverage:** 461 of 470 races. The 9 missing ones are California top-two races, likely same-party, where the party pick is certain.
+
+**Decision rule.** For each race we pick the candidate with the highest `P_model × −log₂(max(p_Kalshi, 1%))`. The model only knows "R vs not-R", so the not-R probability goes to the market's strongest non-Republican (e.g. Bodnar (I) in MT-SEN). There are two pairs of submission files: `submission/baseline_*.csv` picks the model favorite, and `submission/ev_*.csv` applies the rule.
+
+**Expected score over the 461 races with markets** (snapshot of Oct 22, 2026):
+
+| Strategy | Underdog picks | E[points], by our model | E[points], if Kalshi is right |
+|---|---|---|---|
+| Kalshi favorite | 0 | 41.9 | 44.1 |
+| Model favorite | 19 | 60.8 | 47.0 |
+| **Expected-points rule** | **180** | 109.4 | **71.4** |
+
+**How to read this.** The rule wins even if Kalshi is perfectly calibrated, because the payout is asymmetric (see [Scoring](#scoring-and-why-it-changes-the-strategy)). Only 16 of the 169 House underdog picks are races where our model actually favors the underdog. The rest are long-shot picks: the model gives the underdog more than the tiny break-even probability, e.g. 0.9% for a 3% Kalshi underdog.
+
+**Caveats:**
+- These long-shot picks depend entirely on how well calibrated our probabilities are in the tails. They are driven by σ = 7.24, which is not yet validated.
+- Prediction markets usually *overprice* long shots.
+- The outcomes are correlated, so they will hit or miss together.
+- 180 underdog picks may look like "always pick the underdog" to the judges.
+
+**Before this rule goes in a final submission:**
+- Backtest the tail calibration on historical House upsets.
+- Decide how much variance we want.
+
+**Biggest disagreements with the market.** These are almost all candidate effects that a uniform swing misses:
+- **Senate:** ME (Collins), OH (Brown), TX (Talarico vs. Paxton) and AK.
+- **House:** PA-01 (Fitzpatrick), NY-17 (Lawler), TX-15/28/34 (South Texas Latino shift) and NY-01.
+
 Outputs:
+- [`results/model_vs_kalshi.csv`](results/model_vs_kalshi.csv): per race, model vs market, pick, points if right, expected value
+- [`results/strategy_summary.csv`](results/strategy_summary.csv)
 - [`results/national_environment.csv`](results/national_environment.csv)
 - [`results/house_2024_on_2026_map.csv`](results/house_2024_on_2026_map.csv)
 - [`results/redistricting_by_state.csv`](results/redistricting_by_state.csv)
@@ -162,7 +196,9 @@ Data: [The Downballot's presidential results by congressional district](https://
 - [ ] Confirm the open questions with the organizers (below)
 - [x] Baseline v0: 2024 presidential results on the 2026 map ([Baseline v0](#baseline-v0-2024-replayed-on-the-2026-map))
 - [x] Baseline v1: uniform national swing from the generic ballot ([Baseline v1](#baseline-v1-adding-the-national-environment))
-- [ ] Ingest: Kalshi daily snapshot, MIT results, Ballotpedia candidates
+- [x] Kalshi snapshot + model-vs-market comparison + expected-points pick
+- [ ] Backtest tail calibration (σ) on historical House results before trusting long-shot picks
+- [ ] Ingest: MIT results, Ballotpedia candidates, incumbency
 - [ ] Phase 0 baselines + scoring function + backtest harness
 - [ ] Phase 1 fundamentals model
 - [ ] Phase 2 polls + simulation

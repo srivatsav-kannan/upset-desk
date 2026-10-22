@@ -1,0 +1,36 @@
+race_id,chamber,predicted_winner_party,candidate_name,win_probability
+AK-SEN,Senate,R,Republican party,0.649
+AL-SEN,Senate,R,Barry Moore,0.9974
+AR-SEN,Senate,R,Tom Cotton,0.9974
+CO-SEN,Senate,D,John Hickenlooper,0.9984
+DE-SEN,Senate,D,Chris Coons,0.9997
+FL-SEN,Senate,D,Angie Nixon,0.353
+GA-SEN,Senate,R,Mike Collins,0.1292
+IA-SEN,Senate,R,Ashley Hinson,0.6552
+ID-SEN,Senate,R,Jim Risch,0.9998
+IL-SEN,Senate,D,Juliana Stratton,0.9984
+KS-SEN,Senate,R,Roger Marshall,0.7861
+KY-SEN,Senate,R,Andy Barr,0.9973
+LA-SEN,Senate,D,Jamie Davis,0.054
+MA-SEN,Senate,D,Ed Markey,1.0
+ME-SEN,Senate,D,Troy Jackson,0.9916
+MI-SEN,Senate,D,Abdul El-Sayed,0.8921
+MN-SEN,Senate,D,Peggy Flanagan,0.9784
+MS-SEN,Senate,R,Cindy Hyde-Smith,0.9582
+MT-SEN,Senate,I,Seth Bodnar,0.0933
+NC-SEN,Senate,R,Michael Whatley,0.1616
+NE-SEN,Senate,R,Pete Ricketts,0.9206
+NH-SEN,Senate,D,Chris Pappas,0.9656
+NJ-SEN,Senate,R,Justin Murphy,0.0122
+NM-SEN,Senate,D,Ben Ray Luján,0.9881
+OH-SEN,Senate,R,Jon Husted,0.5462
+OK-SEN,Senate,R,Kevin Hern,0.9995
+OR-SEN,Senate,D,Jeff Merkley,0.9997
+RI-SEN,Senate,D,Jack Reed,0.9996
+SC-SEN,Senate,D,Annie Andrews,0.1504
+SD-SEN,Senate,R,Mike Rounds,0.9953
+TN-SEN,Senate,R,Bill Hagerty,0.9962
+TX-SEN,Senate,R,Ken Paxton,0.6768
+VA-SEN,Senate,R,Bert Mizusawa,0.0127
+WV-SEN,Senate,R,Shelley Moore Capito,1.0
+WY-SEN,Senate,R,Harriet Hageman,1.0
