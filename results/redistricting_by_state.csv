@@ -1,0 +1,10 @@
+state,seats,districts_changed,trump_seats_old,trump_seats_new,net_r_change
+AL,7,4,5,6,1
+CA,52,49,11,5,-6
+FL,28,21,20,24,4
+LA,6,6,4,5,1
+NC,14,2,11,11,0
+OH,15,14,11,12,1
+TN,9,8,8,9,1
+TX,38,37,27,30,3
+UT,4,4,4,3,-1

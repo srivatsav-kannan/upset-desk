@@ -2,7 +2,7 @@
 
 Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
-> **Status:** planning and data collection. No model code yet. See [Roadmap](#roadmap).
+> **Status:** Baseline v0 is done. It replays the 2024 presidential vote on the 2026 district map. See [Roadmap](#roadmap).
 
 ## The challenge
 
@@ -81,29 +81,66 @@ The plan is deterministic first and AI later. Each phase has to beat the previou
 
 The slides warn that "sometimes, too much data is noise". Ranked by expected value, the order is district lean → incumbency/open seat → national environment → polls → money → ratings → everything else.
 
-## Repo layout (planned)
+## Repo layout
 
 ```
-data/raw/          # downloaded source files, never edited by hand (large files gitignored)
-data/overrides/    # hand-curated fixes (e.g. candidate names), each row cites a source
-data/processed/    # model-ready tables built by code
-src/ingest/        # one module per source
-src/features/      # feature building
-src/models/        # baselines, fundamentals, polls + simulation
-src/decide/        # expected-points pick logic
-src/submit/        # writes and validates the submission CSVs
-notebooks/         # exploration only; nothing the pipeline depends on
-submission/        # final CSVs + write-up
+forecast.py        # the entire pipeline in one file: ingest -> model -> results -> submission
+data/raw/          # downloaded source files, cached with retrieval date, never edited by hand
+results/           # model outputs (committed every run)
+submission/        # submission CSVs in the official format, plus templates/
 ```
 
 ## How to run
 
-To be written once the pipeline exists. The target is a single command that goes from raw data to the submission CSVs, with fixed seeds.
+Requires Python 3.9+ and only the standard library.
+
+```bash
+python3 forecast.py            # uses cached data in data/raw/
+python3 forecast.py --refresh  # re-downloads the source data first
+```
+
+## Baseline v0: 2024 replayed on the 2026 map
+
+**Method.** Each House race is predicted from the 2024 presidential margin (Harris − Trump) inside its **2026** boundaries. The Downballot recomputed these for the 10 states that redrew: AL, CA, FL, LA, MO, NC, OH, TN, TX and UT. Their sheet keeps Missouri on its 2022 lines. Each Senate race uses the state's 2024 presidential margin. Win probability is Φ(margin / σ), where σ = 7.24 points: the root-mean-square change in district presidential margin from 2020 to 2024 on identical lines. There is no fitting and no randomness.
+
+**What redistricting changes** (Trump-won seats, 2024 vote, old lines → 2026 lines):
+
+| State | Seats | Districts redrawn | Trump seats old → new | Net R |
+|---|---|---|---|---|
+| FL | 28 | 21 | 20 → 24 | +4 |
+| TX | 38 | 37 | 27 → 30 | +3 |
+| AL / LA / OH / TN | 7 / 6 / 15 / 9 | 4 / 6 / 14 / 8 | | +1 each |
+| NC | 14 | 2 | 11 → 11 | 0 (NC-01 made redder) |
+| UT | 4 | 4 | 4 → 3 | −1 |
+| CA | 52 | 49 | 11 → 5 | −6 |
+| **Total** | 435 | 145 | **230 → 234** | **+4 R** |
+
+**The redistricting effect grows as the environment moves toward Democrats.** The new Republican maps pack seats that were marginal Trump seats into safer ones:
+
+| Uniform swing to D | House D seats, 2024 lines | House D seats, 2026 lines | Cost to D |
+|---|---|---|---|
+| 0 (2024 replay) | 205 | 201 | −4 |
+| +4 | 221 | 215 | −6 |
+| +8 | 237 | 225 | −12 |
+
+**Senate.** A straight 2024 replay gives Democrats 12 of the 35 races. GA, MI and NC go R because Trump carried them. Kalshi currently has Democrats favored in about 18. That gap is the national environment and candidate effects, which this baseline deliberately leaves out.
+
+**Known limits.** No candidates, no incumbency, no national swing (it's a constant in `forecast.py`). σ comes from presidential-to-presidential shifts, so it misses House candidate effects. Comparing districts by number across maps is crude where districts were renumbered, so state-level totals are the reliable comparison.
+
+Outputs:
+- [`results/house_2024_on_2026_map.csv`](results/house_2024_on_2026_map.csv)
+- [`results/redistricting_by_state.csv`](results/redistricting_by_state.csv)
+- [`results/seats_by_national_swing.csv`](results/seats_by_national_swing.csv)
+- [`results/senate_2024_baseline.csv`](results/senate_2024_baseline.csv)
+- `submission/baseline_*.csv`
+
+Data: [The Downballot's presidential results by congressional district](https://www.the-downballot.com/p/the-downballots-calculations-of-presidential), for both the 2026 lines and the 2024 lines.
 
 ## Roadmap
 
 - [ ] Confirm the open questions with the organizers (below)
-- [ ] Ingest: Kalshi daily snapshot, MIT results, district lean on new lines, Ballotpedia candidates
+- [x] Baseline v0: 2024 presidential results on the 2026 map ([Baseline v0](#baseline-v0-2024-replayed-on-the-2026-map))
+- [ ] Ingest: Kalshi daily snapshot, MIT results, Ballotpedia candidates
 - [ ] Phase 0 baselines + scoring function + backtest harness
 - [ ] Phase 1 fundamentals model
 - [ ] Phase 2 polls + simulation
