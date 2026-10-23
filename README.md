@@ -118,6 +118,8 @@ A full run takes 30–50 seconds, most of it the uniform-swing House backtest.
 cd visualizer && npm install && npm run dev
 ```
 
+A workflow can also publish the map to GitHub Pages on every push to `main`. It needs a one-time setup by the repo owner, and the site would be public. See [Publishing on GitHub Pages](visualizer/README.md#publishing-on-github-pages).
+
 ## Models
 
 Every model writes `models/<name>/predictions.csv` in one shared format ([`models/README.md`](models/README.md)). The decision step then turns it into picks and submission CSVs inside the same folder, so models can be compared side by side.
