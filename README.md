@@ -97,7 +97,8 @@ models/<name>/            # one folder per model (see models/README.md)
 data/raw/                 # downloaded source files, cached with retrieval date, never edited by hand
                           #   (llm_news/: the frozen news research the ensemble reads)
 tests/                    # unittest suite for parsers, backtest leakage, calibration and outputs
-submission/templates/     # the official templates
+submission/                # the team's submission CSVs (copied from the submission model by forecast.py)
+  templates/              #   the official templates
 visualizer/               # React + TypeScript map of every model's predictions.csv (see visualizer/README.md)
 ```
 

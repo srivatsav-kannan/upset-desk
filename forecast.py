@@ -7,15 +7,21 @@ Run:  python3 forecast.py                        # every model in models/, using
 
 A model is any folder models/<name>/ with a model.py that defines run(args) and writes
 models/<name>/predictions.csv (format: common.PREDICTION_FIELDS). A model that reads another
-model's outputs lists it in DEPENDS_ON, and that model runs first. For each model, decide.py
+model's outputs lists it in DEPENDS_ON, and that model runs first. The SUBMISSION_MODEL's
+submission CSVs are also copied to the top-level submission/ folder. For each model, decide.py
 then compares the predictions with Kalshi and writes that model's results/ and submission/.
 """
 
 import argparse
 import importlib
+import shutil
 
 import decide
-from common import MODELS
+from common import MODELS, TEMPLATES
+
+# The model whose picks are the team's submission: after it runs, its submission CSVs are
+# copied to submission/ as <model>_<rule>_<track>.csv (both pick rules, until we choose one).
+SUBMISSION_MODEL = "ensemble"
 
 
 def available() -> list:
@@ -56,6 +62,10 @@ def main() -> None:
             print(f"  {r['scope']:6} {r['strategy']:21} underdog picks {r['underdog_picks']:3}  "
                   f"E[pts] model {r['expected_points_model']:6.2f}  if Kalshi right {r['expected_points_if_kalshi_right']:6.2f}")
         print(f"wrote models/{name}/predictions.csv, results/ and submission/")
+        if name == SUBMISSION_MODEL:
+            for f in sorted((MODELS / name / "submission").glob("*.csv")):
+                shutil.copyfile(f, TEMPLATES.parent / f"{name}_{f.name}")
+            print(f"copied {name}'s submission CSVs to submission/")
 
 
 if __name__ == "__main__":
