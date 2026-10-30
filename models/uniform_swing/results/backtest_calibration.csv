@@ -23,6 +23,12 @@ scope,variant,model_upset_p_from,model_upset_p_to,races,expected_upsets,observed
 2010-2022,"Student-t + incumbency, refit",0.03,0.1,437,24.86,25,0.0569,0.0572,0.039,0.0831
 2010-2022,"Student-t + incumbency, refit",0.1,0.25,258,41.7,43,0.1616,0.1667,0.1262,0.217
 2010-2022,"Student-t + incumbency, refit",0.25,0.5,158,59.29,60,0.3753,0.3797,0.3078,0.4574
+2010-2022,"Student-t + incumbent running / open seat, refit",0.0,0.0025,657,0.75,1,0.0011,0.0015,0.0003,0.0086
+2010-2022,"Student-t + incumbent running / open seat, refit",0.0025,0.01,706,3.82,7,0.0054,0.0099,0.0048,0.0203
+2010-2022,"Student-t + incumbent running / open seat, refit",0.01,0.03,505,9.09,9,0.018,0.0178,0.0094,0.0335
+2010-2022,"Student-t + incumbent running / open seat, refit",0.03,0.1,417,24.16,24,0.0579,0.0576,0.039,0.0842
+2010-2022,"Student-t + incumbent running / open seat, refit",0.1,0.25,214,34.34,33,0.1604,0.1542,0.112,0.2086
+2010-2022,"Student-t + incumbent running / open seat, refit",0.25,0.5,156,56.99,57,0.3653,0.3654,0.2939,0.4433
 midterms,"v1: normal, sigma 7.24",0.0,0.0025,827,0.18,7,0.0002,0.0085,0.0041,0.0174
 midterms,"v1: normal, sigma 7.24",0.0025,0.01,122,0.69,5,0.0056,0.041,0.0176,0.0924
 midterms,"v1: normal, sigma 7.24",0.01,0.03,112,2.09,3,0.0187,0.0268,0.0092,0.0758
@@ -47,3 +53,9 @@ midterms,"Student-t + incumbency, refit",0.01,0.03,293,5.25,6,0.0179,0.0205,0.00
 midterms,"Student-t + incumbency, refit",0.03,0.1,239,14.07,18,0.0589,0.0753,0.0482,0.1159
 midterms,"Student-t + incumbency, refit",0.1,0.25,143,23.25,29,0.1626,0.2028,0.1451,0.2761
 midterms,"Student-t + incumbency, refit",0.25,0.5,98,36.65,40,0.374,0.4082,0.3161,0.5071
+midterms,"Student-t + incumbent running / open seat, refit",0.0,0.0025,390,0.46,1,0.0012,0.0026,0.0005,0.0144
+midterms,"Student-t + incumbent running / open seat, refit",0.0025,0.01,435,2.35,4,0.0054,0.0092,0.0036,0.0234
+midterms,"Student-t + incumbent running / open seat, refit",0.01,0.03,287,5.19,7,0.0181,0.0244,0.0119,0.0495
+midterms,"Student-t + incumbent running / open seat, refit",0.03,0.1,226,13.4,15,0.0593,0.0664,0.0406,0.1066
+midterms,"Student-t + incumbent running / open seat, refit",0.1,0.25,119,19.55,22,0.1642,0.1849,0.1254,0.2641
+midterms,"Student-t + incumbent running / open seat, refit",0.25,0.5,99,36.87,40,0.3724,0.404,0.3127,0.5025

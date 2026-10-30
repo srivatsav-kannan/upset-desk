@@ -55,6 +55,8 @@ PRES_DEM = {2008: "Obama", 2012: "Obama", 2016: "Clinton", 2020: "Biden"}
 WIKI_API = "https://en.wikipedia.org/w/api.php?format=json&formatversion=2&action=parse&page="
 GENERIC_BALLOT_PAGE = "2026_United_States_House_of_Representatives_elections"
 GENERIC_BALLOT_SECTION = "Generic congressional ballot aggregate polls"
+SENATE_PAGE = "2026_United_States_Senate_elections"
+SENATE_SECTIONS = ["Special elections during the preceding Congress", "Elections leading to the next Congress"]
 
 STATES = {
     "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
@@ -129,7 +131,67 @@ def fetch_generic_ballot(refresh: bool) -> Path:
     return cached("wikipedia", "generic_ballot", "json", refresh, download)
 
 
+def fetch_wiki(name: str, page: str, sections: list, refresh: bool) -> Path:
+    """Wikitext of whole page (sections=[]) or of the named sections, with the revision id."""
+    def download() -> bytes:
+        if not sections:
+            return http_get(WIKI_API + page + "&prop=wikitext|revid")
+        index = {s["line"]: s["index"] for s in json.loads(http_get(WIKI_API + page + "&prop=sections"))["parse"]["sections"]}
+        parts = [json.loads(http_get(WIKI_API + page + f"&prop=wikitext|revid&section={index[t]}"))["parse"] for t in sections]
+        return json.dumps({"parse": {"revid": parts[0]["revid"], "wikitext": "\n".join(p["wikitext"] for p in parts)}}).encode()
+    return cached("wikipedia", name, "json", refresh, download)
+
+
 # ---------------------------------------------------------------- 2026 inputs
+
+PARTY_WORD = {"Democratic": "D", "DFL": "D", "Republican": "R", "Independent": "I"}
+# "Incumbent renominated", "Incumbent advanced to general", "Interim appointee nominated", ...
+RUNNING = re.compile(r"Incumbent (renominated|advanced|running|nominated)|appointee nominated", re.I)
+NOT_RUNNING = re.compile(r"retir|lost|defeated|resign|died|withdr", re.I)
+
+
+def _status_running(status: str) -> bool:
+    return bool(RUNNING.search(status)) and not NOT_RUNNING.search(status)
+
+
+def load_house_incumbents_2026(path: Path) -> dict:
+    """{race_id: [{"party", "running"}]} for each member listed against a 2026 district.
+
+    Parsed from the per-state tables on Wikipedia's 2026 House page. A district can list
+    several members (redistricting pairings) or none ("new seat"); "running" means the member
+    is the nominee in that district (status "Incumbent renominated" or similar).
+    """
+    text = json.loads(path.read_text())["parse"]["wikitext"]
+    out, rid = {}, None
+    for row in re.split(r"\n\|-", text):
+        m = re.search(r"^\s*!.*?\{\{ushr\|([A-Z]{2})\|(\w+)\|", row, re.M)
+        if m:
+            rid = f"{m[1]}-{'AL' if m[2].upper() == 'AL' else m[2].zfill(2)}"
+            out.setdefault(rid, [])
+        if rid is None:
+            continue
+        if re.search(r"\{\{ushr\|[A-Z]{2}\|\w+\|X\}\}", row) is None and m is None and not re.search(r"\{\{sortname", row):
+            continue
+        party = re.search(r"^\|[^\n]*?\|\s*(Democratic|Republican|Independent)\s*$", row, re.M)
+        status = re.search(r"^\|[^\n]*?(Incumbent[^\n]*|New representative[^\n]*|Vacant[^\n]*)$", row, re.M)
+        if party and status and re.search(r"\{\{sortname|\[\[", row.split(party.group(0))[0]):
+            out[rid].append({"party": PARTY_WORD[party[1]], "running": _status_running(status[1])})
+        if row.strip().startswith("}") or "\n|}" in row:
+            rid = None
+    return out
+
+
+def load_senate_incumbents_2026(path: Path) -> dict:
+    """{state: {"party", "running"}} for the seat up in 2026 (specials included), from Wikipedia."""
+    text = json.loads(path.read_text())["parse"]["wikitext"]
+    out = {}
+    for row in re.split(r"\n\|-", text):
+        m = re.search(r"^\s*!\s*\[\[2026 United States Senate (?:special )?election in ([^|\]]+)\|", row, re.M)
+        party = re.search(r"\{\{Party shading/\w+\}\}\s*\|\s*(Democratic|DFL|Republican|Independent)\s*$", row, re.M)
+        status = re.search(r"\|\s*(Incumbent[^\n]*|Interim appointee[^\n]*)$", row, re.M)
+        if m and party and status and m[1] in STATES:
+            out[STATES[m[1]]] = {"party": PARTY_WORD[party[1]], "running": _status_running(status[1])}
+    return out
 
 def load_generic_ballot(path: Path) -> list:
     """Parse the aggregator rows into [{source, dem, rep, margin}] (our own average, not theirs)."""
@@ -250,7 +312,8 @@ def load_house_results(path: Path, races_path: Path, cycles: set) -> dict:
             rows = [r for r in rows if r["ranked_choice_round"] == str(max(rounds))]
         cands = {}
         for r in rows:
-            c = cands.setdefault(r["candidate_id"] or f"row{r['id']}", {"votes": 0, "party": "O", "winner": False})
+            c = cands.setdefault(r["candidate_id"] or f"row{r['id']}",
+                                 {"votes": 0, "party": "O", "winner": False, "pid": r["politician_id"]})
             c["votes"] += int(float(r["votes"])) if r["votes"] else 0
             if r["ballot_party"] == "DEM":
                 c["party"] = "D"
@@ -265,7 +328,27 @@ def load_house_results(path: Path, races_path: Path, cycles: set) -> dict:
         parties = {c["party"] for c in cs}
         out[key] = {"winner": winner["party"], "contested": {"D", "R"} <= parties and total > 0,
                     "votes": (d, rep, total),
-                    "margin": 100 * (d - rep) / total if total else None, "incumbent": incumbent.get(race, "")}
+                    "margin": 100 * (d - rep) / total if total else None, "incumbent": incumbent.get(race, ""),
+                    "cands": [{"pid": c["pid"], "party": c["party"], "winner": c["winner"]} for c in cs]}
+    return out
+
+
+def house_members_by_cycle(path: Path, cycles: set) -> dict:
+    """{cycle: {politician_id}} of sitting House members going into each cycle's election.
+
+    Members are the previous cycle's general-election winners plus anyone who won a special
+    election since (538 politician ids). A candidate in that cycle's race who is in this set
+    is an incumbent running, even after redistricting moves them to a new district number.
+    """
+    winners = {}
+    for r in read_rows(path):
+        if r["office_name"] == "U.S. House" and r["winner"] == "true" and r["politician_id"] and r["cycle"].isdigit():
+            winners.setdefault(int(r["cycle"]), {})[r["politician_id"]] = r["special"] == "true"
+    out = {}
+    for y in cycles:
+        members = {pid for pid, special in winners.get(y - 2, {}).items() if not special}
+        members |= {pid for c in (y - 2, y - 1) for pid, special in winners.get(c, {}).items() if special}
+        out[y] = members
     return out
 
 

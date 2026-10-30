@@ -4,7 +4,7 @@ Each model lives in its own folder and produces one file that everything else re
 
 | Folder | Phase | Status |
 |---|---|---|
-| [`uniform_swing/`](uniform_swing/) | Baseline v0/v1 | **Done.** The 2024 vote on the 2026 map plus a generic-ballot swing. Has a 2010–2024 House backtest. |
+| [`uniform_swing/`](uniform_swing/) | Baseline v2 | **Done.** The 2024 vote on the 2026 map, a generic-ballot swing and incumbency, with Student-t probabilities. Has a 2010–2024 House backtest. |
 | [`expert_ratings/`](expert_ratings/) | 0b | Planned. Cook / Sabato / Inside ratings mapped to probabilities. |
 | [`fundamentals/`](fundamentals/) | 1 | Planned. Margin regression: lean, incumbency, open seat, environment, money. |
 | [`polls_simulation/`](polls_simulation/) | 2 | Planned. Poll average blended with fundamentals, plus a correlated simulation. |
@@ -41,4 +41,4 @@ One row per race, in the order of [`submission/templates/full_congress_track_tem
 **Rules:**
 - **No Kalshi prices.** A model never reads them. `decide.py` is the only code that sees the market.
 - **Shared data code.** Downloads and parsers that more than one model can use go in [`common.py`](../common.py). Everything specific to one model stays in its folder.
-- **Backtest before adopting.** A new model should beat [`uniform_swing`](uniform_swing/)'s out-of-sample scores (log loss 0.197 for v1, 0.149 for the Student-t + incumbency variant) before we rely on it.
+- **Backtest before adopting.** A new model should beat [`uniform_swing`](uniform_swing/)'s out-of-sample scores (log loss 0.139 for v2, the Student-t + incumbent running / open seat version; 0.197 for v1) before we rely on it.

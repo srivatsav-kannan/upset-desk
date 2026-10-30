@@ -1,6 +1,6 @@
-# Uniform swing (Baseline v0/v1)
+# Uniform swing (Baseline v2)
 
-The 2024 presidential vote on the 2026 district map, shifted by one national swing from the generic ballot. [`model.py`](model.py) writes [`predictions.csv`](predictions.csv) and the diagnostics in [`results/`](results/). [`backtest.py`](backtest.py) replays the same recipe on the 2010–2024 House. The shared [`decide.py`](../../decide.py) turns the predictions into [`results/model_vs_kalshi.csv`](results/model_vs_kalshi.csv) and the CSVs in [`submission/`](submission/).
+The 2024 presidential vote on the 2026 district map, shifted by one national swing from the generic ballot, plus incumbency, with Student-t win probabilities ([v2](#baseline-v2-student-t--incumbency)). [`model.py`](model.py) writes [`predictions.csv`](predictions.csv) and the diagnostics in [`results/`](results/). [`backtest.py`](backtest.py) replays the same recipe on the 2010–2024 House. The shared [`decide.py`](../../decide.py) turns the predictions into [`results/model_vs_kalshi.csv`](results/model_vs_kalshi.csv) and the CSVs in [`submission/`](submission/).
 
 ```bash
 python3 forecast.py --model uniform_swing            # from the repo root
@@ -99,6 +99,66 @@ Outputs:
 
 Data: [The Downballot's presidential results by congressional district](https://www.the-downballot.com/p/the-downballots-calculations-of-presidential), for both the 2026 lines and the 2024 lines.
 
+> The tables above describe v1. The current model is v2, below.
+
+## Baseline v2: Student-t + incumbency
+
+**Method.** v2 adds incumbency to the v1 margin and replaces the normal curve with a Student-t, as the [backtest](#backtest-is-σ-calibrated-in-the-tails) recommended:
+
+> margin = 2024 margin on the 2026 lines + swing + **5.1** × (incumbent running: +1 D / −1 R) + **1.3** × (open seat: +1 if a Democrat held it / −1 if a Republican did)
+>
+> P(D) = Student-t CDF(margin / **5.56**, df **3**)
+
+The four bold numbers are fit by maximum likelihood on all 2,655 contested House races from 2010 to 2022.
+
+**Why two incumbency terms, not one.** Herui's single +4.4-point bonus followed 538's `incumbent_party`, which marks the party that *holds* the seat, so open seats count too. In 2026 many members are retiring, so the effect is split in two:
+- **Incumbent running:** a sitting member is on the ballot. In the backtest, these are derived from 538's politician IDs: the previous cycle's winners, plus special-election winners, who appear on this cycle's ballot. This survives redistricting renumbering.
+- **Open seat:** no sitting member is running, so the party that held the seat gets the smaller open-seat term instead.
+
+An incumbent running is worth about 4× an open seat held by the same party.
+
+**2026 incumbents** come from Wikipedia's [2026 House](https://en.wikipedia.org/wiki/2026_United_States_House_of_Representatives_elections) and [2026 Senate](https://en.wikipedia.org/wiki/2026_United_States_Senate_elections) tables, cached with the revision ID in `data/raw/wikipedia/`. A member counts as running when the status reads "Incumbent renominated", "advanced to general" or "appointee nominated". Statuses mentioning retiring, losing, resigning or withdrawing don't count.
+- **House:** 351 incumbents are running and 69 seats are open. 14 are new or vacant seats with no incumbency term. 7 districts list two members because of redistricting pairings.
+- **Senate:** all 35 races parsed.
+
+**Backtest, out-of-sample (LOCO):**
+
+| Variant | Log loss | Brier | Midterms log loss |
+|---|---|---|---|
+| v1: normal, σ = 7.24 | 0.197 | 0.0498 | 0.214 |
+| Student-t + one incumbency term (+4.4) | 0.149 | 0.0413 | 0.165 |
+| **v2: Student-t + incumbent running / open seat** | **0.139** | **0.0382** | **0.154** |
+
+v2 is calibrated in every bin. Upsets, expected → observed, 2010–2022:
+
+| Model's P(predicted loser wins) | Races | Expected | Observed |
+|---|---|---|---|
+| < 0.25% | 657 | 0.8 | 1 |
+| 0.25–1% | 706 | 3.8 | 7 |
+| 1–3% | 505 | 9.1 | 9 |
+| 3–10% | 417 | 24.2 | 24 |
+| 10–25% | 214 | 34.3 | 33 |
+| 25–50% | 156 | 57.0 | 57 |
+
+**2026 result** (generic ballot D+8.72, swing D+10.37, Kalshi snapshot of Oct 22):
+- **House:** D 230 / R 205, with 234.7 expected D seats (v1: 237). 17 calls change from v1, all because of incumbents:
+  - **Incumbents now favored to hold:** Cuellar TX-28, Castor FL-14, Kaptur OH-09, Davis NC-01, Figures AL-02, Van Orden WI-03, LaLota NY-01, Miller-Meeks IA-01, Bresnahan PA-08, Wagner MO-02, Turner OH-10 and others.
+  - **Open R-held seats that tip D:** IA-02 and NC-11.
+- **Senate:** 15 of 35 D, no call changes. Incumbents running widen the R margins in OH (Husted −6.0), AK (Sullivan −7.9) and FL (Moody −7.8). Collins's Maine falls from D+17 to D+12.
+
+**Expected score over the 461 races with markets:**
+
+| Strategy | Underdog picks | E[points], by our model | E[points], if Kalshi is right |
+|---|---|---|---|
+| Kalshi favorite | 0 | 44.1 | 44.1 |
+| Model favorite | 16 | 63.5 | 46.5 |
+| Expected-points rule | 222 | 88.4 | 73.4 |
+
+**Caveats before trusting the `ev_*` picks:**
+- **The Senate tail is not validated.** The House-fitted t (df 3) still gives a 25-point Senate race about a 1% upset chance. That's above the break-even for a 98–99% Kalshi favorite, so the rule picks underdogs in 20 of 35 Senate races, including CO, DE, OR, RI and WY. Statewide races probably have thinner tails than districts, so a Senate backtest has to come before these picks are used.
+- **Safe-seat long shots barely matter in expectation.** In a 97%+ seat, the favorite and the underdog are both worth about 0.03–0.05 expected points. The long-shot picks add variance, not much expected value.
+- **The Kalshi snapshot is from Oct 22.** Refresh it with `--refresh` before the Nov 1 pull, which also refreshes the generic ballot and incumbents.
+
 ## Backtest: is σ calibrated in the tails?
 
 **Method.** The v1 recipe is replayed on every House cycle from 2010 to 2022. Each one uses only information available before that Election Day:
@@ -130,7 +190,8 @@ Upsets, expected → observed, 2010–2022:
 | v1: normal | σ = 7.24 (not fitted) | 0.197 | 0.0498 | 0.214 |
 | Normal, refit | σ = 9.3 | 0.196 | 0.0515 | 0.211 |
 | Student-t, refit | df 2, scale 4.2 | 0.177 | 0.0493 | 0.186 |
-| **Student-t + incumbency, refit** | **+4.4 pts to the incumbent's party**, df 3, scale 5.8 | **0.149** | **0.0413** | **0.165** |
+| Student-t + incumbency, refit | +4.4 pts to the incumbent's party, df 3, scale 5.8 | 0.149 | 0.0413 | 0.165 |
+| **Student-t + incumbent running / open seat (v2)** | **+5.1 running, +1.3 open**, df 3, scale 5.56 | **0.139** | **0.0382** | **0.154** |
 
 **Where the fat tail comes from: crossover incumbents.** These are members holding seats that lean to the other party. Two groups account for almost all of the deep-tail upsets: Blue Dog Democrats who survived 2010 in McCain seats (Ross, Boren, Matheson, Rahall, Chandler) and Peterson in 2018. The 2020 South Florida shift (FL-26, FL-27) adds two more. Among races the lean-only t model calls safe (upset chance under 3%):
 

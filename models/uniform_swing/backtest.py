@@ -9,7 +9,7 @@ models/uniform_swing/results/backtest_*.csv.
 import math
 from pathlib import Path
 
-from common import (MIDTERMS, fetch, fetch_fte, load_districts, load_generic_ballot_history,
+from common import (MIDTERMS, fetch, fetch_fte, house_members_by_cycle, load_districts, load_generic_ballot_history,
                     load_house_results, load_pres_pct, national_vote_margins, write_csv)
 
 RESULTS = Path(__file__).resolve().parent / "results"
@@ -75,6 +75,33 @@ def fit_t(races: list, key: str = "pred") -> tuple:
     return min(fits, key=lambda f: log_loss(races, f[1], key, f[0]))
 
 
+SIGN = {"D": 1, "R": -1}
+
+
+def incumbency_features(contest: dict, members: set) -> tuple:
+    """(running, open) for one race: +1 for D, -1 for R, 0 for neither.
+
+    running: a sitting member is on the ballot (sum over D/R members, clipped; a D-vs-R
+    member pairing cancels). open: no member running, so the seat-holding party (538's
+    incumbent_party) gets the open-seat term instead.
+    """
+    on_ballot = [c["party"] for c in contest["cands"] if c["pid"] in members]
+    running = max(-1, min(1, sum(SIGN.get(p, 0) for p in on_ballot)))
+    return running, (SIGN.get(contest["incumbent"], 0) if not on_ballot else 0)
+
+
+def run_open_bonus(races: list) -> tuple:
+    """Least-squares (beta_running, beta_open), no intercept, on contested forecast residuals."""
+    xs = [(r["x_run"], r["x_open"], r["actual_margin"] - r["pred"]) for r in races]
+    a = sum(x * x for x, _, _ in xs)
+    b = sum(x * y for x, y, _ in xs)
+    d = sum(y * y for _, y, _ in xs)
+    u = sum(x * e for x, _, e in xs)
+    v = sum(y * e for _, y, e in xs)
+    det = a * d - b * b
+    return (d * u - b * v) / det, (a * v - b * u) / det
+
+
 def incumbency_bonus(races: list) -> float:
     """Least-squares points added to the incumbent's party (no intercept), from contested margins."""
     inc = [(1 if r["incumbent"] == "D" else -1, r["actual_margin"] - r["pred"]) for r in races if r["incumbent"]]
@@ -115,6 +142,7 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
         if cy in house_nat:  # 538's national House vote ends in 2022; check our sum agrees, then fill gaps
             assert abs(house_nat[cy] - 100 * (d - rep) / total) < 1.0, f"{cy}: summed House vote disagrees with 538"
         house_nat.setdefault(cy, 100 * (d - rep) / total)
+    members = house_members_by_cycle(fetch_fte("election_results_house", refresh), set(BACKTEST))
     gb = load_generic_ballot_history(fetch_fte("generic_topline_historical", refresh),
                                      fetch_fte("generic_ballot_averages_old_model", refresh))
     races, cycles = [], []
@@ -134,8 +162,10 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
         swing_or = house_nat[y] - pres_nat[pres_year]
         for rid in sorted(lean):
             c = seats[rid]
+            x_run, x_open = incumbency_features(c, members[y])
             races.append({
-                "cycle": y, "race_id": rid, "incumbent": c["incumbent"], "lean": lean[rid],
+                "cycle": y, "race_id": rid, "incumbent": c["incumbent"], "x_run": x_run, "x_open": x_open,
+                "lean": lean[rid],
                 "pred": lean[rid] + swing_fc if swing_fc is not None else None,
                 "pred_oracle": lean[rid] + swing_or, "actual_margin": c["margin"], "winner": c["winner"],
                 "contested": c["contested"], "scored": c["contested"] and c["winner"] in ("D", "R"),
@@ -158,13 +188,20 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
         for r in rs:
             r["pred_inc"] = r["pred"] + beta * {"D": 1, "R": -1}.get(r["incumbent"], 0)
 
+    def with_run_open(rs: list, betas: tuple) -> None:
+        for r in rs:
+            r["pred_ro"] = r["pred"] + betas[0] * r["x_run"] + betas[1] * r["x_open"]
+
     # Out-of-sample probabilities: every parameter is refit without the held-out cycle.
     loco = {}
     for y in fc_cycles:
         train = [r for r in fc if r["cycle"] != y]
         beta = incumbency_bonus(train)
         with_incumbency(train, beta)
-        loco[y] = {"sigma": fit_sigma(train), "t": fit_t(train), "beta": beta, "t_inc": fit_t(train, "pred_inc")}
+        betas = run_open_bonus(train)
+        with_run_open(train, betas)
+        loco[y] = {"sigma": fit_sigma(train), "t": fit_t(train), "beta": beta, "t_inc": fit_t(train, "pred_inc"),
+                   "betas_ro": betas, "t_ro": fit_t(train, "pred_ro")}
     for r in races:
         r["upset_v1"] = r["scored"] and r["pred"] is not None and (r["pred"] > 0) != (r["winner"] == "D")
         if r["pred"] is None:
@@ -176,9 +213,12 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
             r["p_d_normal"] = phi(r["pred"] / p["sigma"])
             r["p_d_t"] = cdf(r["pred"] / p["t"][1], p["t"][0])
             r["p_d_t_inc"] = cdf(r["pred_inc"] / p["t_inc"][1], p["t_inc"][0])
+            with_run_open([r], p["betas_ro"])
+            r["p_d_t_ro"] = cdf(r["pred_ro"] / p["t_ro"][1], p["t_ro"][0])
 
     variants = {"v1: normal, sigma %.2f" % sigma_v1: "v1", "normal, refit sigma": "normal",
-                "Student-t, refit": "t", "Student-t + incumbency, refit": "t_inc"}
+                "Student-t, refit": "t", "Student-t + incumbency, refit": "t_inc",
+                "Student-t + incumbent running / open seat, refit": "t_ro"}
 
     def score(rs: list) -> dict:
         out = {}
@@ -206,7 +246,10 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
                       "wrong_calls_v1": sum(r["upset_v1"] for r in rs), "sigma_fit_this_cycle": round(fit_sigma(rs), 2),
                       "sigma_loco": round(p["sigma"], 2), "t_df_loco": df_label(p["t"][0]),
                       "t_scale_loco": round(p["t"][1], 2), "incumbency_bonus_loco": round(p["beta"], 2),
-                      "t_inc_df_loco": df_label(p["t_inc"][0]), "t_inc_scale_loco": round(p["t_inc"][1], 2)})
+                      "t_inc_df_loco": df_label(p["t_inc"][0]), "t_inc_scale_loco": round(p["t_inc"][1], 2),
+                      "running_bonus_loco": round(p["betas_ro"][0], 2), "open_bonus_loco": round(p["betas_ro"][1], 2),
+                      "t_ro_df_loco": df_label(p["t_ro"][0]), "t_ro_scale_loco": round(p["t_ro"][1], 2),
+                      "incumbents_running": sum(r["x_run"] != 0 for r in rs), "open_seats": sum(r["x_open"] != 0 for r in rs)})
             for key, (ll, brier) in s.items():
                 c[f"log_loss_{key}"], c[f"brier_{key}"] = round(ll, 4), round(brier, 4)
     pooled = {}
@@ -223,7 +266,8 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
                "polling_error", "pres_national_margin", "swing_forecast", "swing_actual", "seats", "scored",
                "one_party", "other_winner", "wrong_calls_v1", "rms_error_forecast", "rms_error_oracle",
                "sigma_fit_this_cycle", "sigma_fit_oracle", "sigma_loco", "t_df_loco", "t_scale_loco",
-               "incumbency_bonus_loco", "t_inc_df_loco", "t_inc_scale_loco"]
+               "incumbency_bonus_loco", "t_inc_df_loco", "t_inc_scale_loco", "incumbents_running", "open_seats",
+               "running_bonus_loco", "open_bonus_loco", "t_ro_df_loco", "t_ro_scale_loco"]
     cfields += [f"{m}_{k}" for m in ("log_loss", "brier") for k in variants.values()]
     write_csv(RESULTS / "backtest_cycles.csv", cycles, cfields)
 
@@ -245,7 +289,7 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
                               "observed_ci95_lo": round(ci[0], 4), "observed_ci95_hi": round(ci[1], 4)})
     write_csv(RESULTS / "backtest_calibration.csv", calib, list(calib[0].keys()))
 
-    rfields = ["cycle", "race_id", "incumbent", "lean", "pred", "pred_oracle", "actual_margin", "winner",
+    rfields = ["cycle", "race_id", "incumbent", "x_run", "x_open", "lean", "pred", "pred_oracle", "actual_margin", "winner",
                "contested", "scored", "upset_v1"] + [f"p_d_{k}" for k in variants.values()]
     write_csv(RESULTS / "backtest_house_races.csv",
               [{k: round(v, 6) if isinstance(v, float) else v for k, v in r.items()} for r in races], rfields)
@@ -255,14 +299,22 @@ def run_backtest(refresh: bool, sigma_v1: float) -> dict:
     with_incumbency(fc, beta)
     t_df, t_scale = fit_t(fc)
     ti_df, ti_scale = fit_t(fc, "pred_inc")
+    betas = run_open_bonus(fc)
+    with_run_open(fc, betas)
+    ro_df, ro_scale = fit_t(fc, "pred_ro")
     return {
         "races": len(races), "scored": len(fc), "cycles": fc_cycles, "pooled": pooled, "calibration": calib,
         "variants": variants, "sigma_all": fit_sigma(fc),
         "sigma_midterms": fit_sigma([r for r in fc if r["cycle"] in MIDTERMS]),
         "sigma_oracle": fit_sigma(scored, "pred_oracle"), "beta": beta,
         "t": (df_label(t_df), t_scale), "t_inc": (df_label(ti_df), ti_scale),
+        "betas_ro": betas, "t_ro": (ro_df, ro_scale),
         "polling_rmse": rms([c["polling_error"] for c in cycles if isinstance(c.get("polling_error"), float)]),
     }
+
+
+def df_label(df) -> str:
+    return "normal" if df is None else str(df)
 
 
 def report(bt: dict) -> None:
@@ -272,6 +324,8 @@ def report(bt: dict) -> None:
           f"vote {bt['sigma_oracle']:.2f};  Student-t df {bt['t'][0]} scale {bt['t'][1]:.2f};  + incumbency "
           f"({bt['beta']:+.1f} pts) df {bt['t_inc'][0]} scale {bt['t_inc'][1]:.2f};  "
           f"generic-ballot RMS miss {bt['polling_rmse']:.2f}")
+    print(f"  incumbent running {bt['betas_ro'][0]:+.1f} pts, open seat (holding party) {bt['betas_ro'][1]:+.1f} pts; "
+          f"Student-t df {df_label(bt['t_ro'][0])} scale {bt['t_ro'][1]:.2f}")
     for scope, row in bt["pooled"].items():
         print(f"  {scope:9} log loss / Brier: " + ",  ".join(
             f"{k} {row['log_loss_' + k]:.4f} / {row['brier_' + k]:.4f}" for k in bt["variants"].values()))

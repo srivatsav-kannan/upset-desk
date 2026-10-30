@@ -2,7 +2,7 @@
 
 Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
-> **Status:** One model is built: [`uniform_swing`](models/uniform_swing/), the 2024 vote on the 2026 map plus a generic-ballot swing. It's compared against Kalshi race by race, with the expected-points pick rule applied, and backtested on the 2010–2024 House. Four more models are planned in [`models/`](models/). See [Models](#models).
+> **Status:** One model is built: [`uniform_swing`](models/uniform_swing/), the 2024 vote on the 2026 map plus a generic-ballot swing and incumbency, with Student-t probabilities (v2). It's compared against Kalshi race by race, with the expected-points pick rule applied, and backtested on the 2010–2024 House. Four more models are planned in [`models/`](models/). See [Models](#models).
 
 ## The challenge
 
@@ -126,15 +126,15 @@ Every model writes `models/<name>/predictions.csv` in one shared format ([`model
 
 | Model | Status | Out-of-sample House log loss, 2010–2022 |
 |---|---|---|
-| [`uniform_swing`](models/uniform_swing/) | Built | 0.197 as used now (normal, σ = 7.24). 0.149 with a Student-t + incumbency. |
+| [`uniform_swing`](models/uniform_swing/) | Built (v2) | **0.139** (Student-t + incumbent running / open seat). v1 was 0.197. |
 | [`expert_ratings`](models/expert_ratings/) | Planned (Phase 0b) | |
 | [`fundamentals`](models/fundamentals/) | Planned (Phase 1) | |
 | [`polls_simulation`](models/polls_simulation/) | Planned (Phase 2) | |
 | [`upset_classifier`](models/upset_classifier/) | Planned (Phase 4, optional) | |
 
-**`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.4 swing (generic ballot D+8.7, against a 2024 presidential national margin of D−1.7). The result is House D 237 / R 198 and 15 of 35 Senate seats for Democrats. Against Kalshi, the expected-points rule makes 180 underdog picks and expects 71.4 points if the market is right, against 44.1 for picking every Kalshi favorite.
+**`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.4 swing (generic ballot D+8.7, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
 
-The backtest found that the normal curve has the wrong shape: its tails are too thin and its middle too wide. A Student-t is calibrated. Almost every deep-tail upset was a crossover incumbent, so incumbency has to come into the model before the long-shot picks can be trusted.
+The result is House D 230 / R 205 and 15 of 35 Senate seats for Democrats. Against Kalshi, the expected-points rule makes 222 underdog picks and expects 73.4 points if the market is right, against 44.1 for picking every Kalshi favorite. 20 of those underdog picks are Senate long shots that rest on a House-fitted tail, which hasn't been validated on the Senate yet.
 
 The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/README.md): redistricting effects, the swing, the Kalshi comparison and the [backtest](models/uniform_swing/README.md#backtest-is-σ-calibrated-in-the-tails).
 
@@ -148,8 +148,8 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [x] One folder per model, with a shared predictions format and decision step ([models/](models/))
 - [x] Interactive map of each model's predictions on the 2026 lines ([visualizer/](visualizer/))
 - [ ] Resolve the Missouri map mismatch (see [Special cases](#special-cases-to-handle))
-- [ ] Switch to Student-t + incumbency once 2026 incumbents and retirements are ingested
-- [ ] Ingest: Ballotpedia candidates, incumbency, retirements
+- [x] Baseline v2: Student-t + incumbent running / open seat, with 2026 incumbents and retirements from Wikipedia ([v2](models/uniform_swing/README.md#baseline-v2-student-t--incumbency))
+- [ ] Senate backtest of the tail before trusting Senate long-shot picks
 - [ ] Phase 0 baselines + scoring function + backtest harness
 - [ ] Phase 1 fundamentals model
 - [ ] Phase 2 polls + simulation
