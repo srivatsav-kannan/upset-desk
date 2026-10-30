@@ -8,6 +8,7 @@ import csv
 import datetime as dt
 import io
 import json
+import math
 import re
 import time
 import urllib.error
@@ -42,13 +43,17 @@ FTE_FILES = {
     "election_results_house": FTE_RESULTS + "election_results_house.csv",
     "election_results_presidential": FTE_RESULTS + "election_results_presidential.csv",
     "election_results_generichouse": FTE_RESULTS + "election_results_generichouse.csv",  # national House vote
+    "election_results_senate": FTE_RESULTS + "election_results_senate.csv",
     "races": FTE_RESULTS + "races.csv",  # incumbent party per race
+    # Every poll in the final weeks of a race, 1998-2022, with the result (pollster-ratings input).
+    "raw_polls": FTE_DATA + "pollster-ratings/raw_polls.csv",
     "generic_topline_historical": FTE_DATA + "congress-generic-ballot/generic_topline_historical.csv",  # <= 2016
     "generic_ballot_averages_old_model": FTE_DATA + "polls/old_model/generic_ballot_averages_old_model.csv",  # 2018+
 }
 
 ELECTION_DAY = {2010: "2010-11-02", 2012: "2012-11-06", 2014: "2014-11-04", 2016: "2016-11-08",
-                2018: "2018-11-06", 2020: "2020-11-03", 2022: "2022-11-08", 2024: "2024-11-05"}
+                2018: "2018-11-06", 2020: "2020-11-03", 2022: "2022-11-08", 2024: "2024-11-05",
+                2026: "2026-11-03"}
 MIDTERMS = {2010, 2014, 2018, 2022}
 PRES_DEM = {2008: "Obama", 2012: "Obama", 2016: "Clinton", 2020: "Biden"}
 
@@ -103,7 +108,7 @@ def cached(folder: str, name: str, ext: str, refresh: bool, download) -> Path:
     """Return the newest cached raw file for a source, calling download() if needed."""
     d = RAW / folder
     d.mkdir(parents=True, exist_ok=True)
-    hits = sorted(d.glob(f"{name}_*.{ext}"))
+    hits = sorted(d.glob(f"{name}_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].{ext}"))  # exact name + date
     if hits and (not refresh or (folder, name) in _REFRESHED):
         return hits[-1]
     path = d / f"{name}_{dt.date.today().isoformat()}.{ext}"
@@ -140,6 +145,25 @@ def fetch_wiki(name: str, page: str, sections: list, refresh: bool) -> Path:
         parts = [json.loads(http_get(WIKI_API + page + f"&prop=wikitext|revid&section={index[t]}"))["parse"] for t in sections]
         return json.dumps({"parse": {"revid": parts[0]["revid"], "wikitext": "\n".join(p["wikitext"] for p in parts)}}).encode()
     return cached("wikipedia", name, "json", refresh, download)
+
+
+def fetch_house_ratings(year: int, refresh: bool) -> Path:
+    """Wikipedia's "<year> United States House of Representatives election ratings" page."""
+    return fetch_wiki(f"house_ratings_{year}", f"{year}_United_States_House_of_Representatives_election_ratings", [],
+                      refresh)
+
+
+def fetch_senate_page(year: int, refresh: bool) -> Path:
+    """Wikipedia's "<year> United States Senate elections" page (its ratings table is parsed below)."""
+    return fetch_wiki(f"senate_page_{year}", f"{year}_United_States_Senate_elections", [], refresh)
+
+
+def fetch_senate_race_page(year: int, state: str, special: bool, refresh: bool) -> Path:
+    """Wikipedia's page for one Senate race (polling tables, candidates)."""
+    name = next(k for k, v in STATES.items() if v == state)
+    kind = "special_election" if special else "election"
+    return fetch_wiki(f"senate_race_{year}_{state}{'_special' if special else ''}",
+                      f"{year}_United_States_Senate_{kind}_in_{name.replace(' ', '_')}", [], refresh)
 
 
 # ---------------------------------------------------------------- 2026 inputs
@@ -192,6 +216,244 @@ def load_senate_incumbents_2026(path: Path) -> dict:
         if m and party and status and m[1] in STATES:
             out[STATES[m[1]]] = {"party": PARTY_WORD[party[1]], "running": _status_running(status[1])}
     return out
+
+# ---------------------------------------------------------------- expert ratings (any cycle)
+
+# Rating levels on a -3 (Safe R) .. +3 (Safe D) scale. Independents count with the D side:
+# a model's p_d is the probability that the strongest non-Republican wins.
+RATING_LEVEL = {"safe": 3, "solid": 3, "likely": 2, "favored": 2, "lean": 1, "tilt": 0.5, "tossup": 0, "toss-up": 0}
+RATING_CELL = re.compile(r"\{\{USRaceRating\|\s*([A-Za-z-]+)\s*(?:\|\s*([DRI])\b)?[^}]*\}\}"
+                         r"|\{\{sort\|\d+\|\s*(Safe|Solid|Likely|Lean|Tilt|Toss-?up)\s*([DRI])?", re.I)
+NOT_RUNNING_CELL = re.compile(r"retir|lost|defeated|resign|died|withdr|running for|seeking|not running|"
+                              r"term.limited|appointee not", re.I)
+
+
+def rating_score(level: str, party: str) -> float:
+    v = RATING_LEVEL[level.lower()]
+    return 0.0 if v == 0 else (-v if party == "R" else v)
+
+
+def load_ratings(path: Path, chamber: str) -> dict:
+    """Final pre-election expert ratings from a Wikipedia ratings table.
+
+    House: {race_id: row}; Senate: {(state, special): row}. Each row has "scores" (one per
+    rater, -3 Safe R .. +3 Safe D), plus "inc_party" and "inc_running" read from the incumbent
+    cell. Only rating cells are read: tables that also show the winner keep it in a separate
+    column, which is ignored (no leakage). A "Median" column, where present, is skipped.
+    """
+    text = json.loads(path.read_text())["parse"]["wikitext"]
+    out = {}
+    for row in re.split(r"\n\|-", text):
+        head = row.strip().split("\n")[0]
+        if chamber == "House":
+            m = re.search(r"\{\{ushr\|([A-Z]{2})\|(\w+)\|", head)
+            if not m or not head.lstrip().startswith("!"):
+                continue
+            key = f"{m[1]}-{'AL' if m[2].upper() in ('AL', '0') else m[2].zfill(2)}"
+        else:
+            m = re.match(r"\s*!\s*\[\[[^|\]]*\|([^\]]+)\]\]", head)  # [[#Ohio|Ohio]] or [[2026 ... in Ohio|Ohio]]
+            name = re.sub(r"<br\s*/?>.*|\s*\(.*\)", "", m[1]).strip() if m else ""
+            if name not in STATES:
+                continue
+            key = (STATES[name], "special" in head.lower())
+        lines = [ln for ln in row.split("\n")[1:] if "Median" not in ln]
+        scores = [rating_score(c[0] or c[2], (c[1] or c[3] or "").upper()) for c in RATING_CELL.findall("\n".join(lines))]
+        if len(scores) < 2:
+            continue
+        inc = next((ln for ln in lines if ("sortname" in ln or "[[" in ln) and "Party shading" in ln.replace("party shading", "Party shading")
+                    and not RATING_CELL.search(ln) and "%" not in ln.split("|")[-1]), "")
+        party = re.search(r"[Pp]arty shading/(Democratic|DFL|Republican|Independent)", inc)
+        prev = out.get(key)
+        if prev and len(prev["scores"]) >= len(scores):
+            continue
+        out[key] = {"scores": scores, "inc_party": PARTY_WORD[party[1]] if party else "",
+                    "inc_running": bool(inc) and not NOT_RUNNING_CELL.search(inc)}
+    return out
+
+
+# ---------------------------------------------------------------- Senate results + polls (backtests)
+
+def load_senate_results(path: Path, cycles: set) -> dict:
+    """Senate general elections as {(cycle, state, special): contest}.
+
+    The deciding contest is a runoff if there was one, else the general or jungle primary;
+    ranked-choice races use the final round. "margin" is the strongest non-Republican's share
+    minus the strongest Republican's, in points of the total vote, and "winner" is R or D
+    (D meaning any non-Republican, as in p_d), and "non_r_party" says whether that strongest
+    non-Republican was a Democrat or an independent. Contested means both sides were on the ballot.
+    """
+    contests = {}
+    for r in read_rows(path):
+        if (r["office_name"] == "U.S. Senate" and r["cycle"].isdigit() and int(r["cycle"]) in cycles
+                and r["party"] == "" and r["stage"] in STAGE_RANK):
+            key = (int(r["cycle"]), r["state_abbrev"], r["special"] == "true")
+            contests.setdefault(key, {}).setdefault(r["race_id"], []).append(r)
+    out = {}
+    for key, by_race in contests.items():
+        race = max(by_race, key=lambda k: STAGE_RANK[by_race[k][0]["stage"]])
+        rows = by_race[race]
+        rounds = [int(r["ranked_choice_round"]) for r in rows if r["ranked_choice_round"]]
+        if rounds:
+            rows = [r for r in rows if r["ranked_choice_round"] == str(max(rounds))]
+        cands = {}
+        for r in rows:
+            c = cands.setdefault(r["candidate_id"] or f"row{r['id']}", {"votes": 0, "rep": False, "dem": False, "winner": False})
+            c["votes"] += int(float(r["votes"])) if r["votes"] else 0
+            c["rep"] |= r["ballot_party"] == "REP"
+            c["dem"] |= r["ballot_party"] == "DEM"
+            c["winner"] |= r["winner"] == "true"
+        cs = list(cands.values())
+        total = sum(c["votes"] for c in cs)
+        rep = max((c["votes"] for c in cs if c["rep"]), default=0)
+        top_non = max((c for c in cs if not c["rep"]), key=lambda c: c["votes"], default={"votes": 0, "dem": True})
+        non = top_non["votes"]
+        winner = next((c for c in cs if c["winner"]), max(cs, key=lambda c: c["votes"]))
+        out[key] = {"winner": "R" if winner["rep"] else "D", "contested": rep > 0 and non > 0 and total > 0,
+                    "non_r_party": "D" if top_non["dem"] else "I",
+                    "margin": 100 * (non - rep) / total if total else None}
+    return out
+
+
+def state_pres_margins(path: Path) -> dict:
+    """{(year, state): D-R presidential margin in points} from 538's statewide general rows."""
+    pct = {}
+    for r in read_rows(path):
+        if (r["office_name"] == "U.S. President" and r["stage"] == "general" and r["state_abbrev"]
+                and not r.get("district", "") and r["ballot_party"] in ("DEM", "REP") and r["percent"]):
+            k = (int(r["cycle"]), r["state_abbrev"])
+            pct.setdefault(k, {})
+            pct[k][r["ballot_party"]] = max(pct[k].get(r["ballot_party"], 0.0), float(r["percent"]))
+    return {k: v["DEM"] - v["REP"] for k, v in pct.items() if len(v) == 2}
+
+
+def load_raw_polls(path: Path) -> list:
+    """538's archived polls of general elections, with the margin oriented as non-R minus R.
+
+    Returns [{type, cycle, key, pollster, partisan, days, n, margin_poll, margin_actual}] for
+    Senate (key (cycle, state, special)) and House (key (cycle, race_id)) generals; polls of
+    runoffs and same-party matchups are dropped.
+    """
+    out = []
+    for r in read_rows(path):
+        t = r["race"].split("_")[1] if r["race"].count("_") >= 2 else ""
+        if t not in ("Sen-G", "Sen-GS", "House-G"):
+            continue
+        p1, p2 = r["cand1_party"], r["cand2_party"]
+        if (p1 == "REP") == (p2 == "REP"):
+            continue
+        sign = -1 if p1 == "REP" else 1
+        cycle = int(r["cycle"])
+        if t == "House-G":
+            st, _, n = r["location"].partition("-")
+            key = (cycle, f"{st}-{'AL' if n in ('AL', '0', '') else n.zfill(2)}")
+        else:
+            key = (cycle, r["location"], t == "Sen-GS")
+        out.append({"type": "House" if t == "House-G" else "Senate", "cycle": cycle, "key": key,
+                    "pollster": r["pollster"], "partisan": r["partisan"] not in ("", "NA"),
+                    "days": int(r["time_to_election"]), "n": float(r["samplesize"] or 0),
+                    "margin_poll": sign * float(r["margin_poll"]), "margin_actual": sign * float(r["margin_actual"])})
+    return out
+
+
+MONTHS = {m: i for i, m in enumerate(["january", "february", "march", "april", "may", "june", "july", "august",
+                                         "september", "october", "november", "december"], 1)}
+
+
+def poll_end_date(text: str, year: int):
+    """Last day of a Wikipedia poll's field dates ("October 20–26, 2026", "Sep 30 – Oct 2, 2026")."""
+    text = re.sub(r"\{\{[^}]*\}\}|<[^>]+>", " ", text)
+    found = re.findall(r"([A-Za-z]{3,9})\.?\s+(\d{1,2})(?:\s*[–-]\s*(\d{1,2})\b(?!\s*[A-Za-z]))?", text)
+    found = [(MONTHS.get(next((k for k in MONTHS if k.startswith(m.lower()[:3])), ""), 0), d1, d2) for m, d1, d2 in found]
+    found = [f for f in found if f[0]]
+    if not found:
+        return None
+    mo, d1, d2 = found[-1]
+    y = re.findall(r"\b(20\d\d)\b", text)
+    return dt.date(int(y[-1]) if y else year, mo, int(d2 or d1))
+
+
+def _cells(row: str) -> list:
+    cells = []
+    for ln in row.split("\n"):
+        ln = ln.strip()
+        if ln.startswith("|") and not ln.startswith("|}") and not ln.startswith("|-"):
+            cells += [c for c in ln[1:].split("||")]
+    return cells
+
+
+def _cell_text(cell: str) -> str:
+    """Drop a cell's attributes ('style=... |' or '{{party shading/X}} |') and its references."""
+    cell = re.sub(r"<ref[^>]*/>|<ref[^>]*>.*?</ref>", "", cell, flags=re.S)
+    depth, cut = 0, -1
+    for i, ch in enumerate(cell):  # the attribute separator is a '|' outside templates and links
+        depth += {"{": 1, "[": 1, "}": -1, "]": -1}.get(ch, 0)
+        if ch == "|" and depth == 0:
+            cut = i
+            break
+    return cell[cut + 1:] if cut >= 0 else cell
+
+
+def load_wiki_polls(path: Path, year: int) -> list:
+    """Individual general-election polls from a Wikipedia race page's first head-to-head table.
+
+    Only the first table under the "General election" polling heading with a "Poll source"
+    header is read (later tables are hypothetical matchups). Candidate columns are the ones
+    whose header names a party, (D)/(DFL)/(I) vs (R). Rows split by rowspan (LV and RV
+    versions of one poll) inherit the pollster and dates of the row above. Returns
+    [{pollster, partisan, end, n, pop, margin, non_r_party}] with margin = strongest non-R
+    candidate minus the Republican, and non_r_party D or I for that candidate.
+    """
+    text = json.loads(path.read_text())["parse"]["wikitext"]
+    g = re.search(r"\n==+\s*General election\s*==+", text)
+    if not g:
+        return []
+    body = text[g.end():]
+    nxt = re.search(r"\n==\s*[^=]", body)  # the next level-2 section ends the general election
+    body = body[:nxt.start()] if nxt else body
+    hyp = re.search(r"\n=+\s*Hypothetical", body)
+    body = body[:hyp.start()] if hyp else body
+    for tbl in re.findall(r"\{\|.*?\n\|\}", body, re.S):
+        if "Poll source" not in tbl:
+            continue
+        rows = re.split(r"\n\|-", tbl)
+        heads = [h for r in rows[:3] for h in re.findall(r"^!\s*(.*)$", r, re.M)]
+        heads = [re.sub(r"^[^|]*style=[^|]*\|", "", h) for h in heads]
+        cols = {}
+        for i, h in enumerate(heads):
+            p = re.search(r"\((D|DFL|R|I)\)", h)
+            if p:
+                cols[i] = "D" if p[1] == "DFL" else p[1]
+        if "R" not in cols.values() or set(cols.values()) == {"R"}:
+            continue
+        polls, prev = [], []
+        for r in rows[1:]:
+            cells = _cells(r)
+            if len(cells) < len(heads) - 2:
+                continue
+            if len(cells) < len(heads):  # rowspan: inherit leading cells from the row above
+                cells = prev[:len(heads) - len(cells)] + cells
+            prev = cells
+            txt = [_cell_text(c) for c in cells]
+            if "Average" in txt[0] or "aggregat" in txt[0].lower():
+                continue
+            pct = {}
+            for i, party in cols.items():
+                m = re.search(r"(\d+(?:\.\d+)?)\s*%", txt[i]) if i < len(txt) else None
+                if m:
+                    pct[party] = max(pct.get(party, 0.0), float(m[1]))
+            end = poll_end_date(txt[1], year) if len(txt) > 1 else None
+            if "R" not in pct or len(pct) < 2 or end is None:
+                continue
+            non_r = max((p for p in pct if p != "R"), key=pct.get)
+            n = re.search(r"([\d,]+)\s*\((LV|RV|A|V)\)", txt[2]) if len(txt) > 2 else None
+            pop = re.search(r"\((LV|RV|A|V)\)", txt[2]) if len(txt) > 2 else None
+            pollster = re.sub(r"\[\[(?:[^|\]]*\|)?([^\]]*)\]\]", r"\1", re.sub(r"\{\{[^}]*\}\}", "", txt[0])).strip()
+            polls.append({"pollster": pollster, "partisan": bool(re.search(r"\((D|R)\)", pollster)), "end": end,
+                          "n": float(n[1].replace(",", "")) if n else 0.0, "pop": pop[1] if pop else "",
+                          "margin": pct[non_r] - pct["R"], "non_r_party": non_r})
+        return polls
+    return []
+
 
 def load_generic_ballot(path: Path) -> list:
     """Parse the aggregator rows into [{source, dem, rep, margin}] (our own average, not theirs)."""
@@ -379,6 +641,75 @@ def load_generic_ballot_history(hist_path: Path, recent_path: Path) -> dict:
             pct = {r["candidate"]: float(r["pct_estimate"]) for r in rows if r["date"] == d}
             out[y] = {"date": d, "margin": pct["Democrats"] - pct["Republicans"]}
     return out
+
+
+# ---------------------------------------------------------------- probability helpers
+
+# Win probabilities are P(D) = F(margin / scale) for a Student-t F, fit by maximum likelihood
+# on past winners (shared by every model's backtest).
+T_DF_GRID = [1, 2, 3, 4, 6, 10, 30, None]  # Student-t degrees of freedom tried; None = normal
+
+
+def phi(z: float) -> float:
+    return 0.5 * math.erfc(-z / math.sqrt(2))
+
+
+def cdf(x: float, df=None) -> float:
+    """Student-t CDF for integer df (closed form, Abramowitz & Stegun 26.7.3-4); df=None is the normal."""
+    if df is None:
+        return phi(x)
+    th = math.atan(abs(x) / math.sqrt(df))
+    c2 = math.cos(th) ** 2
+    if df % 2:
+        term = s = math.cos(th)
+        for j in range(1, (df - 1) // 2):
+            term *= c2 * 2 * j / (2 * j + 1)
+            s += term
+        a = 2 / math.pi * (th + (math.sin(th) * s if df > 1 else 0.0))
+    else:
+        term = s = 1.0
+        for j in range(1, df // 2):
+            term *= c2 * (2 * j - 1) / (2 * j)
+            s += term
+        a = math.sin(th) * s
+    return 0.5 + 0.5 * a if x >= 0 else 0.5 - 0.5 * a
+
+
+def log_loss(races: list, scale: float, key: str = "pred", df=None) -> float:
+    """Mean negative log-likelihood (nats) of the actual winners under P(D) = F(margin / scale)."""
+    return -sum(math.log(max(cdf(r["sign"] * r[key] / scale, df), 1e-300)) for r in races) / len(races)
+
+
+def fit_sigma(races: list, key: str = "pred", df=None) -> float:
+    """Maximum-likelihood scale (golden-section search on log scale; the likelihood is unimodal)."""
+    lo, hi = math.log(0.5), math.log(60.0)
+    g = (math.sqrt(5) - 1) / 2
+    for _ in range(36):
+        a, b = hi - g * (hi - lo), lo + g * (hi - lo)
+        if log_loss(races, math.exp(a), key, df) < log_loss(races, math.exp(b), key, df):
+            hi = b
+        else:
+            lo = a
+    return math.exp((lo + hi) / 2)
+
+
+def fit_t(races: list, key: str = "pred") -> tuple:
+    """(df, scale) with the best likelihood over T_DF_GRID."""
+    fits = [(df, fit_sigma(races, key, df)) for df in T_DF_GRID]
+    return min(fits, key=lambda f: log_loss(races, f[1], key, f[0]))
+
+
+def wilson(k: int, n: int, z: float = 1.96) -> tuple:
+    if n == 0:
+        return 0.0, 1.0
+    p, den = k / n, 1 + z * z / n
+    c = (p + z * z / (2 * n)) / den
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
+    return max(0.0, c - h), min(1.0, c + h)
+
+
+def rms(xs: list) -> float:
+    return math.sqrt(sum(x * x for x in xs) / len(xs)) if xs else float("nan")
 
 
 # ---------------------------------------------------------------- outputs

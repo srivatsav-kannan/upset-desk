@@ -1,5 +1,7 @@
 # Uniform swing (Baseline v2)
 
+> **Data note.** The committed outputs use the Oct 30 generic ballot (D+8.9, swing D+10.5) and Kalshi snapshot: House D 231 / R 204, Senate 15 D, 222 underdog picks, 74.3 expected points if Kalshi is right. Figures written below come from the Oct 21 snapshots. The submission model is now [`ensemble`](../ensemble/), which uses this model as its fundamentals input.
+
 The 2024 presidential vote on the 2026 district map, shifted by one national swing from the generic ballot, plus incumbency, with Student-t win probabilities ([v2](#baseline-v2-student-t--incumbency)). [`model.py`](model.py) writes [`predictions.csv`](predictions.csv) and the diagnostics in [`results/`](results/). [`backtest.py`](backtest.py) replays the same recipe on the 2010–2024 House. The shared [`decide.py`](../../decide.py) turns the predictions into [`results/model_vs_kalshi.csv`](results/model_vs_kalshi.csv) and the CSVs in [`submission/`](submission/).
 
 ```bash

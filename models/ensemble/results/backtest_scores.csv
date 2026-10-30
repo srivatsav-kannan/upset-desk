@@ -1,0 +1,131 @@
+scope,variant,races,log_loss,brier,wrong_calls
+House,fundamentals,2655,0.1398,0.0424,161
+House,+ratings,2655,0.0804,0.0244,92
+House,+ratings+polls,2655,0.0804,0.0244,92
+House,+ratings+polls+gb_corr,2655,0.0816,0.0252,98
+House,+ratings+polls+intercept,2655,0.0829,0.0256,101
+House,+ratings+polls+gb_corr+curve,2655,0.0897,0.0283,108
+House,uniform_swing v2,2655,0.1392,0.0382,131
+Senate,fundamentals,242,0.2698,0.0721,21
+Senate,+ratings,242,0.1779,0.0496,18
+Senate,+ratings+polls,242,0.1798,0.054,21
+Senate,+ratings+polls+gb_corr,242,0.1803,0.0544,20
+Senate,+ratings+polls+intercept,242,0.189,0.0555,19
+Senate,+ratings+polls+gb_corr+curve,242,0.1948,0.0561,21
+"Senate, polled",fundamentals,211,0.2876,0.0757,19
+"Senate, polled",+ratings,211,0.1982,0.055,17
+"Senate, polled",+ratings+polls,211,0.2004,0.0599,20
+"Senate, polled",+ratings+polls+gb_corr,211,0.2005,0.0602,19
+"Senate, polled",+ratings+polls+intercept,211,0.2112,0.0618,18
+"Senate, polled",+ratings+polls+gb_corr+curve,211,0.2177,0.0623,20
+House midterms,fundamentals,1556,0.1598,0.0514,118
+House midterms,+ratings,1556,0.0845,0.0266,59
+House midterms,+ratings+polls,1556,0.0845,0.0266,59
+House midterms,+ratings+polls+gb_corr,1556,0.0881,0.0282,68
+House midterms,+ratings+polls+intercept,1556,0.0888,0.0285,69
+House midterms,+ratings+polls+gb_corr+curve,1556,0.0991,0.0323,76
+House midterms,uniform_swing v2,1556,0.1535,0.0429,89
+Senate midterms,fundamentals,141,0.3048,0.0763,13
+Senate midterms,+ratings,141,0.1976,0.0501,10
+Senate midterms,+ratings+polls,141,0.1865,0.0522,13
+Senate midterms,+ratings+polls+gb_corr,141,0.1873,0.0529,11
+Senate midterms,+ratings+polls+intercept,141,0.1953,0.0532,11
+Senate midterms,+ratings+polls+gb_corr+curve,141,0.2083,0.0552,12
+House rated (competitive),fundamentals,792,0.4377,0.1395,160
+House rated (competitive),+ratings,792,0.2684,0.0819,92
+House rated (competitive),+ratings+polls,792,0.2684,0.0819,92
+House rated (competitive),+ratings+polls+gb_corr,792,0.2725,0.0844,98
+House rated (competitive),+ratings+polls+intercept,792,0.2769,0.0858,101
+House rated (competitive),+ratings+polls+gb_corr+curve,792,0.3002,0.0948,108
+House rated (competitive),uniform_swing v2,792,0.4286,0.1239,130
+House 2010,fundamentals,406,0.2108,0.0721,47
+House 2010,+ratings,406,0.1002,0.0317,17
+House 2010,+ratings+polls,406,0.1002,0.0317,17
+House 2010,+ratings+polls+gb_corr,406,0.1036,0.0338,23
+House 2010,+ratings+polls+intercept,406,0.1033,0.0337,23
+House 2010,+ratings+polls+gb_corr+curve,406,0.1224,0.0401,25
+House 2010,uniform_swing v2,406,0.2366,0.0609,31
+House 2012,fundamentals,348,0.1416,0.0423,22
+House 2012,+ratings,348,0.0659,0.0207,10
+House 2012,+ratings+polls,348,0.0659,0.0207,10
+House 2012,+ratings+polls+gb_corr,348,0.0701,0.0223,10
+House 2012,+ratings+polls+intercept,348,0.0721,0.0231,11
+House 2012,+ratings+polls+gb_corr+curve,348,0.0797,0.0259,13
+House 2012,uniform_swing v2,348,0.1417,0.0395,16
+House 2014,fundamentals,358,0.1212,0.0338,15
+House 2014,+ratings,358,0.0642,0.0218,12
+House 2014,+ratings+polls,358,0.0642,0.0218,12
+House 2014,+ratings+polls+gb_corr,358,0.0622,0.0213,12
+House 2014,+ratings+polls+intercept,358,0.0623,0.0213,12
+House 2014,+ratings+polls+gb_corr+curve,358,0.0693,0.0235,12
+House 2014,uniform_swing v2,358,0.1224,0.0337,15
+House 2016,fundamentals,344,0.0663,0.0161,6
+House 2016,+ratings,344,0.0401,0.012,5
+House 2016,+ratings+polls,344,0.0401,0.012,5
+House 2016,+ratings+polls+gb_corr,344,0.0383,0.0112,5
+House 2016,+ratings+polls+intercept,344,0.0382,0.0111,5
+House 2016,+ratings+polls+gb_corr+curve,344,0.047,0.0148,7
+House 2016,uniform_swing v2,344,0.0928,0.0261,11
+House 2018,fundamentals,394,0.191,0.063,37
+House 2018,+ratings,394,0.0801,0.0224,11
+House 2018,+ratings+polls,394,0.0801,0.0224,11
+House 2018,+ratings+polls+gb_corr,394,0.0883,0.0256,15
+House 2018,+ratings+polls+intercept,394,0.09,0.0262,15
+House 2018,+ratings+polls+gb_corr+curve,394,0.0996,0.0305,19
+House 2018,uniform_swing v2,394,0.1386,0.0416,22
+House 2020,fundamentals,407,0.1242,0.03,15
+House 2020,+ratings,407,0.1113,0.0301,18
+House 2020,+ratings+polls,407,0.1113,0.0301,18
+House 2020,+ratings+polls+gb_corr,407,0.1029,0.0279,15
+House 2020,+ratings+polls+intercept,407,0.1075,0.0291,16
+House 2020,+ratings+polls+gb_corr+curve,407,0.0981,0.0264,12
+House 2020,uniform_swing v2,407,0.1212,0.0294,15
+House 2022,fundamentals,398,0.1116,0.0347,19
+House 2022,+ratings,398,0.0909,0.0297,19
+House 2022,+ratings+polls,398,0.0909,0.0297,19
+House 2022,+ratings+polls+gb_corr,398,0.0955,0.0315,18
+House 2022,+ratings+polls+intercept,398,0.0966,0.0318,19
+House 2022,+ratings+polls+gb_corr+curve,398,0.1018,0.0339,20
+House 2022,uniform_swing v2,398,0.1116,0.0342,21
+Senate 2010,fundamentals,37,0.5915,0.1283,5
+Senate 2010,+ratings,37,0.4461,0.0964,5
+Senate 2010,+ratings+polls,37,0.3472,0.0869,6
+Senate 2010,+ratings+polls+gb_corr,37,0.3474,0.0865,4
+Senate 2010,+ratings+polls+intercept,37,0.3725,0.0863,4
+Senate 2010,+ratings+polls+gb_corr+curve,37,0.4183,0.0907,5
+Senate 2012,fundamentals,33,0.2698,0.0832,3
+Senate 2012,+ratings,33,0.1532,0.0467,2
+Senate 2012,+ratings+polls,33,0.1992,0.0625,3
+Senate 2012,+ratings+polls+gb_corr,33,0.2078,0.0652,3
+Senate 2012,+ratings+polls+intercept,33,0.2299,0.0704,3
+Senate 2012,+ratings+polls+gb_corr+curve,33,0.2345,0.0715,3
+Senate 2014,fundamentals,36,0.1877,0.0548,3
+Senate 2014,+ratings,36,0.0606,0.0144,1
+Senate 2014,+ratings+polls,36,0.071,0.0187,1
+Senate 2014,+ratings+polls+gb_corr,36,0.0683,0.0179,1
+Senate 2014,+ratings+polls+intercept,36,0.0663,0.0167,1
+Senate 2014,+ratings+polls+gb_corr+curve,36,0.0704,0.0181,1
+Senate 2016,fundamentals,33,0.1348,0.0331,1
+Senate 2016,+ratings,33,0.1434,0.0471,2
+Senate 2016,+ratings+polls,33,0.143,0.0479,2
+Senate 2016,+ratings+polls+gb_corr,33,0.137,0.0462,2
+Senate 2016,+ratings+polls+intercept,33,0.1402,0.0471,2
+Senate 2016,+ratings+polls+gb_corr+curve,33,0.133,0.0447,2
+Senate 2018,fundamentals,34,0.3169,0.0936,4
+Senate 2018,+ratings,34,0.1649,0.0546,2
+Senate 2018,+ratings+polls,34,0.2212,0.0719,3
+Senate 2018,+ratings+polls+gb_corr,34,0.2204,0.072,3
+Senate 2018,+ratings+polls+intercept,34,0.2233,0.0722,3
+Senate 2018,+ratings+polls+gb_corr+curve,34,0.2181,0.0728,3
+Senate 2020,fundamentals,35,0.2562,0.0816,4
+Senate 2020,+ratings,35,0.1544,0.0529,4
+Senate 2020,+ratings+polls,35,0.1693,0.0585,3
+Senate 2020,+ratings+polls+gb_corr,35,0.167,0.0582,4
+Senate 2020,+ratings+polls+intercept,35,0.1709,0.0588,3
+Senate 2020,+ratings+polls+gb_corr+curve,35,0.1615,0.0558,4
+Senate 2022,fundamentals,34,0.1046,0.0252,1
+Senate 2022,+ratings,34,0.105,0.0331,2
+Senate 2022,+ratings+polls,34,0.099,0.0305,3
+Senate 2022,+ratings+polls+gb_corr,34,0.1061,0.0341,3
+Senate 2022,+ratings+polls+intercept,34,0.1112,0.0367,3
+Senate 2022,+ratings+polls+gb_corr+curve,34,0.1158,0.0381,3

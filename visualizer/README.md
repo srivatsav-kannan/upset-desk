@@ -13,7 +13,7 @@ Requires Node.js 20+.
 
 ## What it shows
 
-- **Data:** every `models/<name>/predictions.csv` in the repo, in the shared format from [`models/README.md`](../models/README.md). A new model shows up in the picker as soon as its CSV exists: on the next build, or live while `npm run dev` is running. The picker uses the first heading of the model's README as its name.
+- **Data:** every `models/<name>/predictions.csv` in the repo, in the shared format from [`models/README.md`](../models/README.md). A new model shows up in the picker as soon as its CSV exists: on the next build, or live while `npm run dev` is running. The picker uses the first heading of the model's README as its name. If the model also writes `results/race_explain.csv` (`race_id` plus labelled columns), the tooltip lists those lines under the margin, e.g. the ensemble's fundamentals, ratings, polls and news for each race.
 - **Color:** the projected margin (`projected_margin`), in USA Election Map's buckets. A model with no margin is bucketed by win probability instead (95 / 80 / 60%).
 
   | Bucket | Margin (points) |
@@ -67,7 +67,7 @@ The build uses relative paths, so it works under the `/election-prediction/` sub
 
 | File | What it does |
 |---|---|
-| `src/data/models.ts` | Finds and validates every `predictions.csv` (`import.meta.glob`) |
+| `src/data/models.ts` | Finds and validates every `predictions.csv`, plus optional `results/race_explain.csv` (`import.meta.glob`) |
 | `src/map/scale.ts` | Margin buckets, sides, labels |
 | `src/map/ElectionMap.tsx` | The SVG map: zoom (d3-zoom), hover/focus, click-to-zoom |
 | `src/map/Legend.tsx`, `Tooltip.tsx`, `RaceTable.tsx` | Key with seat counts, hover card, table view |

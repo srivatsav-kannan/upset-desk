@@ -12,6 +12,7 @@ on:
       - "visualizer/**"
       - "models/**/predictions.csv"
       - "models/**/README.md"
+      - "models/**/results/race_explain.csv"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

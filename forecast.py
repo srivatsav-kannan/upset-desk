@@ -6,7 +6,8 @@ Run:  python3 forecast.py                        # every model in models/, using
       python3 forecast.py --swing 0              # uniform_swing: override the national swing
 
 A model is any folder models/<name>/ with a model.py that defines run(args) and writes
-models/<name>/predictions.csv (format: common.PREDICTION_FIELDS). For each model, decide.py
+models/<name>/predictions.csv (format: common.PREDICTION_FIELDS). A model that reads another
+model's outputs lists it in DEPENDS_ON, and that model runs first. For each model, decide.py
 then compares the predictions with Kalshi and writes that model's results/ and submission/.
 """
 
@@ -21,6 +22,20 @@ def available() -> list:
     return sorted(p.parent.name for p in MODELS.glob("*/model.py"))
 
 
+def with_dependencies(names: list, modules: dict) -> list:
+    """Run order: a model's DEPENDS_ON models (whose outputs it reads) run before it."""
+    order = []
+
+    def visit(name: str) -> None:
+        if name not in order:
+            for dep in getattr(modules[name], "DEPENDS_ON", []):
+                visit(dep)
+            order.append(name)
+    for n in names:
+        visit(n)
+    return order
+
+
 def main() -> None:
     names = available()
     modules = {n: importlib.import_module(f"models.{n}.model") for n in names}
@@ -32,7 +47,7 @@ def main() -> None:
             m.add_arguments(ap)
     args = ap.parse_args()
 
-    for name in args.model or names:
+    for name in with_dependencies(args.model or names, modules):
         print(f"== {name}")
         modules[name].run(args)
         d = decide.run(MODELS / name, args.refresh)

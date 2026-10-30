@@ -43,6 +43,16 @@ export function Tooltip({ anchor, chamber, modelName }: { anchor: TooltipAnchor;
           <div className="tooltip-meta">
             {BUCKET_LABEL[bucketOf(race)]} {race.winner} · {modelName}
           </div>
+          {race.explain.length > 0 && (
+            <dl className="tooltip-explain">
+              {race.explain.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </>
       ) : (
         <div className="tooltip-meta">{chamber === "Senate" ? "No Senate race in 2026" : "No prediction"}</div>

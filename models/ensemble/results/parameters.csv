@@ -1,0 +1,7 @@
+chamber,independent,polls,student_t_df,student_t_scale,w_fundamentals_margin,w_incumbent_running,w_open_seat,w_rating_mean,w_poll_average
+House,False,False,30,6.819,0.3855,0.8123,-0.1706,5.9661,
+House,True,False,normal,8.707,,,,9.8258,
+Senate,False,False,4,5.513,0.342,1.4377,-0.4273,6.0735,
+Senate,False,True,4,4.38,0.2214,1.1217,-0.3747,3.0479,0.4901
+Senate,True,False,4,4.831,,,,9.0217,
+Senate,True,True,10,5.224,,,,4.316,0.573

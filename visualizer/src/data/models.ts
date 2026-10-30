@@ -13,6 +13,8 @@ export interface Race {
   winner: Party;
   /** Probability for `winner`. */
   winProbability: number;
+  /** Optional label/value lines from the model's results/race_explain.csv (why it predicts this). */
+  explain: [string, string][];
 }
 
 export interface Model {
@@ -24,6 +26,13 @@ export interface Model {
 // Every model folder that has a predictions.csv (format: models/README.md) is picked up at
 // build time, so a new model appears in the picker as soon as its CSV is committed.
 const csvFiles = import.meta.glob<string>("../../../models/*/predictions.csv", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+// Optional: results/race_explain.csv, one row per race_id; every other column is a labelled
+// line the tooltip shows (blank cells are skipped).
+const explainFiles = import.meta.glob<string>("../../../models/*/results/race_explain.csv", {
   query: "?raw",
   import: "default",
   eager: true,
@@ -50,9 +59,21 @@ function probability(value: string, where: string): number {
   return p;
 }
 
+function explanations(id: string): Map<string, [string, string][]> {
+  const text = explainFiles[`../../../models/${id}/results/race_explain.csv`];
+  const out = new Map<string, [string, string][]>();
+  if (!text) return out;
+  for (const row of parseCsv(text)) {
+    const lines = Object.entries(row).filter(([k, v]) => k !== "race_id" && v !== "");
+    out.set(row.race_id, lines);
+  }
+  return out;
+}
+
 function parseModel(path: string, text: string): Model {
   const id = path.split("/").at(-2) ?? path;
   const rows = parseCsv(text);
+  const explain = explanations(id);
   const missing = FIELDS.filter((f) => !(f in (rows[0] ?? {})));
   if (missing.length) throw new Error(`${id}/predictions.csv: missing column(s) ${missing.join(", ")}`);
   const races = new Map<string, Race>();
@@ -72,6 +93,7 @@ function parseModel(path: string, text: string): Model {
       pD: probability(r.p_d, where),
       winner: r.predicted_winner_party,
       winProbability: probability(r.win_probability, where),
+      explain: explain.get(r.race_id) ?? [],
     });
   }
   return { id, name: modelName(id), races };

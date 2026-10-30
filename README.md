@@ -2,7 +2,7 @@
 
 Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
-> **Status:** One model is built: [`uniform_swing`](models/uniform_swing/), the 2024 vote on the 2026 map plus a generic-ballot swing and incumbency, with Student-t probabilities (v2). It's compared against Kalshi race by race, with the expected-points pick rule applied, and backtested on the 2010–2024 House. Four more models are planned in [`models/`](models/). See [Models](#models).
+> **Status:** The submission model is [`ensemble`](models/ensemble/): fundamentals, 11 expert ratings per race, Senate polls and a researched news layer. They're stacked by a regression fit on every 2010–2022 House and Senate race, and it is calibrated out of sample. Out-of-sample log loss is 0.080 in the House, against 0.139 for the [`uniform_swing`](models/uniform_swing/) baseline. Submission CSVs are in [`models/ensemble/submission/`](models/ensemble/submission/). See [Models](#models).
 
 ## The challenge
 
@@ -86,7 +86,7 @@ The slides warn that "sometimes, too much data is noise". Ranked by expected val
 ## Repo layout
 
 ```
-forecast.py               # runner: runs each model, then the decision step on its predictions
+forecast.py               # runner: runs each model (dependencies first), then the decision step on its predictions
 common.py                 # shared data layer: downloads, raw-data cache, parsers, CSV helpers
 decide.py                 # the only code that reads Kalshi: expected-points pick + submission CSVs
 models/<name>/            # one folder per model (see models/README.md)
@@ -95,6 +95,8 @@ models/<name>/            # one folder per model (see models/README.md)
   results/                #   diagnostics, backtests, model_vs_kalshi.csv, strategy_summary.csv
   submission/             #   favorite_*.csv and ev_*.csv in the official template format
 data/raw/                 # downloaded source files, cached with retrieval date, never edited by hand
+                          #   (llm_news/: the frozen news research the ensemble reads)
+tests/                    # unittest suite for parsers, backtest leakage, calibration and outputs
 submission/templates/     # the official templates
 visualizer/               # React + TypeScript map of every model's predictions.csv (see visualizer/README.md)
 ```
@@ -108,9 +110,11 @@ python3 forecast.py                        # every model in models/, using cache
 python3 forecast.py --model uniform_swing  # one model (repeatable)
 python3 forecast.py --refresh              # re-downloads the source data first
 python3 forecast.py --swing 0              # uniform_swing: overrides the national swing (0 = pure 2024 replay)
+python3 forecast.py --ensemble-d-correction  # ensemble: apply the generic-ballot D correction (worse in the backtest)
+python3 -m unittest discover tests         # 22 tests: parsers, leakage, calibration, outputs, no Kalshi in models
 ```
 
-A full run takes 30–50 seconds, most of it the uniform-swing House backtest.
+A full run takes about 1¾ minutes, most of it the two leave-one-cycle-out backtests.
 
 **Map of the predictions.** The [visualizer](visualizer/) needs Node.js 20+. It reads every `models/*/predictions.csv`, so run the pipeline first:
 
@@ -124,17 +128,29 @@ A workflow can also publish the map to GitHub Pages on every push to `main`. It 
 
 Every model writes `models/<name>/predictions.csv` in one shared format ([`models/README.md`](models/README.md)). The decision step then turns it into picks and submission CSVs inside the same folder, so models can be compared side by side.
 
-| Model | Status | Out-of-sample House log loss, 2010–2022 |
+| Model | Status | Out-of-sample log loss, 2010–2022 |
 |---|---|---|
-| [`uniform_swing`](models/uniform_swing/) | Built (v2) | **0.139** (Student-t + incumbent running / open seat). v1 was 0.197. |
-| [`expert_ratings`](models/expert_ratings/) | Planned (Phase 0b) | |
-| [`fundamentals`](models/fundamentals/) | Planned (Phase 1) | |
-| [`polls_simulation`](models/polls_simulation/) | Planned (Phase 2) | |
+| [`ensemble`](models/ensemble/) | **Built, submission model** | House **0.080**, Senate **0.180** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
+| [`uniform_swing`](models/uniform_swing/) | Built (v2), baseline | House 0.139 (Student-t + incumbent running / open seat). v1 was 0.197. |
+| [`expert_ratings`](models/expert_ratings/) | Folded into `ensemble` | |
+| [`fundamentals`](models/fundamentals/) | Partly in `ensemble` (no FEC money yet) | |
+| [`polls_simulation`](models/polls_simulation/) | Folded into `ensemble` (Senate polls + seat simulation) | |
 | [`upset_classifier`](models/upset_classifier/) | Planned (Phase 4, optional) | |
 
-**`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.4 swing (generic ballot D+8.7, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
+**`ensemble` in brief.** For each race the inputs are:
+- fundamentals (from `uniform_swing`);
+- the mean of up to 11 expert ratings;
+- for the Senate, a recency-weighted average of the last 4 weeks of polls.
 
-The result is House D 230 / R 205 and 15 of 35 Senate seats for Democrats. Against Kalshi, the expected-points rule makes 222 underdog picks and expects 73.4 points if the market is right, against 44.1 for picking every Kalshi favorite. 20 of those underdog picks are Senate long shots that rest on a House-fitted tail, which hasn't been validated on the Senate yet.
+A regression fit on 2,655 House and 242 Senate races, leave-one-cycle-out, combines them. A Student-t turns the margin into a probability. A news layer, researched for 105 competitive races and centred so it can't move the national environment, adds at most a couple of points.
+
+The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 79% chance of a non-R Senate majority. With the expected-points rule it makes 38 underdog picks and expects 51.4 points if Kalshi is right, against 45.3 for picking every Kalshi favorite.
+
+A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 79% → 55%) instead of being applied. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
+
+**`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.5 swing (generic ballot D+8.9 on Oct 30, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
+
+The result is House D 231 / R 204 and 15 of 35 Senate seats for Democrats. Against Kalshi, the expected-points rule makes 222 underdog picks and expects 74.3 points if the market is right, against 45.3 for picking every Kalshi favorite. 20 of those underdog picks are Senate long shots that rest on a House-fitted tail; the ensemble fits its tail on the Senate instead.
 
 The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/README.md): redistricting effects, the swing, the Kalshi comparison and the [backtest](models/uniform_swing/README.md#backtest-is-σ-calibrated-in-the-tails).
 
@@ -149,10 +165,11 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [x] Interactive map of each model's predictions on the 2026 lines ([visualizer/](visualizer/))
 - [ ] Resolve the Missouri map mismatch (see [Special cases](#special-cases-to-handle))
 - [x] Baseline v2: Student-t + incumbent running / open seat, with 2026 incumbents and retirements from Wikipedia ([v2](models/uniform_swing/README.md#baseline-v2-student-t--incumbency))
-- [ ] Senate backtest of the tail before trusting Senate long-shot picks
-- [ ] Phase 0 baselines + scoring function + backtest harness
-- [ ] Phase 1 fundamentals model
-- [ ] Phase 2 polls + simulation
+- [x] Senate backtest of the tail before trusting Senate long-shot picks (the ensemble's Senate backtest, 242 races)
+- [x] Ensemble: expert ratings + Senate polls + fundamentals, stacked and backtested on 2010–2022 House and Senate, with a news layer and a seat simulation ([ensemble](models/ensemble/))
+- [x] Test suite (`python3 -m unittest discover tests`)
+- [ ] Phase 1 fundamentals: FEC money
+- [ ] House district polls
 - [ ] Phase 3 decision layer, then the final run after the Nov 1 Kalshi pull
 - [ ] Write-up + visualization for the bonus award (the visualizer is a starting point)
 

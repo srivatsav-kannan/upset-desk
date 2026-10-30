@@ -1,9 +1,9 @@
 source,dem,rep,margin,wikipedia_revid
-Decision Desk HQ,49.9,41.8,8.1,1381384626
-FiftyPlusOne,51.8,42.8,9.0,1381384626
-NBC News,52.0,43.0,9.0,1381384626
-RealClearPolitics,50.4,42.1,8.3,1381384626
-Silver Bulletin,50.5,41.3,9.2,1381384626
-MEAN of aggregators,,,8.72,
+Decision Desk HQ,51.2,41.8,9.4,1382821364
+FiftyPlusOne,52.2,43.2,9.0,1382821364
+NBC News,52.0,43.0,9.0,1382821364
+RealClearPolitics,51.4,43.2,8.2,1382821364
+Silver Bulletin,51.2,42.4,8.8,1382821364
+MEAN of aggregators,,,8.88,
 2024 presidential national margin,,,-1.65,
-APPLIED swing to D,,,10.37,
+APPLIED swing to D,,,10.53,

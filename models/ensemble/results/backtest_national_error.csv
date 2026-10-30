@@ -1,0 +1,15 @@
+chamber,cycle,races,mean_error_+ratings+polls,senate_poll_bias
+House,2010,308,-0.78,
+House,2012,267,1.71,
+House,2014,282,-1.95,
+House,2016,254,-1.45,
+House,2018,308,1.57,
+House,2020,309,-3.38,
+House,2022,308,0.36,
+Senate,2010,32,2.53,-1.74
+Senate,2012,30,3.91,-5.2
+Senate,2014,32,-2.21,3.32
+Senate,2016,27,-2.01,3.99
+Senate,2018,33,-0.22,-1.47
+Senate,2020,32,-3.92,5.78
+Senate,2022,31,0.8,0.7

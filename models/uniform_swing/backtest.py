@@ -9,8 +9,9 @@ models/uniform_swing/results/backtest_*.csv.
 import math
 from pathlib import Path
 
-from common import (MIDTERMS, fetch, fetch_fte, house_members_by_cycle, load_districts, load_generic_ballot_history,
-                    load_house_results, load_pres_pct, national_vote_margins, write_csv)
+from common import (MIDTERMS, cdf, fetch, fetch_fte, fit_sigma, fit_t, house_members_by_cycle, load_districts,
+                    load_generic_ballot_history, load_house_results, load_pres_pct, national_vote_margins, phi, rms,
+                    wilson, write_csv)
 
 RESULTS = Path(__file__).resolve().parent / "results"
 
@@ -22,58 +23,6 @@ BACKTEST = {
 }
 # Model probability that the predicted loser wins, binned for the tail-calibration table.
 UPSET_BINS = [0.0, 0.0025, 0.01, 0.03, 0.10, 0.25, 0.5000001]
-
-T_DF_GRID = [1, 2, 3, 4, 6, 10, 30, None]  # Student-t degrees of freedom tried; None = normal
-
-
-def phi(z: float) -> float:
-    return 0.5 * math.erfc(-z / math.sqrt(2))
-
-
-def cdf(x: float, df=None) -> float:
-    """Student-t CDF for integer df (closed form, Abramowitz & Stegun 26.7.3-4); df=None is the normal."""
-    if df is None:
-        return phi(x)
-    th = math.atan(abs(x) / math.sqrt(df))
-    c2 = math.cos(th) ** 2
-    if df % 2:
-        term = s = math.cos(th)
-        for j in range(1, (df - 1) // 2):
-            term *= c2 * 2 * j / (2 * j + 1)
-            s += term
-        a = 2 / math.pi * (th + (math.sin(th) * s if df > 1 else 0.0))
-    else:
-        term = s = 1.0
-        for j in range(1, df // 2):
-            term *= c2 * (2 * j - 1) / (2 * j)
-            s += term
-        a = math.sin(th) * s
-    return 0.5 + 0.5 * a if x >= 0 else 0.5 - 0.5 * a
-
-
-def log_loss(races: list, scale: float, key: str = "pred", df=None) -> float:
-    """Mean negative log-likelihood (nats) of the actual winners under P(D) = F(margin / scale)."""
-    return -sum(math.log(max(cdf(r["sign"] * r[key] / scale, df), 1e-300)) for r in races) / len(races)
-
-
-def fit_sigma(races: list, key: str = "pred", df=None) -> float:
-    """Maximum-likelihood scale (golden-section search on log scale; the likelihood is unimodal)."""
-    lo, hi = math.log(0.5), math.log(60.0)
-    g = (math.sqrt(5) - 1) / 2
-    for _ in range(36):
-        a, b = hi - g * (hi - lo), lo + g * (hi - lo)
-        if log_loss(races, math.exp(a), key, df) < log_loss(races, math.exp(b), key, df):
-            hi = b
-        else:
-            lo = a
-    return math.exp((lo + hi) / 2)
-
-
-def fit_t(races: list, key: str = "pred") -> tuple:
-    """(df, scale) with the best likelihood over T_DF_GRID."""
-    fits = [(df, fit_sigma(races, key, df)) for df in T_DF_GRID]
-    return min(fits, key=lambda f: log_loss(races, f[1], key, f[0]))
-
 
 SIGN = {"D": 1, "R": -1}
 
@@ -106,19 +55,6 @@ def incumbency_bonus(races: list) -> float:
     """Least-squares points added to the incumbent's party (no intercept), from contested margins."""
     inc = [(1 if r["incumbent"] == "D" else -1, r["actual_margin"] - r["pred"]) for r in races if r["incumbent"]]
     return sum(i * e for i, e in inc) / len(inc)
-
-
-def wilson(k: int, n: int, z: float = 1.96) -> tuple:
-    if n == 0:
-        return 0.0, 1.0
-    p, den = k / n, 1 + z * z / n
-    c = (p + z * z / (2 * n)) / den
-    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
-    return max(0.0, c - h), min(1.0, c + h)
-
-
-def rms(xs: list) -> float:
-    return math.sqrt(sum(x * x for x in xs) / len(xs)) if xs else float("nan")
 
 
 def run_backtest(refresh: bool, sigma_v1: float) -> dict:

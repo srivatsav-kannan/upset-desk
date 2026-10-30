@@ -1,36 +1,36 @@
 race_id,chamber,predicted_winner_party,candidate_name,win_probability
-AK-SEN,Senate,R,Republican party,0.874
-AL-SEN,Senate,D,Everett Wess,0.0152
-AR-SEN,Senate,R,Tom Cotton,0.9901
-CO-SEN,Senate,R,Mark Baisley,0.0088
-DE-SEN,Senate,R,Michael Katz,0.0061
-FL-SEN,Senate,D,Angie Nixon,0.1269
-GA-SEN,Senate,R,Mike Collins,0.0484
-IA-SEN,Senate,R,Ashley Hinson,0.7488
-ID-SEN,Senate,R,Jim Risch,0.9944
-IL-SEN,Senate,R,Don Tracy,0.0133
-KS-SEN,Senate,R,Roger Marshall,0.9269
-KY-SEN,Senate,D,Charles Booker,0.0153
-LA-SEN,Senate,D,Jamie Davis,0.051
+AK-SEN,Senate,R,Republican party,0.8701
+AL-SEN,Senate,D,Everett Wess,0.0155
+AR-SEN,Senate,R,Tom Cotton,0.9899
+CO-SEN,Senate,R,Mark Baisley,0.0087
+DE-SEN,Senate,R,Michael Katz,0.006
+FL-SEN,Senate,D,Angie Nixon,0.1308
+GA-SEN,Senate,R,Mike Collins,0.0472
+IA-SEN,Senate,R,Ashley Hinson,0.7413
+ID-SEN,Senate,R,Jim Risch,0.9943
+IL-SEN,Senate,R,Don Tracy,0.0131
+KS-SEN,Senate,R,Roger Marshall,0.9248
+KY-SEN,Senate,D,Charles Booker,0.0156
+LA-SEN,Senate,D,Jamie Davis,0.0523
 MA-SEN,Senate,D,Ed Markey,0.9974
-ME-SEN,Senate,D,Troy Jackson,0.9421
-MI-SEN,Senate,D,Abdul El-Sayed,0.9194
-MN-SEN,Senate,D,Peggy Flanagan,0.968
-MS-SEN,Senate,R,Cindy Hyde-Smith,0.9747
-MT-SEN,Senate,I,Seth Bodnar,0.0725
-NC-SEN,Senate,R,Michael Whatley,0.1865
-NE-SEN,Senate,R,Pete Ricketts,0.9647
-NH-SEN,Senate,D,Chris Pappas,0.9601
-NJ-SEN,Senate,R,Justin Murphy,0.0155
-NM-SEN,Senate,R,Larry E. Marker,0.0153
-OH-SEN,Senate,R,Jon Husted,0.8183
-OK-SEN,Senate,D,N’Kiyla Thomas,0.01
-OR-SEN,Senate,R,David Brock Smith,0.0063
-RI-SEN,Senate,R,Raymond McKay,0.0066
-SC-SEN,Senate,R,Darline Graham,0.9458
-SD-SEN,Senate,R,Mike Rounds,0.9884
-TN-SEN,Senate,R,Bill Hagerty,0.9891
-TX-SEN,Senate,R,Ken Paxton,0.7682
-VA-SEN,Senate,R,Bert Mizusawa,0.0157
+ME-SEN,Senate,D,Troy Jackson,0.9437
+MI-SEN,Senate,D,Abdul El-Sayed,0.9217
+MN-SEN,Senate,D,Peggy Flanagan,0.9687
+MS-SEN,Senate,R,Cindy Hyde-Smith,0.9742
+MT-SEN,Senate,I,Seth Bodnar,0.0746
+NC-SEN,Senate,R,Michael Whatley,0.1809
+NE-SEN,Senate,R,Pete Ricketts,0.9638
+NH-SEN,Senate,R,John E. Sununu,0.0389
+NJ-SEN,Senate,R,Justin Murphy,0.0152
+NM-SEN,Senate,R,Larry E. Marker,0.0151
+OH-SEN,Senate,R,Jon Husted,0.8126
+OK-SEN,Senate,D,N’Kiyla Thomas,0.0102
+OR-SEN,Senate,R,David Brock Smith,0.0062
+RI-SEN,Senate,R,Raymond McKay,0.0065
+SC-SEN,Senate,R,Darline Graham,0.9443
+SD-SEN,Senate,R,Mike Rounds,0.9882
+TN-SEN,Senate,D,Marquita Bradshaw,0.0111
+TX-SEN,Senate,R,Ken Paxton,0.7612
+VA-SEN,Senate,R,Bert Mizusawa,0.0154
 WV-SEN,Senate,R,Shelley Moore Capito,0.9964
-WY-SEN,Senate,D,James Byrd,0.0034
+WY-SEN,Senate,R,Harriet Hageman,0.9965

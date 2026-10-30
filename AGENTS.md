@@ -23,7 +23,8 @@ Produce submission CSVs, in the official template format, for the 2026 House and
 2. Have `run` write `models/<name>/predictions.csv`: 470 rows in full-congress template order, with unrounded `p_d`.
 3. Write its own diagnostics and backtest to `models/<name>/results/`.
 4. Write `models/<name>/README.md` (method, data, results, limits), and add a row to the Models tables in `models/README.md` and `README.md`. The README's first `# ` heading becomes the model's name in the visualizer's picker.
-5. Never write into another model's folder.
+5. Never write into another model's folder. A model may *read* another's committed outputs if it lists that model in `DEPENDS_ON`, so `forecast.py` runs it first (e.g. `ensemble` reads `uniform_swing`).
+6. Optionally write `models/<name>/results/race_explain.csv` (`race_id` plus labelled columns); the map's tooltip shows those lines.
 
 Nothing else is needed for the visualizer: it finds the new `predictions.csv` on its own. It does validate the CSV, though. A malformed one is left out of the picker, and the reason is logged to the browser console.
 
@@ -74,6 +75,7 @@ Every model change should report the following, using leave-one-cycle-out CV on 
 ## Before you open a PR
 
 - The pipeline runs end to end, or the part you touched does.
+- `python3 -m unittest discover tests` passes. It includes a leakage test (scrambling a held-out cycle's results must not change its forecasts) and a check that nothing under `models/` reads Kalshi.
 - The validators in `common.py` pass. `validate_predictions` checks each model's `predictions.csv`, and `validate_submission` checks every submission CSV. Both require race IDs in template order, every party D/R/I, and probabilities in [0, 1].
 - `candidate_name` comes from the Kalshi market's candidate where there is one, and is otherwise blank until candidate data is ingested.
 - If you changed a shared file (`common.py`, `decide.py`, `forecast.py`), every model's outputs are either unchanged or the change is explained.

@@ -1,10 +1,10 @@
 scope,races_with_market,strategy,underdog_picks,expected_points_model,expected_points_if_kalshi_right
-Senate,35,model favorite,3,9.26,5.45
-Senate,35,Kalshi favorite,0,5.05,4.94
-Senate,35,expected-points rule,20,11.09,7.27
-House,426,model favorite,13,54.22,41.05
-House,426,Kalshi favorite,0,39.02,39.12
-House,426,expected-points rule,202,77.31,66.1
-All,461,model favorite,16,63.49,46.5
-All,461,Kalshi favorite,0,44.07,44.06
-All,461,expected-points rule,222,88.4,73.37
+Senate,35,model favorite,4,9.36,5.54
+Senate,35,Kalshi favorite,0,4.52,5.05
+Senate,35,expected-points rule,22,11.22,7.55
+House,426,model favorite,12,58.19,41.92
+House,426,Kalshi favorite,0,41.75,40.24
+House,426,expected-points rule,200,81.3,66.7
+All,461,model favorite,16,67.55,47.46
+All,461,Kalshi favorite,0,46.27,45.29
+All,461,expected-points rule,222,92.52,74.25

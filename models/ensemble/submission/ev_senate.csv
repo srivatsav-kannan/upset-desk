@@ -1,0 +1,36 @@
+race_id,chamber,predicted_winner_party,candidate_name,win_probability
+AK-SEN,Senate,R,Republican party,0.5205
+AL-SEN,Senate,R,Barry Moore,0.9954
+AR-SEN,Senate,R,Tom Cotton,0.994
+CO-SEN,Senate,R,Mark Baisley,0.004
+DE-SEN,Senate,D,Chris Coons,0.9966
+FL-SEN,Senate,R,Ashley Moody,0.9669
+GA-SEN,Senate,R,Mike Collins,0.0139
+IA-SEN,Senate,D,Josh Turek,0.4802
+ID-SEN,Senate,R,Jim Risch,0.9947
+IL-SEN,Senate,D,Juliana Stratton,0.9962
+KS-SEN,Senate,D,Adam Hamilton,0.5676
+KY-SEN,Senate,R,Andy Barr,0.9945
+LA-SEN,Senate,R,Julia Letlow,0.9565
+MA-SEN,Senate,D,Ed Markey,0.999
+ME-SEN,Senate,D,Troy Jackson,0.8435
+MI-SEN,Senate,D,Abdul El-Sayed,0.8657
+MN-SEN,Senate,D,Peggy Flanagan,0.965
+MS-SEN,Senate,R,Cindy Hyde-Smith,0.9724
+MT-SEN,Senate,R,Kurt Alme,0.9897
+NC-SEN,Senate,R,Michael Whatley,0.0121
+NE-SEN,Senate,R,Pete Ricketts,0.8018
+NH-SEN,Senate,R,John E. Sununu,0.0414
+NJ-SEN,Senate,D,Cory Booker,0.9949
+NM-SEN,Senate,D,Ben Ray Luján,0.9963
+OH-SEN,Senate,R,Jon Husted,0.333
+OK-SEN,Senate,R,Kevin Hern,0.9953
+OR-SEN,Senate,D,Jeff Merkley,0.9965
+RI-SEN,Senate,D,Jack Reed,0.9988
+SC-SEN,Senate,R,Darline Graham,0.8564
+SD-SEN,Senate,R,Mike Rounds,0.9963
+TN-SEN,Senate,R,Bill Hagerty,0.9955
+TX-SEN,Senate,R,Ken Paxton,0.2248
+VA-SEN,Senate,R,Bert Mizusawa,0.0051
+WV-SEN,Senate,R,Shelley Moore Capito,0.9974
+WY-SEN,Senate,R,Harriet Hageman,0.9972
