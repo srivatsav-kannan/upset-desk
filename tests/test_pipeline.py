@@ -95,6 +95,41 @@ class TestPolls(unittest.TestCase):
         self.assertTrue(all(p["margin_actual"] < 0 for p in tx))  # Cruz (R) beat O'Rourke in 2018
 
 
+class TestHousePolls(unittest.TestCase):
+    def test_state_pages(self):
+        """A section per district, California's two sub-pages included; TX-15 has general-election polls."""
+        ca = common.load_wiki_house_polls(common.fetch_house_state_page(2026, "CA", False, False), 2026)
+        self.assertEqual(sorted(ca), [f"{n:02d}" for n in range(1, 53)])
+        tx = common.load_wiki_house_polls(common.fetch_house_state_page(2026, "TX", False, False), 2026)
+        self.assertGreaterEqual(len(tx["15"]), 3)
+        for p in tx["15"]:
+            self.assertEqual(p["non_r_party"], "D")
+            self.assertLess(abs(p["margin"]), 40)
+
+    def test_unpolled_races_are_the_ensembles(self):
+        changed = {r["race_id"] for r in common.read_rows(common.MODELS / "house_polls" / "results" / "race_changes.csv")}
+        ens = {r["race_id"]: r for r in common.read_rows(common.MODELS / "ensemble" / "predictions.csv")}
+        for r in common.read_rows(common.MODELS / "house_polls" / "predictions.csv"):
+            if r["race_id"] not in changed:
+                self.assertEqual(r, ens[r["race_id"]])
+        self.assertTrue(changed and all(rid[3:] != "SEN" for rid in changed))
+
+    def test_simulation_matches_probabilities(self):
+        """The simulated elections reproduce each race's probability, and the portfolio's mean
+        score for a strategy matches its expected score from those probabilities."""
+        res = common.MODELS / "house_polls" / "results"
+        for r in common.read_rows(res / "simulated_outcomes.csv"):
+            self.assertLess(abs(float(r["p_d"]) - float(r["p_d_simulated"])), 0.04, r["race_id"])
+        ev = {(r["scope"], r["strategy"]): float(r["expected_points_model"])
+              for r in common.read_rows(res / "strategy_summary.csv")}
+        port = {(r["scope"], r["strategy"]): float(r["mean"]) for r in common.read_rows(res / "portfolio_summary.csv")}
+        for scope in ("Senate", "All"):
+            for name in ("Kalshi favorite", "model favorite"):
+                self.assertLess(abs(port[(scope, name)] - ev[(scope, name)]), 0.03 * ev[(scope, name)] + 0.1)
+            self.assertLess(abs(port[(scope, "expected points, edge >= 0%")] - ev[(scope, "expected-points rule")]),
+                            0.03 * ev[(scope, "expected-points rule")] + 0.1)
+
+
 class TestBacktest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

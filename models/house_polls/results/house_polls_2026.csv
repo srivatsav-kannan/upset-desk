@@ -1,0 +1,84 @@
+race_id,pollster,end,days,sample,population,sponsor,non_r_party,margin
+AR-02,Emerson College,2026-10-14,20,383.0,LV,,D,-4.0
+AZ-01,Keating Research,2026-10-28,6,500.0,LV,,D,4.0
+AZ-02,Emerson College,2026-10-14,20,345.0,LV,,D,2.0
+CA-48,RedBox Research (D),2026-10-23,11,1151.0,LV,D,D,5.0
+CA-48,Tarrance Group (R),2026-10-20,14,410.0,LV,R,D,3.0
+CA-48,SurveyUSA,2026-10-07,27,518.0,LV,,D,9.0
+CO-03,Democratic Congressional Campaign Committee,2026-10-21,13,402.0,LV,,D,1.0
+CO-05,Public Policy Polling (D),2026-10-20,14,577.0,LV,D,D,0.0
+CO-05,Global Strategy Group (D),2026-10-18,16,500.0,LV,D,D,5.0
+FL-07,DCCC,2026-10-19,15,414.0,LV,D,D,0.0
+FL-09,SEA Polling (D),2026-10-15,19,0.0,LV,D,D,0.0
+FL-14,Emerson College,2026-10-14,20,315.0,LV,,D,5.0
+FL-25,Public Policy Polling (D),2026-10-27,7,523.0,LV,D,D,6.0
+FL-25,Public Policy Polling (D),2026-10-22,12,592.0,LV,D,D,5.0
+FL-25,National Research Inc. (R),2026-10-15,19,400.0,LV,R,D,-7.0
+GA-03,VoteNexus (D),2026-10-07,27,301.0,LV,D,D,-5.0
+GA-07,20/20 Insight (D),2026-10-09,25,457.0,LV,D,D,2.0
+IA-02,Emerson College,2026-10-14,20,344.0,LV,,D,3.0
+IN-05,Quantus Insights (R),2026-10-22,12,601.0,LV,R,D,-3.0
+KS-02,DCCC,2026-10-20,14,639.0,LV,D,D,-3.0
+KY-06,Public Policy Polling (D),2026-10-20,14,572.0,LV,D,D,6.0
+ME-02,Tulchin Research (D),2026-10-14,20,500.0,LV,D,D,4.0
+MI-04,RedBox Research,2026-10-23,11,787.0,LV,,D,-3.0
+MI-07,Emerson College,2026-10-14,20,314.0,LV,,D,8.0
+MI-10,RedBox Research,2026-10-23,11,889.0,LV,,D,-5.0
+MN-01,Public Policy Polling (D),2026-10-14,20,588.0,LV,D,D,0.0
+MN-01,SurveyUSA,2026-10-09,25,565.0,LV,,D,2.0
+MN-08,Public Policy Polling (D),2026-10-26,8,585.0,RV,D,D,-6.0
+MO-02,Emerson College,2026-10-14,20,401.0,LV,,D,5.0
+MO-02,Public Policy Polling (D),2026-10-20,14,631.0,LV,D,D,1.0
+MT-01,RedBox Research (D),2026-10-23,11,754.0,LV,D,D,-2.0
+MT-01,Montana State University Billings,2026-10-21,13,0.0,,,D,17.0
+MT-01,Public Policy Polling (D),2026-10-14,20,541.0,LV,D,D,3.0
+MT-02,Montana State University Billings,2026-10-21,13,0.0,,,D,-11.0
+NC-01,RedBox Research (D),2026-10-23,11,1468.0,LV,D,D,1.0
+NC-01,co/efficient (R),2026-10-08,26,623.0,LV,R,D,-1.0
+NC-01,Neighborhood Research (R),2026-10-06,28,303.0,LV,R,D,10.0
+NC-09,Public Policy Polling (D),2026-10-20,14,526.0,LV,D,D,-4.0
+NC-11,RedBox Research (D),2026-10-23,11,873.0,LV,D,D,6.0
+NC-11,Emerson College,2026-10-14,20,388.0,LV,,D,13.0
+NE-01,Public Policy Polling (D),2026-10-20,14,536.0,LV,D,D,-1.0
+NH-01,Saint Anselm College,2026-10-20,14,861.0,LV,,D,4.0
+NH-02,Saint Anselm College,2026-10-20,14,811.0,LV,,D,16.0
+NJ-02,Impact Research (D),2026-10-10,24,0.0,LV,D,D,-10.0
+NM-01,Research & Polling,2026-10-09,25,380.0,LV,,D,18.0
+NM-02,Research & Polling,2026-10-09,25,383.0,LV,,D,4.0
+NM-03,Research & Polling,2026-10-09,25,362.0,LV,,D,14.0
+NV-03,RedBox Research (D),2026-10-23,11,687.0,LV,D,D,7.0
+NY-17,RedBox Research (D),2026-10-23,11,726.0,LV,D,D,2.0
+NY-21,Public Policy Polling (D),2026-10-13,21,613.0,LV,D,D,-2.0
+NY-21,Siena University,2026-10-06,28,496.0,LV,,D,4.0
+OH-01,RedBox Research (D),2026-10-23,11,821.0,LV,D,D,9.0
+OH-01,Quantus Insights,2026-10-21,13,561.0,LV,,D,5.0
+OH-07,RedBox Research (D),2026-10-23,11,875.0,LV,D,D,4.0
+OH-09,RedBox Research (D),2026-10-23,11,858.0,LV,D,D,6.0
+OH-10,DCCC (D),2026-10-13,21,535.0,LV,D,D,3.0
+OH-15,Hart Research (D),2026-10-12,22,503.0,LV,D,D,3.0
+PA-01,RedBox Research (D),2026-10-23,11,733.0,LV,D,D,0.0
+PA-01,New York Times/The Philadelphia Inquirer/Siena University,2026-10-22,12,400.0,LV,,D,2.0
+PA-01,Global Strategy Group (D),2026-10-08,26,1032.0,LV,D,D,0.0
+PA-07,RedBox Research (D),2026-10-23,11,644.0,LV,D,D,5.0
+PA-07,New York Times/The Philadelphia Inquirer/Siena University,2026-10-22,12,400.0,LV,,D,5.0
+PA-07,Muhlenberg College Institute of Public Opinion,2026-10-15,19,529.0,LV,,D,6.0
+PA-08,RedBox Research (D),2026-10-23,11,696.0,LV,D,D,3.0
+PA-08,New York Times/The Philadelphia Inquirer/Siena University,2026-10-22,12,400.0,LV,,D,5.0
+PA-08,Emerson College,2026-10-14,20,396.0,LV,,D,4.0
+PA-10,RedBox Research (D),2026-10-23,11,1022.0,LV,D,D,3.0
+PA-10,New York Times/The Philadelphia Inquirer/Siena University,2026-10-22,12,400.0,LV,,D,0.0
+PA-10,Susquehanna Polling & Research (R),2026-10-11,23,300.0,LV,R,D,3.0
+SC-01,Public Policy Polling (D),2026-10-22,12,770.0,LV,D,D,2.0
+TX-09,DCCC,2026-10-22,12,490.0,LV,D,D,-1.0
+TX-09,University of Houston,2026-10-07,27,677.0,LV,,D,-6.0
+TX-15,Texas Southern University,2026-10-16,18,0.0,LV,,D,7.0
+TX-23,Normington Petts (D),2026-10-07,27,400.0,LV,D,D,0.0
+TX-28,DCCC,2026-10-13,21,536.0,LV,D,D,20.0
+TX-34,Washington Post/Schar School,2026-10-19,15,626.0,LV,,D,7.0
+TX-35,Washington Post/Schar School,2026-10-19,15,606.0,LV,,D,-1.0
+TX-35,Emerson College,2026-10-14,20,417.0,LV,,D,2.0
+TX-35,Normington Petts (D),2026-10-14,20,400.0,LV,D,D,2.0
+VA-01,DCCC Targeting Team (D),2026-10-25,9,478.0,LV,D,D,1.0
+VA-01,Public Policy Polling (D),2026-10-22,12,570.0,LV,D,D,1.0
+VA-02,Christopher Newport University,2026-10-10,24,702.0,LV,,D,3.0
+WA-03,Change Research (D),2026-10-21,13,551.0,LV,D,D,1.0

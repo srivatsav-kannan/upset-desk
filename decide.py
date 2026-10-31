@@ -4,6 +4,12 @@ This is the only place Kalshi prices are used, so every model's probabilities st
 independent opinion. Input: models/<name>/predictions.csv. Output, in the same folder:
 results/model_vs_kalshi.csv, results/strategy_summary.csv, and submission/favorite_*.csv
 (the model favorite) plus submission/ev_*.csv (the expected-points rule) in template format.
+
+A model that also writes results/simulated_outcomes.csv (each race's winner in every one of
+its seeded, correlated simulated elections) gets a portfolio step: pick strategies are scored
+in every simulated election, giving the spread of the total score, not just its mean
+(results/portfolio_summary.csv), and the strategy most likely to beat a strong rival entry is
+written as submission/portfolio_*.csv.
 """
 
 import datetime as dt
@@ -13,12 +19,20 @@ import re
 import time
 from pathlib import Path
 
-from common import STATES, cached, http_get, load_template, validate_predictions, validate_submission, write_csv
+from common import (STATES, cached, http_get, load_template, read_rows, validate_predictions, validate_submission,
+                    write_csv)
 
 KALSHI_API = "https://api.elections.kalshi.com/trade-api/v2"
 # Series that hold 2026 congressional winner markets (one event per race).
 KALSHI_SERIES = re.compile(r"^(KX)?SENATE[A-Z]{2}S?$|^KXHOUSERACE$|^(KX)?HOUSE[A-Z]{2}(\d{1,2}|AL)$")
 KALSHI_FLOOR = 0.01  # scoring floors Kalshi's probability at 1%
+# Portfolio strategies: the expected-points rule, keeping an underdog pick only when its expected
+# points beat the Kalshi favorite's by at least this share (0 = the plain rule).
+EDGE_THRESHOLDS = [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
+# The rival entry to beat: one that picks every Kalshi favorite and, from lucky upsets, scores this
+# many points more in the same election. A field mostly picking favorites clusters near that
+# entry, so its best teams sit a few points above it. An assumption, not an estimate.
+RIVAL_LEAD = {"Senate": 1.0, "All": 5.0}
 KALSHI_MARKET_FIELDS = ["ticker", "yes_sub_title", "rules_primary", "status", "yes_bid_dollars",
                         "yes_ask_dollars", "last_price_dollars", "volume_fp", "open_interest_fp"]
 
@@ -135,6 +149,62 @@ def decide(p_d_model: float, market) -> dict:
     }
 
 
+def quantile(xs: list, q: float) -> float:
+    s = sorted(xs)
+    return s[min(len(s) - 1, int(q * len(s)))]
+
+
+def portfolio(compare: list, market: dict, sims_path: Path) -> tuple:
+    """Score pick strategies in every simulated election; return (summary rows, {scope: picks}).
+
+    A strategy maps each race with a market to a party. Its score in one simulated election is
+    the sum of -log2(max(p_Kalshi, 1%)) over its correct picks. Races without a market score the
+    same for every strategy and are left out.
+    """
+    wins = {r["race_id"]: r["non_r_wins"] for r in read_rows(sims_path)}
+    n = len(next(iter(wins.values())))
+    rows = [r for r in compare if r["kalshi_event"]]
+
+    def edge(k: float) -> dict:
+        return {r["race_id"]: r["pick"] if r["pick"] == r["kalshi_favorite"]
+                or r["ev_pick"] >= (1 + k) * r["ev_kalshi_favorite"] else r["kalshi_favorite"] for r in rows}
+
+    strategies = {"Kalshi favorite": {r["race_id"]: r["kalshi_favorite"] for r in rows},
+                  "model favorite": {r["race_id"]: r["model_favorite"] for r in rows}}
+    strategies |= {f"expected points, edge >= {k:.0%}": edge(k) for k in EDGE_THRESHOLDS}
+    summary, best = [], {}
+    for scope, chambers in [("Senate", {"Senate"}), ("All", {"Senate", "House"})]:
+        scores = {}
+        for label, picks in strategies.items():
+            s = [0.0] * n
+            for r in rows:
+                if r["chamber"] in chambers:
+                    party = picks[r["race_id"]]
+                    pts, hit = points(market[r["race_id"]]["cands"][party]["p"]), "0" if party == "R" else "1"
+                    for i, w in enumerate(wins[r["race_id"]]):
+                        if w == hit:
+                            s[i] += pts
+            scores[label] = s
+        rival = scores["Kalshi favorite"]
+        for label, s in scores.items():
+            mean = sum(s) / n
+            summary.append({"scope": scope, "strategy": label,
+                            "underdog_picks": sum(strategies[label][r["race_id"]] != r["kalshi_favorite"]
+                                                  for r in rows if r["chamber"] in chambers),
+                            "mean": round(mean, 2), "sd": round(math.sqrt(sum((x - mean) ** 2 for x in s) / n), 2),
+                            "p10": round(quantile(s, 0.1), 2), "median": round(quantile(s, 0.5), 2),
+                            "p90": round(quantile(s, 0.9), 2),
+                            "p_beat_kalshi_favorites": round(sum(a > b for a, b in zip(s, rival)) / n, 4),
+                            "rival_lead": RIVAL_LEAD[scope],
+                            "p_beat_rival": round(sum(a > b + RIVAL_LEAD[scope] for a, b in zip(s, rival)) / n, 4),
+                            "simulations": n})
+        rs = [x for x in summary if x["scope"] == scope]
+        best[scope] = max(rs, key=lambda x: (x["p_beat_rival"], x["mean"]))["strategy"]
+        for x in rs:
+            x["chosen"] = x["strategy"] == best[scope]
+    return summary, {scope: strategies[label] for scope, label in best.items()}
+
+
 def run(model_dir: Path, refresh: bool) -> dict:
     """Run the decision step for one model folder and return (snapshot time, coverage, summary)."""
     preds = validate_predictions(model_dir / "predictions.csv")
@@ -177,15 +247,25 @@ def run(model_dir: Path, refresh: bool) -> dict:
                             "expected_points_if_kalshi_right": round(ev_market, 2)})
     write_csv(model_dir / "results" / "strategy_summary.csv", summary, list(summary[0].keys()))
 
-    # Submissions in the official template format: model favorite (favorite_*) and EV rule (ev_*).
+    # Portfolio step, for a model that publishes its simulated elections.
+    sims = model_dir / "results" / "simulated_outcomes.csv"
+    chosen = {}
+    if sims.exists():
+        port, chosen = portfolio(compare, market, sims)
+        write_csv(model_dir / "results" / "portfolio_summary.csv", port, list(port[0].keys()))
+
+    # Submissions in the official template format: model favorite (favorite_*), EV rule (ev_*),
+    # and, with simulations, the chosen portfolio strategy (portfolio_*; model favorite where no market).
     picks = {r["race_id"]: r for r in compare}
-    for tmpl, track in [("senate_track_template.csv", "senate"), ("full_congress_track_template.csv", "full_congress")]:
+    for tmpl, track, scope in [("senate_track_template.csv", "senate", "Senate"),
+                               ("full_congress_track_template.csv", "full_congress", "All")]:
         template = load_template(tmpl)
-        for prefix, choose in [("favorite", "model_favorite"), ("ev", "pick")]:
+        rules = [("favorite", "model_favorite"), ("ev", "pick")] + ([("portfolio", scope)] if chosen else [])
+        for prefix, choose in rules:
             rows = []
             for t in template:
                 r, mk = picks[t["race_id"]], market.get(t["race_id"])
-                party = r[choose]
+                party = chosen[scope].get(t["race_id"], r["model_favorite"]) if prefix == "portfolio" else r[choose]
                 p_model = r["model_p_r"] if party == "R" else 1 - r["model_p_r"]
                 name = mk["cands"].get(party, {}).get("name", "") if mk else ""
                 rows.append({**t, "predicted_winner_party": party, "candidate_name": name,
@@ -193,4 +273,4 @@ def run(model_dir: Path, refresh: bool) -> dict:
             out = model_dir / "submission" / f"{prefix}_{track}.csv"
             write_csv(out, rows, list(template[0].keys()))
             validate_submission(out, template)
-    return {"retrieved": retrieved, "markets": len(market), "summary": summary}
+    return {"retrieved": retrieved, "markets": len(market), "summary": summary, "portfolio": port if chosen else []}

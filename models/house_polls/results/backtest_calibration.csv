@@ -1,0 +1,7 @@
+scope,upset_p_from,upset_p_to,races,expected_upsets,observed_upsets,observed_ci95_lo,observed_ci95_hi
+"House, polled",0.0,0.0025,22,0.03,0,0.0,0.1487
+"House, polled",0.0025,0.01,82,0.47,1,0.0022,0.0659
+"House, polled",0.01,0.03,104,1.88,2,0.0053,0.0674
+"House, polled",0.03,0.1,124,7.3,6,0.0224,0.1016
+"House, polled",0.1,0.25,83,14.07,16,0.1223,0.2904
+"House, polled",0.25,0.5,91,33.43,34,0.2812,0.4762

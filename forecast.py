@@ -61,6 +61,9 @@ def main() -> None:
         for r in d["summary"]:
             print(f"  {r['scope']:6} {r['strategy']:21} underdog picks {r['underdog_picks']:3}  "
                   f"E[pts] model {r['expected_points_model']:6.2f}  if Kalshi right {r['expected_points_if_kalshi_right']:6.2f}")
+        for r in d["portfolio"]:
+            print(f"  portfolio {r['scope']:6} {r['strategy']:31} underdogs {r['underdog_picks']:3}  mean {r['mean']:6.2f}  "
+                  f"p10-p90 {r['p10']:6.2f}-{r['p90']:6.2f}  P(beat rival) {r['p_beat_rival']:.3f}{'  <- chosen' if r['chosen'] else ''}")
         print(f"wrote models/{name}/predictions.csv, results/ and submission/")
         if name == SUBMISSION_MODEL:
             for f in sorted((MODELS / name / "submission").glob("*.csv")):
