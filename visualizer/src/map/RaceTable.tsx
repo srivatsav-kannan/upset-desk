@@ -1,4 +1,6 @@
 import type { Chamber } from "../data/models";
+import { LINES_YEARS } from "../data/redistricting";
+import { formatPres, presFillOf, shiftOf, winnerChange } from "./redistricting";
 import { byStateThenDistrict, type Region } from "./regions";
 import { BUCKET_LABEL, PARTY_NAME, bucketOf, fillOf, formatMargin, formatProbability } from "./scale";
 
@@ -34,6 +36,49 @@ export function RaceTable({ regions, chamber, modelName }: { regions: Region[]; 
                 <td>
                   {BUCKET_LABEL[bucketOf(race)]} {race.winner}
                 </td>
+              </tr>
+            ) : null,
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** The redistricting view's table twin: each redrawn district on both maps, plus the forecast. */
+export function RedistrictingTable({ regions, modelName }: { regions: Region[]; modelName: string }) {
+  const rows = regions.filter((r) => r.lines?.redrawn).sort(byStateThenDistrict);
+  const states = new Set(rows.map((r) => r.stateId)).size;
+  return (
+    <div className="table-view">
+      <table>
+        <caption>
+          {rows.length} districts in {states} states redrawn for 2026 · 2024 presidential margin on each map (The Downballot) · Forecast: {modelName}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">District</th>
+            <th scope="col" className="num">2024 lines</th>
+            <th scope="col" className="num">2026 lines</th>
+            <th scope="col" className="num">Shift</th>
+            <th scope="col">2024 winner</th>
+            <th scope="col" className="num">2026 forecast</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ id, title, lines, race }) =>
+            lines ? (
+              <tr key={id}>
+                <th scope="row">{title}</th>
+                {LINES_YEARS.map((y) => (
+                  <td key={y} className="num">
+                    <span className="line-key" style={{ background: presFillOf(lines.vote[y].margin) }} aria-hidden="true" />
+                    {formatPres(lines.vote[y].margin)}
+                  </td>
+                ))}
+                <td className="num">{formatPres(shiftOf(lines))}</td>
+                <td>{winnerChange(lines)}</td>
+                <td className="num">{race ? formatMargin(race) : ""}</td>
               </tr>
             ) : null,
           )}

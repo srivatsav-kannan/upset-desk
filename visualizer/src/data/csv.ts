@@ -1,5 +1,5 @@
-/** Parse RFC 4180 CSV (quoted fields, escaped quotes, CRLF) into records keyed by the header row. */
-export function parseCsv(text: string): Record<string, string>[] {
+/** Parse RFC 4180 CSV (quoted fields, escaped quotes, CRLF) into rows of fields. */
+export function parseCsvRows(text: string): string[][] {
   const rows: string[][] = [];
   let row: string[] = [];
   let field = "";
@@ -34,7 +34,12 @@ export function parseCsv(text: string): Record<string, string>[] {
     row.push(field);
     rows.push(row);
   }
-  const [header, ...body] = rows.filter((r) => r.length > 1 || r[0] !== "");
+  return rows;
+}
+
+/** Parse RFC 4180 CSV into records keyed by the header row. */
+export function parseCsv(text: string): Record<string, string>[] {
+  const [header, ...body] = parseCsvRows(text).filter((r) => r.length > 1 || r[0] !== "");
   if (!header) return [];
   return body.map((r) => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""])));
 }

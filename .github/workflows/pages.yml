@@ -13,6 +13,7 @@ on:
       - "models/**/predictions.csv"
       - "models/**/README.md"
       - "models/**/results/race_explain.csv"
+      - "data/raw/downballot/downballot_202[46]_lines_*.csv"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

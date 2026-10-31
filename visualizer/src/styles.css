@@ -271,6 +271,18 @@ select:focus-visible {
   pointer-events: none;
 }
 
+/* Redistricting: the other map's district lines, only where they moved. */
+.moved-lines {
+  fill: none;
+  stroke: var(--text-primary);
+  stroke-width: 1.25px;
+  stroke-dasharray: 3 2.5;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
 #hatch line {
   stroke: var(--surface);
   stroke-width: 1.4px;
@@ -362,6 +374,16 @@ select:focus-visible {
 
 .tooltip-explain dd {
   margin: 0;
+}
+
+.tooltip-caption {
+  margin: -3px 0 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.tooltip-row-current {
+  font-weight: 600;
 }
 
 .line-key {
@@ -469,6 +491,12 @@ footer {
   height: 10px;
 }
 
+.legend-extra .swatch-dash {
+  display: block;
+  width: 16px;
+  border-top: 1.5px dashed var(--text-primary);
+}
+
 .swatch-hatched {
   background: repeating-linear-gradient(45deg, var(--d-lean) 0 3px, var(--surface) 3px 4.5px);
 }
@@ -516,7 +544,17 @@ footer {
   font-weight: 400;
 }
 
-.table-view .line-key {
+.table-view .tooltip-caption {
+  margin: -3px 0 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.tooltip-row-current {
+  font-weight: 600;
+}
+
+.line-key {
   margin-right: 8px;
 }
 
