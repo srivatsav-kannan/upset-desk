@@ -79,7 +79,7 @@ The plan is deterministic first and AI later. Each phase has to beat the previou
 | Candidates | [Ballotpedia](https://ballotpedia.org) | Who is on the ballot, incumbents, open seats, uncontested races. |
 | Expert ratings | [Sabato's Crystal Ball](https://centerforpolitics.org/crystalball), [Inside Elections](https://insideelections.com), Cook | Current ratings, plus historical ratings (from Wikipedia race pages) for the backtest. |
 | Demographics | [Census ACS](https://data.census.gov) | Income, education and age by district. Lowest priority: mostly captured by lean already. |
-| Map shapes | [Census TIGER/Line 2026](https://www2.census.gov/geo/tiger/TIGER2026/CD/) congressional districts (`cd120`) | The 2026 lines, public domain. Used only by the [visualizer](visualizer/). |
+| Map shapes | [Census TIGER/Line 2026](https://www2.census.gov/geo/tiger/TIGER2026/CD/) congressional districts (`cd120`), plus [2025](https://www2.census.gov/geo/tiger/TIGER2025/CD/) (`cd119`) for the 2024 lines of redrawn states | The 2026 and 2024 lines, public domain. Used only by the [visualizer](visualizer/). |
 
 The slides warn that "sometimes, too much data is noise". Ranked by expected value, the order is district lean → incumbency/open seat → national environment → polls → money → ratings → everything else.
 
@@ -164,6 +164,7 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [x] Backtest tail calibration (σ) on historical House results, 2010–2024 ([Backtest](models/uniform_swing/README.md#backtest-is-σ-calibrated-in-the-tails))
 - [x] One folder per model, with a shared predictions format and decision step ([models/](models/))
 - [x] Interactive map of each model's predictions on the 2026 lines ([visualizer/](visualizer/))
+- [x] Redistricting view: each redrawn House district on its 2024 and 2026 lines, by 2024 presidential margin ([visualizer/](visualizer/README.md#what-it-shows))
 - [ ] Resolve the Missouri map mismatch (see [Special cases](#special-cases-to-handle))
 - [x] Baseline v2: Student-t + incumbent running / open seat, with 2026 incumbents and retirements from Wikipedia ([v2](models/uniform_swing/README.md#baseline-v2-student-t--incumbency))
 - [x] Senate backtest of the tail before trusting Senate long-shot picks (the ensemble's Senate backtest, 242 races)

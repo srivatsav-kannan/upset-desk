@@ -17,13 +17,20 @@ export interface DistrictShape {
   d: string;
 }
 
-/** Built by scripts/build-geo.mjs from the Census 2026 district lines. */
+/** Built by scripts/build-geo.mjs from the Census 2026 district lines (and 2024, where they changed). */
 export interface UsGeometry {
   source: string;
   width: number;
   height: number;
   states: StateShape[];
   districts: DistrictShape[];
+  /** States whose district lines changed for 2026 (not Missouri; see the build script). */
+  redrawn: string[];
+  /** Every district of a redrawn state, on its 2024 lines. */
+  districts2024: DistrictShape[];
+  /** Interior district boundaries of each map, only where they moved: the dashed overlay. */
+  lines2024: string;
+  lines2026: string;
 }
 
 export async function loadGeometry(): Promise<UsGeometry> {

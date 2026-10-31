@@ -12,11 +12,14 @@ export const MARGIN_STEPS = { safe: 15, likely: 5, lean: 1 };
 /** Used only for a model whose predictions.csv leaves projected_margin blank. */
 export const PROBABILITY_STEPS = { safe: 0.95, likely: 0.8, lean: 0.6 };
 
+/** Bucket for a margin in points, either sign. */
+export function marginBucket(margin: number): Bucket {
+  const m = Math.abs(margin);
+  return m >= MARGIN_STEPS.safe ? "safe" : m >= MARGIN_STEPS.likely ? "likely" : m >= MARGIN_STEPS.lean ? "lean" : "tilt";
+}
+
 export function bucketOf(race: Race): Bucket {
-  if (race.margin !== null) {
-    const m = Math.abs(race.margin);
-    return m >= MARGIN_STEPS.safe ? "safe" : m >= MARGIN_STEPS.likely ? "likely" : m >= MARGIN_STEPS.lean ? "lean" : "tilt";
-  }
+  if (race.margin !== null) return marginBucket(race.margin);
   const p = race.winProbability;
   return p >= PROBABILITY_STEPS.safe ? "safe" : p >= PROBABILITY_STEPS.likely ? "likely" : p >= PROBABILITY_STEPS.lean ? "lean" : "tilt";
 }

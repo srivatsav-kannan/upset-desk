@@ -4,38 +4,50 @@ import { select } from "d3-selection";
 import "d3-transition";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import type { Chamber } from "../data/models";
+import type { LinesYear } from "../data/redistricting";
 import type { BBox, UsGeometry } from "./geo";
-import type { Region } from "./regions";
+import { formatPres, linesFillOf, shiftLabel } from "./redistricting";
+import type { Region, ViewMode } from "./regions";
 import { BUCKET_LABEL, PARTY_NAME, bucketOf, fillOf, formatMargin, formatProbability } from "./scale";
 import { Tooltip, type TooltipAnchor } from "./Tooltip";
 
 const MAX_ZOOM = 24;
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function ariaLabel(r: Region): string {
+function ariaLabel(r: Region, mode: ViewMode, year: LinesYear): string {
+  if (mode === "redistricting") {
+    if (!r.lines) return `${r.title}: no results`;
+    const margin = `2024 presidential margin ${formatPres(r.lines.vote[year].margin)}`;
+    return r.lines.redrawn ? `${r.title}: ${margin} on the ${year} lines, ${shiftLabel(r.lines)}` : `${r.title}: lines unchanged, ${margin}`;
+  }
   if (!r.race) return `${r.title}: no race`;
   const { race } = r;
   return `${r.title}: ${formatMargin(race)}, ${PARTY_NAME[race.winner]} ${formatProbability(race.winProbability)} to win, ${BUCKET_LABEL[bucketOf(race)]} ${race.winner}`;
 }
 
 /** The colored shapes. Memoized so hovering and zooming never re-render 435 paths. */
-const Regions = memo(function Regions({ regions }: { regions: Region[] }) {
+const Regions = memo(function Regions({ regions, mode, year }: { regions: Region[]; mode: ViewMode; year: LinesYear }) {
+  const byLines = mode === "redistricting";
   return (
     <g className="regions">
-      {regions.map((r) => (
-        <path
-          key={r.id}
-          data-id={r.id}
-          d={r.d}
-          className={r.race ? "region" : "region no-race"}
-          style={{ fill: fillOf(r.race) }}
-          tabIndex={r.race ? 0 : -1}
-          role="img"
-          aria-label={ariaLabel(r)}
-        />
-      ))}
+      {regions.map((r) => {
+        // Redistricting: only redrawn districts are tab stops; the table lists the same set.
+        const shown = byLines ? r.lines?.redrawn : r.race;
+        return (
+          <path
+            key={r.id}
+            data-id={r.id}
+            d={r.d}
+            className={shown ? "region" : "region no-race"}
+            style={{ fill: byLines ? linesFillOf(r.lines, year) : fillOf(r.race) }}
+            tabIndex={shown ? 0 : -1}
+            role="img"
+            aria-label={ariaLabel(r, mode, year)}
+          />
+        );
+      })}
       {regions
-        .filter((r) => r.race?.winner === "I")
+        .filter((r) => !byLines && r.race?.winner === "I")
         .map((r) => (
           <path key={`${r.id}-hatch`} d={r.d} className="hatch" />
         ))}
@@ -56,11 +68,14 @@ const StateBorders = memo(function StateBorders({ geo }: { geo: UsGeometry }) {
 interface Props {
   geo: UsGeometry;
   chamber: Chamber;
+  mode: ViewMode;
+  /** Redistricting view: which map's lines the regions are drawn on. */
+  year: LinesYear;
   regions: Region[];
   modelName: string;
 }
 
-export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
+export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const [transform, setTransform] = useState<ZoomTransform>(zoomIdentity);
@@ -115,7 +130,7 @@ export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
   // A tooltip for a state makes no sense once the shapes underneath it change.
   useEffect(() => {
     setAnchor(null);
-  }, [chamber]);
+  }, [regions]);
 
   const regionAt = (target: EventTarget | null) => {
     const id = target instanceof Element ? target.getAttribute("data-id") : null;
@@ -151,6 +166,12 @@ export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
 
   const active = anchor ? byId.get(anchor.region.id) : undefined;
   const zoomed = transform.k > 1.01;
+  // The other map's boundaries, dashed, wherever they moved.
+  const moved = mode === "redistricting" ? (year === 2026 ? geo.lines2024 : geo.lines2026) : "";
+  const label =
+    mode === "redistricting"
+      ? `Map of House districts on the ${year} lines, redrawn districts colored by 2024 presidential margin.`
+      : `Map of 2026 ${chamber} races, colored by projected margin. ${modelName}.`;
 
   return (
     <div className="map-frame">
@@ -160,7 +181,7 @@ export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
         role="group"
-        aria-label={`Map of 2026 ${chamber} races, colored by projected margin. ${modelName}.`}
+        aria-label={label}
         onPointerMove={onPointerMove}
         onPointerDown={onPointerDown}
         onPointerLeave={(e) => e.pointerType !== "touch" && setAnchor(null)}
@@ -175,7 +196,8 @@ export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
           </pattern>
         </defs>
         <g transform={transform.toString()}>
-          <Regions regions={regions} />
+          <Regions regions={regions} mode={mode} year={year} />
+          {moved && <path className="moved-lines" d={moved} aria-hidden="true" />}
           {chamber === "House" && <StateBorders geo={geo} />}
           {active && <path className="hover-ring" d={active.d} />}
         </g>
@@ -191,7 +213,7 @@ export function ElectionMap({ geo, chamber, regions, modelName }: Props) {
           Reset
         </button>
       </div>
-      {anchor && <Tooltip anchor={anchor} chamber={chamber} modelName={modelName} />}
+      {anchor && <Tooltip anchor={anchor} chamber={chamber} mode={mode} year={year} modelName={modelName} />}
     </div>
   );
 }
