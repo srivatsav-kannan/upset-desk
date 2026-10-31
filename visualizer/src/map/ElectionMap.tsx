@@ -14,6 +14,9 @@ import { Tooltip, type TooltipAnchor } from "./Tooltip";
 const MAX_ZOOM = 24;
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** A race flashes on a model switch when this changes: its projected winner or its margin bucket. */
+const ratingOf = (r: Region) => (r.race ? `${r.race.winner} ${bucketOf(r.race)}` : "");
+
 function ariaLabel(r: Region, mode: ViewMode, year: LinesYear): string {
   if (mode === "redistricting") {
     if (!r.lines) return `${r.title}: no results`;
@@ -132,6 +135,23 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
     setAnchor(null);
   }, [regions]);
 
+  // New regions in the same forecast view means the model changed: flash every race whose rating
+  // moved. The CSS animation ends transparent, so the overlay needs no timer; `n` restarts it.
+  const [flash, setFlash] = useState<{ changed: Region[]; n: number } | null>(null);
+  const prevView = useRef({ chamber, mode, year, regions });
+  useEffect(() => {
+    const prev = prevView.current;
+    prevView.current = { chamber, mode, year, regions };
+    if (prev.regions === regions) return;
+    if (mode !== "forecast" || prev.mode !== mode || prev.chamber !== chamber || prev.year !== year) {
+      setFlash(null);
+      return;
+    }
+    const before = new Map(prev.regions.map((r) => [r.id, ratingOf(r)]));
+    const changed = regions.filter((r) => before.get(r.id) !== ratingOf(r));
+    setFlash((f) => ({ changed, n: (f?.n ?? 0) + 1 }));
+  }, [chamber, mode, year, regions]);
+
   const regionAt = (target: EventTarget | null) => {
     const id = target instanceof Element ? target.getAttribute("data-id") : null;
     return id ? byId.get(id) : undefined;
@@ -199,6 +219,13 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
           <Regions regions={regions} mode={mode} year={year} />
           {moved && <path className="moved-lines" d={moved} aria-hidden="true" />}
           {chamber === "House" && <StateBorders geo={geo} />}
+          {flash && (
+            <g key={flash.n} className="flash" aria-hidden="true">
+              {flash.changed.map((r) => (
+                <path key={r.id} d={r.d} />
+              ))}
+            </g>
+          )}
           {active && <path className="hover-ring" d={active.d} />}
         </g>
       </svg>
@@ -213,6 +240,9 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
           Reset
         </button>
       </div>
+      <p className="visually-hidden" aria-live="polite">
+        {flash && `${flash.changed.length} ${flash.changed.length === 1 ? "race" : "races"} changed rating.`}
+      </p>
       {anchor && <Tooltip anchor={anchor} chamber={chamber} mode={mode} year={year} modelName={modelName} />}
     </div>
   );

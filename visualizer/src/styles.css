@@ -1,11 +1,8 @@
 /*
  * Color roles. Party arms are a diverging scale: D (blue) and R (red), four ordered steps each
- * (tilt, lean, likely, safe), plus a neutral for "no race". Blue steps come from the dataviz
- * reference ramp; red steps match each blue step's OKLCH lightness at the reference red's hue.
- * Validated: each arm passes the ordinal checks in both modes, and D vs R at every step clears
- * CVD dE >= 13.1 and normal-vision dE >= 17.7. Tilt sits near 2:1 on the surface, so the table
- * view is the required relief channel. Light: weakest margin lightest. Dark: the anchor flips,
- * so the weakest margin sits nearest the surface and the safest is brightest.
+ * (tilt, lean, likely, safe), plus a neutral for "no race". Lean, likely and safe are three
+ * shades from jacksonjude's USA Election Map; tilt is lean mixed halfway to white. Safest darkest
+ * in both modes.
  */
 :root {
   color-scheme: light;
@@ -20,14 +17,14 @@
   --focus: #2a78d6;
   --shadow: 0 4px 16px rgba(11, 11, 11, 0.12);
   --no-race: #e1e0d9;
-  --d-tilt: #86b6ef;
-  --d-lean: #5598e7;
-  --d-likely: #2a78d6;
-  --d-safe: #184f95;
-  --r-tilt: #ea9a93;
-  --r-lean: #dd716a;
-  --r-likely: #c74845;
-  --r-safe: #892b2a;
+  --d-tilt: #c4d7ff;
+  --d-lean: #8aafff;
+  --d-likely: #587ccc;
+  --d-safe: #1c408c;
+  --r-tilt: #ffc5cb;
+  --r-lean: #ff8b98;
+  --r-likely: #ff5864;
+  --r-safe: #be1c29;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,14 +41,6 @@
     --focus: #3987e5;
     --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
     --no-race: #383835;
-    --d-tilt: #184f95;
-    --d-lean: #256abf;
-    --d-likely: #3987e5;
-    --d-safe: #86b6ef;
-    --r-tilt: #892b2a;
-    --r-lean: #b13f3c;
-    --r-likely: #d75853;
-    --r-safe: #ea9a93;
   }
 }
 
@@ -68,14 +57,6 @@
   --focus: #3987e5;
   --shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   --no-race: #383835;
-  --d-tilt: #184f95;
-  --d-lean: #256abf;
-  --d-likely: #3987e5;
-  --d-safe: #86b6ef;
-  --r-tilt: #892b2a;
-  --r-lean: #b13f3c;
-  --r-likely: #d75853;
-  --r-safe: #ea9a93;
 }
 
 /* ---------------------------------------------------------------- layout */
@@ -99,10 +80,43 @@ body {
   height: 100dvh;
 }
 
-.stage {
-  position: relative;
+/* Map on the left, the seat totals and stacked bar in a sidebar on the right. */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
   flex: 1;
   min-height: 0;
+}
+
+.stage {
+  position: relative;
+  min-height: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 16px 16px;
+  border-left: 1px solid var(--hairline);
+  overflow-y: auto;
+}
+
+/* Phone width: the sidebar drops below the map. */
+@media (max-width: 760px) {
+  .workspace {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stage {
+    flex: 1;
+  }
+
+  .sidebar {
+    padding: 12px 16px 16px;
+    border-top: 1px solid var(--hairline);
+    border-left: 0;
+  }
 }
 
 .map-view,
@@ -288,9 +302,48 @@ select:focus-visible {
   stroke-width: 1.4px;
 }
 
+/* Races whose rating changed on a model switch pulse twice, then fade out for good. */
+.flash path {
+  fill: var(--text-primary);
+  fill-opacity: 0.45;
+  stroke: var(--text-primary);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+  opacity: 0;
+  animation: flash 1.4s ease-out;
+}
+
+@keyframes flash {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.15;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes flash-once {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .region {
     transition: none;
+  }
+
+  .flash path {
+    animation-name: flash-once;
   }
 }
 
@@ -395,28 +448,106 @@ select:focus-visible {
   vertical-align: middle;
 }
 
-/* ---------------------------------------------------------------- legend */
+/* ---------------------------------------------------------------- legend (sidebar right of the map) */
 
-footer {
-  padding: 6px 16px 14px;
+/* The legend fills the sidebar, so the bar runs nearly the full height of the screen. */
+.legend {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.legend-bar {
+/* The vertical stacked bar on the left; its key on the right in the same top-to-bottom order. */
+.legend-body {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 14px;
+  flex: 1;
+  min-height: 340px;
+}
+
+.seat-bar-wrap {
+  position: relative;
+  min-height: 0;
+}
+
+/* Segments sized by seat count, a 2px surface gap between them, rounded ends. */
+.seat-bar {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+}
+
+.seat-seg {
+  flex: 0 1 0;
+  min-height: 3px;
+  display: grid;
+  place-items: center;
+  color: #0b0b0b;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 120ms ease;
+}
+
+.seat-seg-safe {
+  color: #ffffff;
+}
+
+.seat-seg:first-child {
+  border-radius: 4px 4px 0 0;
+}
+
+.seat-seg:last-child {
+  border-radius: 0 0 4px 4px;
+}
+
+.seat-seg:only-child {
+  border-radius: 4px;
+}
+
+.seat-bar:hover .seat-seg:not(:hover) {
+  opacity: 0.55;
+}
+
+.seat-tip {
+  position: absolute;
+  left: calc(100% + 8px);
+  z-index: 10;
+  min-width: 140px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Republican group pinned to the top of the bar, Democrat group to the bottom. */
+.legend-key {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   gap: 12px;
+  min-width: 0;
+}
+
+.legend-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .legend-total {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  min-width: 64px;
-}
-
-.legend-total-d {
-  align-items: flex-start;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .legend-total-label {
@@ -425,70 +556,72 @@ footer {
 }
 
 .legend-total strong {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 600;
   line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
 
-.legend-scale {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(30px, 56px)) 6px repeat(4, minmax(30px, 56px));
-  column-gap: 2px;
+.legend-rows {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.legend-scale .swatch:nth-child(5) {
-  grid-column: 6;
+.legend-rows li,
+.legend-extra-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 13px;
 }
 
-.swatch {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+.legend-rows li:first-child,
+.legend-extra-row {
+  border-top: 1px solid var(--hairline);
+}
+
+.legend-row-label {
+  flex: 1;
   min-width: 0;
+  font-weight: 500;
+}
+
+.legend-row-count {
+  font-variant-numeric: tabular-nums;
+}
+
+.legend-range {
+  margin-left: 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 400;
 }
 
 .swatch-color {
   display: block;
-  width: 100%;
-  height: 12px;
+  flex: none;
+  width: 12px;
+  height: 10px;
   border-radius: 2px;
-}
-
-.swatch-label {
-  color: var(--text-secondary);
-  font-size: 11px;
-}
-
-.swatch-count {
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
 }
 
 .legend-note {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
   gap: 4px 14px;
-  margin: 8px 0 0;
+  margin: 0;
   color: var(--text-secondary);
   font-size: 12px;
-  text-align: center;
 }
 
 .legend-extra {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.legend-extra .swatch-color {
-  width: 14px;
-  height: 10px;
 }
 
 .legend-extra .swatch-dash {
@@ -499,6 +632,15 @@ footer {
 
 .swatch-hatched {
   background: repeating-linear-gradient(45deg, var(--d-lean) 0 3px, var(--surface) 3px 4.5px);
+}
+
+/* Below the map on phones, the bar gets a shorter column. */
+@media (max-width: 760px) {
+  .legend-body {
+    flex: none;
+    height: 300px;
+    min-height: 0;
+  }
 }
 
 /* ---------------------------------------------------------------- table view */
@@ -582,24 +724,7 @@ footer {
     width: 100%;
   }
 
-  .legend-bar {
-    gap: 8px;
-  }
-
-  .legend-total {
-    min-width: 0;
-  }
-
   .legend-total strong {
-    font-size: 18px;
-  }
-
-  .legend-scale {
-    grid-template-columns: repeat(4, minmax(24px, 1fr)) 4px repeat(4, minmax(24px, 1fr));
-    flex: 1;
-  }
-
-  .swatch-label {
-    font-size: 10px;
+    font-size: 20px;
   }
 }
