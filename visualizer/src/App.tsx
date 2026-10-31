@@ -147,33 +147,35 @@ export function App() {
         </button>
       </header>
 
-      <main className="stage">
-        {geo && linesLoaded ? (
-          <>
-            <div className="map-view" hidden={showTable}>
-              <ElectionMap geo={geo} chamber={view.chamber} mode={mode} year={year} regions={regions} modelName={model.name} />
-            </div>
-            {showTable &&
-              (shownLines ? (
-                <RedistrictingTable regions={regions} modelName={model.name} />
-              ) : (
-                <RaceTable regions={regions} chamber={view.chamber} modelName={model.name} />
-              ))}
-          </>
-        ) : (
-          <p className="status">{geoError ? `Couldn't load the map: ${geoError}` : "Loading map…"}</p>
-        )}
-      </main>
-
-      {geo && linesLoaded && (
-        <footer>
-          {shownLines ? (
-            <RedistrictingLegend regions={regions} redistricting={shownLines} year={year} />
+      <div className="workspace">
+        <main className="stage">
+          {geo && linesLoaded ? (
+            <>
+              <div className="map-view" hidden={showTable}>
+                <ElectionMap geo={geo} chamber={view.chamber} mode={mode} year={year} regions={regions} modelName={model.name} />
+              </div>
+              {showTable &&
+                (shownLines ? (
+                  <RedistrictingTable regions={regions} modelName={model.name} />
+                ) : (
+                  <RaceTable regions={regions} chamber={view.chamber} modelName={model.name} />
+                ))}
+            </>
           ) : (
-            <Legend regions={regions} chamber={view.chamber} />
+            <p className="status">{geoError ? `Couldn't load the map: ${geoError}` : "Loading map…"}</p>
           )}
-        </footer>
-      )}
+        </main>
+
+        {geo && linesLoaded && (
+          <aside className="sidebar">
+            {shownLines ? (
+              <RedistrictingLegend regions={regions} redistricting={shownLines} year={year} />
+            ) : (
+              <Legend regions={regions} chamber={view.chamber} />
+            )}
+          </aside>
+        )}
+      </div>
     </div>
   );
 }

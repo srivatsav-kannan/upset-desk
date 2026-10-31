@@ -53,7 +53,8 @@ function LinesCard({ region, year, modelName }: { region: Region; year: LinesYea
 }
 
 interface Props {
-  anchor: TooltipAnchor;
+  /** Null while nothing is hovered: the box stays mounted, just transparent. */
+  anchor: TooltipAnchor | null;
   chamber: Chamber;
   mode: ViewMode;
   year: LinesYear;
@@ -61,24 +62,10 @@ interface Props {
 }
 
 /** Values lead, labels follow: the margin is the strong element, the race name sits above it. */
-export function Tooltip({ anchor, chamber, mode, year, modelName }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState({ left: anchor.x + OFFSET, top: anchor.y + OFFSET });
-
-  // Keep the box inside the viewport: flip to the other side of the pointer near an edge.
-  useLayoutEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const { width, height } = el.getBoundingClientRect();
-    const left = anchor.x + OFFSET + width > window.innerWidth - 8 ? anchor.x - OFFSET - width : anchor.x + OFFSET;
-    const top = anchor.y + OFFSET + height > window.innerHeight - 8 ? anchor.y - OFFSET - height : anchor.y + OFFSET;
-    setPos({ left: Math.max(8, left), top: Math.max(8, top) });
-  }, [anchor]);
-
-  const { region } = anchor;
+function TooltipBody({ region, chamber, mode, year, modelName }: Omit<Props, "anchor"> & { region: Region }) {
   const { race, lines } = region;
   return (
-    <div ref={ref} className="tooltip" role="status" style={pos}>
+    <>
       <div className="tooltip-title">{region.title}</div>
       {mode === "redistricting" ? (
         <LinesCard region={region} year={year} modelName={modelName} />
@@ -112,6 +99,44 @@ export function Tooltip({ anchor, chamber, mode, year, modelName }: Props) {
       ) : (
         <div className="tooltip-meta">{chamber === "Senate" ? "No Senate race in 2026" : "No prediction"}</div>
       )}
+    </>
+  );
+}
+
+/**
+ * Always mounted, on its own compositor layer, and moved by transform. Mounting or unmounting a
+ * composited box makes the browser re-layer the page and re-rasterize the whole map under it,
+ * which is what made hovering stutter; this way only the tooltip's own small layer repaints.
+ */
+export function Tooltip({ anchor, ...rest }: Props) {
+  const ref = useRef<HTMLDivElement>(null);
+  const region = anchor?.region;
+
+  // Measure only when the content changes, not on every pointer move: a measurement forces a
+  // layout, and pointer moves arrive faster than frames.
+  const [size, setSize] = useState<{ width: number; height: number } | null>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || !region) return;
+    setSize({ width: el.offsetWidth, height: el.offsetHeight });
+  }, [region, rest.mode, rest.year, rest.modelName]);
+
+  // Keep the box inside the viewport: flip to the other side of the pointer near an edge.
+  let left = 0;
+  let top = 0;
+  if (anchor && size) {
+    const { width, height } = size;
+    left = Math.max(8, anchor.x + OFFSET + width > window.innerWidth - 8 ? anchor.x - OFFSET - width : anchor.x + OFFSET);
+    top = Math.max(8, anchor.y + OFFSET + height > window.innerHeight - 8 ? anchor.y - OFFSET - height : anchor.y + OFFSET);
+  }
+  return (
+    <div
+      ref={ref}
+      className={anchor && size ? "tooltip" : "tooltip tooltip-hidden"}
+      role="status"
+      style={{ transform: `translate(${left}px, ${top}px)` }}
+    >
+      {region && <TooltipBody region={region} {...rest} />}
     </div>
   );
 }
