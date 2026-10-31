@@ -136,8 +136,8 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
   }, [regions]);
 
   // New regions in the same forecast view means the model changed: flash every race whose rating
-  // moved. The CSS animation ends transparent, so the overlay needs no timer; `n` restarts it.
-  const [flash, setFlash] = useState<{ changed: Region[]; n: number } | null>(null);
+  // moved. The shapes are dropped when the animation ends; `n` restarts it on the next switch.
+  const [flash, setFlash] = useState<{ changed: Region[]; count: number; n: number } | null>(null);
   const prevView = useRef({ chamber, mode, year, regions });
   useEffect(() => {
     const prev = prevView.current;
@@ -149,7 +149,7 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
     }
     const before = new Map(prev.regions.map((r) => [r.id, ratingOf(r)]));
     const changed = regions.filter((r) => before.get(r.id) !== ratingOf(r));
-    setFlash((f) => ({ changed, n: (f?.n ?? 0) + 1 }));
+    setFlash((f) => ({ changed, count: changed.length, n: (f?.n ?? 0) + 1 }));
   }, [chamber, mode, year, regions]);
 
   const regionAt = (target: EventTarget | null) => {
@@ -158,6 +158,7 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
   };
 
   const onPointerMove = (e: PointerEvent<SVGSVGElement>) => {
+    if (e.buttons) return; // dragging pans the map; the zoom handler already hid the tooltip
     const region = regionAt(e.target);
     if (region) setAnchor({ region, x: e.clientX, y: e.clientY });
     else if (e.pointerType !== "touch") setAnchor(null);
@@ -219,8 +220,17 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
           <Regions regions={regions} mode={mode} year={year} />
           {moved && <path className="moved-lines" d={moved} aria-hidden="true" />}
           {chamber === "House" && <StateBorders geo={geo} />}
-          {flash && (
-            <g key={flash.n} className="flash" aria-hidden="true">
+        </g>
+      </svg>
+      {/* Hover ring and change flash live on their own layer, so they never re-rasterize the map. */}
+      <svg className="map-overlay" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <g transform={transform.toString()}>
+          {flash && flash.changed.length > 0 && (
+            <g
+              key={flash.n}
+              className="flash"
+              onAnimationEnd={() => setFlash((f) => f && { ...f, changed: [] })}
+            >
               {flash.changed.map((r) => (
                 <path key={r.id} d={r.d} />
               ))}
@@ -241,9 +251,9 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
         </button>
       </div>
       <p className="visually-hidden" aria-live="polite">
-        {flash && `${flash.changed.length} ${flash.changed.length === 1 ? "race" : "races"} changed rating.`}
+        {flash && `${flash.count} ${flash.count === 1 ? "race" : "races"} changed rating.`}
       </p>
-      {anchor && <Tooltip anchor={anchor} chamber={chamber} mode={mode} year={year} modelName={modelName} />}
+      <Tooltip anchor={anchor} chamber={chamber} mode={mode} year={year} modelName={modelName} />
     </div>
   );
 }

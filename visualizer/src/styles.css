@@ -245,6 +245,17 @@ select:focus-visible {
   cursor: grabbing;
 }
 
+/* Hover ring and change flash, stacked on the map in a compositor layer of their own: changing
+   them repaints only this layer, never the 435 district shapes underneath. */
+.map-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  will-change: transform;
+}
+
 /* The surface-colored gap separates touching fills; no dark borders around marks. */
 .region {
   stroke: var(--surface);
@@ -363,9 +374,13 @@ select:focus-visible {
 
 /* ---------------------------------------------------------------- tooltip */
 
+/* Placed by a transform on its own layer (see Tooltip.tsx), so it moves without repainting the map. */
 .tooltip {
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 10;
+  will-change: transform;
   min-width: 180px;
   max-width: 260px;
   padding: 8px 10px;
@@ -375,6 +390,10 @@ select:focus-visible {
   box-shadow: var(--shadow);
   font-size: 13px;
   pointer-events: none;
+}
+
+.tooltip-hidden {
+  opacity: 0;
 }
 
 .tooltip-title {
