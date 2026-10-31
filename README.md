@@ -112,7 +112,7 @@ python3 forecast.py --model uniform_swing  # one model (repeatable)
 python3 forecast.py --refresh              # re-downloads the source data first
 python3 forecast.py --swing 0              # uniform_swing: overrides the national swing (0 = pure 2024 replay)
 python3 forecast.py --ensemble-d-correction  # ensemble: apply the generic-ballot D correction (worse in the backtest)
-python3 -m unittest discover tests         # 23 tests: parsers, leakage, calibration, outputs, no Kalshi in models
+python3 -m unittest discover tests         # 26 tests: parsers, leakage, calibration, outputs, no Kalshi in models
 ```
 
 A full run takes about 1¾ minutes, most of it the two leave-one-cycle-out backtests.
@@ -132,6 +132,7 @@ Every model writes `models/<name>/predictions.csv` in one shared format ([`model
 | Model | Status | Out-of-sample log loss, 2010–2022 |
 |---|---|---|
 | [`ensemble`](models/ensemble/) | **Built, submission model** | House **0.080**, Senate **0.126** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
+| [`house_polls`](models/house_polls/) | Built, candidate submission model | House **0.0769** (the ensemble plus House district polls; Senate as the ensemble). Adds pick strategies scored against correlated simulated elections. |
 | [`uniform_swing`](models/uniform_swing/) | Built (v2), baseline | House 0.139 (Student-t + incumbent running / open seat). v1 was 0.197. |
 | [`expert_ratings`](models/expert_ratings/) | Folded into `ensemble` | |
 | [`fundamentals`](models/fundamentals/) | Partly in `ensemble` (no FEC money yet) | |
@@ -148,6 +149,8 @@ A regression fit on 2,655 House and 242 Senate races, leave-one-cycle-out, combi
 The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 77% chance of a non-R Senate majority. With the expected-points rule it makes 32 underdog picks and expects 50.8 points if Kalshi is right, against 45.3 for picking every Kalshi favorite.
 
 A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 77% → 50%) instead of being applied. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
+
+**`house_polls` in brief.** The ensemble, plus each House district's general-election polls from the last 28 days where there are any (57 districts in 2026). Fit on the 506 polled House races of 2010–2022, the polls cut log loss on those races from 0.295 to 0.276 and change 2 calls (TX-15 and ME-02 to D). Partisan polls lean about 5 points toward their sponsor, but subtracting that made the backtest worse, so it isn't applied. The model also writes 4,000 seeded simulated elections that share one national error. `decide.py` scores pick strategies in each one: keeping only underdogs whose expected points beat the favorite's by 25% (24 underdogs instead of 36) has the same mean and a narrower downside, and the best chance of beating a rival 5 points ahead of an all-favorites entry. Full write-up: [`models/house_polls/README.md`](models/house_polls/README.md).
 
 **`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.5 swing (generic ballot D+8.9 on Oct 30, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
 
@@ -170,7 +173,8 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [x] Ensemble: expert ratings + Senate polls + fundamentals, stacked and backtested on 2010–2022 House and Senate, with a news layer and a seat simulation ([ensemble](models/ensemble/))
 - [x] Test suite (`python3 -m unittest discover tests`)
 - [ ] Phase 1 fundamentals: FEC money
-- [ ] House district polls
+- [x] House district polls ([house_polls](models/house_polls/))
+- [x] Pick strategies scored against correlated simulated elections ([house_polls](models/house_polls/README.md#pick-strategies-against-simulated-elections))
 - [ ] Phase 3 decision layer, then the final run after the Nov 1 Kalshi pull
 - [ ] Write-up + visualization for the bonus award (the visualizer is a starting point)
 

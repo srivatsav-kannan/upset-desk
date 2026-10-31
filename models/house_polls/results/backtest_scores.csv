@@ -1,0 +1,53 @@
+scope,variant,races,log_loss,brier,wrong_calls
+House,ensemble,2655,0.0804,0.0244,92
+House,+house polls,2655,0.0769,0.0233,88
+House,"+house polls, sponsor-corrected",2655,0.0777,0.0237,88
+House,"+house polls, sponsor-corrected, full weight",2655,0.0772,0.0235,88
+House midterms,ensemble,1556,0.0845,0.0266,59
+House midterms,+house polls,1556,0.0789,0.0245,56
+House midterms,"+house polls, sponsor-corrected",1556,0.0803,0.0251,59
+House midterms,"+house polls, sponsor-corrected, full weight",1556,0.0796,0.0249,59
+"House, polled",ensemble,506,0.295,0.0902,63
+"House, polled",+house polls,506,0.2764,0.0844,59
+"House, polled","+house polls, sponsor-corrected",506,0.2806,0.0863,59
+"House, polled","+house polls, sponsor-corrected, full weight",506,0.2782,0.0855,59
+"House, polled midterms",ensemble,343,0.2798,0.089,42
+"House, polled midterms",+house polls,343,0.2546,0.0795,39
+"House, polled midterms","+house polls, sponsor-corrected",343,0.2609,0.0824,42
+"House, polled midterms","+house polls, sponsor-corrected, full weight",343,0.2578,0.0813,42
+House rated (competitive),ensemble,792,0.2684,0.0819,92
+House rated (competitive),+house polls,792,0.256,0.0782,88
+House rated (competitive),"+house polls, sponsor-corrected",792,0.2589,0.0794,88
+House rated (competitive),"+house polls, sponsor-corrected, full weight",792,0.2574,0.0789,88
+Senate,ensemble,242,0.1264,0.0434,18
+Senate,+house polls,242,0.1264,0.0434,18
+Senate,"+house polls, sponsor-corrected",242,0.1264,0.0434,18
+Senate,"+house polls, sponsor-corrected, full weight",242,0.1264,0.0434,18
+"House, polled 2010",ensemble,132,0.2815,0.0907,15
+"House, polled 2010",+house polls,132,0.2356,0.0716,13
+"House, polled 2010","+house polls, sponsor-corrected",132,0.2345,0.0723,13
+"House, polled 2010","+house polls, sponsor-corrected, full weight",132,0.231,0.0705,13
+"House, polled 2012",ensemble,61,0.2622,0.084,7
+"House, polled 2012",+house polls,61,0.2769,0.0836,7
+"House, polled 2012","+house polls, sponsor-corrected",61,0.2935,0.0883,6
+"House, polled 2012","+house polls, sponsor-corrected, full weight",61,0.2935,0.0887,6
+"House, polled 2014",ensemble,57,0.2497,0.0837,7
+"House, polled 2014",+house polls,57,0.2287,0.0753,6
+"House, polled 2014","+house polls, sponsor-corrected",57,0.2216,0.0716,6
+"House, polled 2014","+house polls, sponsor-corrected, full weight",57,0.2248,0.073,6
+"House, polled 2016",ensemble,42,0.2406,0.0738,4
+"House, polled 2016",+house polls,42,0.2176,0.0694,4
+"House, polled 2016","+house polls, sponsor-corrected",42,0.2086,0.0642,3
+"House, polled 2016","+house polls, sponsor-corrected, full weight",42,0.2077,0.0638,3
+"House, polled 2018",ensemble,108,0.2395,0.0661,9
+"House, polled 2018",+house polls,108,0.216,0.0594,8
+"House, polled 2018","+house polls, sponsor-corrected",108,0.2187,0.0607,8
+"House, polled 2018","+house polls, sponsor-corrected, full weight",108,0.2193,0.0612,8
+"House, polled 2020",ensemble,60,0.4533,0.1154,10
+"House, polled 2020",+house polls,60,0.4419,0.1236,9
+"House, polled 2020","+house polls, sponsor-corrected",60,0.4303,0.122,8
+"House, polled 2020","+house polls, sponsor-corrected, full weight",60,0.4287,0.1216,8
+"House, polled 2022",ensemble,46,0.4071,0.1442,11
+"House, polled 2022",+house polls,46,0.4319,0.1545,12
+"House, polled 2022","+house polls, sponsor-corrected",46,0.4844,0.1756,15
+"House, polled 2022","+house polls, sponsor-corrected, full weight",46,0.4662,0.1697,15

@@ -12,6 +12,7 @@ import math
 import re
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -165,6 +166,25 @@ def fetch_senate_race_page(year: int, state: str, special: bool, refresh: bool) 
     kind = "special_election" if special else "election"
     return fetch_wiki(f"senate_race_{year}_{state}{'_special' if special else ''}",
                       f"{year}_United_States_Senate_{kind}_in_{name.replace(' ', '_')}", [], refresh)
+
+
+def fetch_house_state_page(year: int, state: str, at_large: bool, refresh: bool) -> Path:
+    """Wikipedia's page of one state's House races (a section per district, with polling tables).
+
+    An at-large state has a single-race page. A state split into sub-pages (California's
+    "(districts 1–26)" and "(districts 27–52)") is fetched with them, joined into one snapshot.
+    """
+    name = next(k for k, v in STATES.items() if v == state).replace(" ", "_")
+
+    def get(page: str) -> dict:
+        return json.loads(http_get(WIKI_API + urllib.parse.quote(page.replace(" ", "_")) + "&prop=wikitext|revid"))["parse"]
+
+    def download() -> bytes:
+        main = get(f"{year}_United_States_House_of_Representatives_election{'' if at_large else 's'}_in_{name}")
+        subs = re.findall(r"\{\{main\|([^}|]*\(districts [^)]*\))\}\}", main["wikitext"])
+        text = "\n".join([main["wikitext"]] + [get(s)["wikitext"] for s in subs])
+        return json.dumps({"parse": {"revid": main["revid"], "wikitext": text}}).encode()
+    return cached("wikipedia", f"house_state_{year}_{state}", "json", refresh, download)
 
 
 # ---------------------------------------------------------------- 2026 inputs
@@ -334,10 +354,11 @@ def state_pres_margins(path: Path) -> dict:
 def load_raw_polls(path: Path) -> list:
     """538's archived polls of general elections, with the margin oriented as non-R minus R.
 
-    Returns [{type, cycle, key, pollster, partisan, days, n, margin_poll, margin_actual,
+    Returns [{type, cycle, key, pollster, partisan, sponsor, days, n, margin_poll, margin_actual,
     non_r_id, r_id}] for Senate (key (cycle, state, special)) and House (key (cycle, race_id))
     generals; polls of runoffs and same-party matchups are dropped. The ids are the polled
-    candidates' 538 ids, the same ids as in 538's results.
+    candidates' 538 ids, the same ids as in 538's results. sponsor is the partisan sponsor's
+    party, D or R ("" for nonpartisan polls and the rare poll sponsored by both).
     """
     out = []
     for r in read_rows(path):
@@ -356,6 +377,7 @@ def load_raw_polls(path: Path) -> list:
             key = (cycle, r["location"], t == "Sen-GS")
         out.append({"type": "House" if t == "House-G" else "Senate", "cycle": cycle, "key": key,
                     "pollster": r["pollster"], "partisan": r["partisan"] not in ("", "NA"),
+                    "sponsor": {"DEM": "D", "REP": "R"}.get(r["partisan"], ""),
                     "days": int(r["time_to_election"]), "n": float(r["samplesize"] or 0),
                     "margin_poll": sign * float(r["margin_poll"]), "margin_actual": sign * float(r["margin_actual"]),
                     "non_r_id": r["cand2_id"] if p1 == "REP" else r["cand1_id"],
@@ -411,7 +433,24 @@ def load_wiki_polls(path: Path, year: int) -> list:
     [{pollster, partisan, end, n, pop, margin, non_r_party}] with margin = strongest non-R
     candidate minus the Republican, and non_r_party D or I for that candidate.
     """
-    text = json.loads(path.read_text())["parse"]["wikitext"]
+    return parse_wiki_polls(json.loads(path.read_text(encoding="utf-8"))["parse"]["wikitext"], year)
+
+
+def load_wiki_house_polls(path: Path, year: int) -> dict:
+    """{district: polls} from a state's House page (fetch_house_state_page), as load_wiki_polls.
+
+    Districts are "01".."52", read from each "== District N ==" section; a page with no
+    district sections (an at-large state) is one race, returned as "AL".
+    """
+    text = json.loads(path.read_text(encoding="utf-8"))["parse"]["wikitext"]
+    parts = re.split(r"\n==\s*District (\d+)\s*==[ \t]*\n", text)
+    if len(parts) == 1:
+        return {"AL": parse_wiki_polls(text, year)}
+    return {n.zfill(2): parse_wiki_polls("\n" + body, year) for n, body in zip(parts[1::2], parts[2::2])}
+
+
+def parse_wiki_polls(text: str, year: int) -> list:
+    """load_wiki_polls on wikitext: a whole race page, or one district's section of a state page."""
     g = re.search(r"\n==+\s*General election\s*==+", text)
     if not g:
         return []
@@ -565,6 +604,7 @@ def load_house_results(path: Path, races_path: Path, cycles: set) -> dict:
     Per seat, the deciding contest is a runoff if there was one (Louisiana), else the November
     general or jungle primary; ranked-choice races (AK, ME) use the final round. Fusion lines
     (NY's WFP, CON, ...) are summed into the candidate, whose party is D or R if any line is.
+    Each of "cands" carries its 538 candidate id ("cid"), the id 538's polls use.
     """
     incumbent = {r["id"]: {"DEM": "D", "REP": "R"}.get(r["incumbent_party"], "") for r in read_rows(races_path)}
     contests = {}
@@ -583,7 +623,8 @@ def load_house_results(path: Path, races_path: Path, cycles: set) -> dict:
         cands = {}
         for r in rows:
             c = cands.setdefault(r["candidate_id"] or f"row{r['id']}",
-                                 {"votes": 0, "party": "O", "winner": False, "pid": r["politician_id"]})
+                                 {"votes": 0, "party": "O", "winner": False, "pid": r["politician_id"],
+                                  "cid": r["candidate_id"]})
             c["votes"] += int(float(r["votes"])) if r["votes"] else 0
             if r["ballot_party"] == "DEM":
                 c["party"] = "D"
@@ -599,7 +640,8 @@ def load_house_results(path: Path, races_path: Path, cycles: set) -> dict:
         out[key] = {"winner": winner["party"], "contested": {"D", "R"} <= parties and total > 0,
                     "votes": (d, rep, total),
                     "margin": 100 * (d - rep) / total if total else None, "incumbent": incumbent.get(race, ""),
-                    "cands": [{"pid": c["pid"], "party": c["party"], "winner": c["winner"]} for c in cs]}
+                    "cands": [{"pid": c["pid"], "cid": c["cid"], "party": c["party"], "winner": c["winner"],
+                               "votes": c["votes"]} for c in cs]}
     return out
 
 

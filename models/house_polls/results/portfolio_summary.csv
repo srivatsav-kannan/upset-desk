@@ -1,0 +1,17 @@
+scope,strategy,underdog_picks,mean,sd,p10,median,p90,p_beat_kalshi_favorites,rival_lead,p_beat_rival,simulations,chosen
+Senate,Kalshi favorite,0,5.44,0.8,4.31,5.55,6.54,0.0,1.0,0.0,4000,False
+Senate,model favorite,1,6.23,1.05,4.73,6.23,7.7,0.6078,1.0,0.6078,4000,False
+Senate,"expected points, edge >= 0%",3,6.58,1.76,4.14,6.38,9.03,0.7408,1.0,0.3588,4000,False
+Senate,"expected points, edge >= 10%",3,6.58,1.76,4.14,6.38,9.03,0.7408,1.0,0.3588,4000,False
+Senate,"expected points, edge >= 25%",2,6.52,1.42,4.63,6.65,8.47,0.7005,1.0,0.7005,4000,True
+Senate,"expected points, edge >= 50%",2,6.52,1.42,4.63,6.65,8.47,0.7005,1.0,0.7005,4000,False
+Senate,"expected points, edge >= 100%",1,6.23,1.05,4.73,6.23,7.7,0.6078,1.0,0.6078,4000,False
+Senate,"expected points, edge >= 200%",1,6.23,1.05,4.73,6.23,7.7,0.6078,1.0,0.6078,4000,False
+All,Kalshi favorite,0,51.07,1.96,48.54,51.14,53.54,0.0,5.0,0.0,4000,False
+All,model favorite,5,53.49,2.64,50.1,53.66,56.7,0.879,5.0,0.0607,4000,False
+All,"expected points, edge >= 0%",36,58.23,8.87,47.67,57.22,70.32,0.7618,5.0,0.5295,4000,False
+All,"expected points, edge >= 10%",32,58.27,8.8,47.72,57.43,70.24,0.7532,5.0,0.537,4000,False
+All,"expected points, edge >= 25%",24,58.25,7.53,48.83,57.62,68.18,0.7947,5.0,0.5535,4000,True
+All,"expected points, edge >= 50%",20,57.75,6.91,49.09,57.45,66.91,0.8,5.0,0.5377,4000,False
+All,"expected points, edge >= 100%",13,56.61,5.35,49.98,56.32,63.64,0.8618,5.0,0.493,4000,False
+All,"expected points, edge >= 200%",7,55.3,4.37,49.64,55.29,61.0,0.7532,5.0,0.403,4000,False
