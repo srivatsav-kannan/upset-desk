@@ -17,6 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 RAW = ROOT / "data" / "raw"
+OVERRIDES = ROOT / "data" / "overrides"
 MODELS = ROOT / "models"
 TEMPLATES = ROOT / "submission" / "templates"
 USER_AGENT = "model-citizens-forecast/0.1 (https://github.com/srivatsav-kannan/election-prediction)"
@@ -280,8 +281,11 @@ def load_senate_results(path: Path, cycles: set) -> dict:
     ranked-choice races use the final round. "margin" is the strongest non-Republican's share
     minus the strongest Republican's, in points of the total vote, and "winner" is R or D
     (D meaning any non-Republican, as in p_d), and "non_r_party" says whether that strongest
-    non-Republican was a Democrat or an independent. Contested means both sides were on the ballot.
+    non-Republican was a Democrat or an independent. "non_r_id" and "r_id" are the two
+    candidates' 538 ids. Contested means both sides were on the ballot. Party fixes (e.g. a
+    Republican re-elected as a write-in) come from data/overrides/senate_candidate_party.csv.
     """
+    fixes = {r["candidate_id"]: r["party"] for r in read_rows(OVERRIDES / "senate_candidate_party.csv")}
     contests = {}
     for r in read_rows(path):
         if (r["office_name"] == "U.S. Senate" and r["cycle"].isdigit() and int(r["cycle"]) in cycles
@@ -297,19 +301,20 @@ def load_senate_results(path: Path, cycles: set) -> dict:
             rows = [r for r in rows if r["ranked_choice_round"] == str(max(rounds))]
         cands = {}
         for r in rows:
-            c = cands.setdefault(r["candidate_id"] or f"row{r['id']}", {"votes": 0, "rep": False, "dem": False, "winner": False})
+            c = cands.setdefault(r["candidate_id"] or f"row{r['id']}",
+                                 {"id": r["candidate_id"], "votes": 0, "rep": False, "dem": False, "winner": False})
             c["votes"] += int(float(r["votes"])) if r["votes"] else 0
-            c["rep"] |= r["ballot_party"] == "REP"
+            c["rep"] |= r["ballot_party"] == "REP" or fixes.get(r["candidate_id"]) == "R"
             c["dem"] |= r["ballot_party"] == "DEM"
             c["winner"] |= r["winner"] == "true"
         cs = list(cands.values())
         total = sum(c["votes"] for c in cs)
-        rep = max((c["votes"] for c in cs if c["rep"]), default=0)
-        top_non = max((c for c in cs if not c["rep"]), key=lambda c: c["votes"], default={"votes": 0, "dem": True})
-        non = top_non["votes"]
+        top_rep = max((c for c in cs if c["rep"]), key=lambda c: c["votes"], default={"id": "", "votes": 0})
+        top_non = max((c for c in cs if not c["rep"]), key=lambda c: c["votes"], default={"id": "", "votes": 0, "dem": True})
+        rep, non = top_rep["votes"], top_non["votes"]
         winner = next((c for c in cs if c["winner"]), max(cs, key=lambda c: c["votes"]))
         out[key] = {"winner": "R" if winner["rep"] else "D", "contested": rep > 0 and non > 0 and total > 0,
-                    "non_r_party": "D" if top_non["dem"] else "I",
+                    "non_r_party": "D" if top_non["dem"] else "I", "non_r_id": top_non["id"], "r_id": top_rep["id"],
                     "margin": 100 * (non - rep) / total if total else None}
     return out
 
@@ -329,9 +334,10 @@ def state_pres_margins(path: Path) -> dict:
 def load_raw_polls(path: Path) -> list:
     """538's archived polls of general elections, with the margin oriented as non-R minus R.
 
-    Returns [{type, cycle, key, pollster, partisan, days, n, margin_poll, margin_actual}] for
-    Senate (key (cycle, state, special)) and House (key (cycle, race_id)) generals; polls of
-    runoffs and same-party matchups are dropped.
+    Returns [{type, cycle, key, pollster, partisan, days, n, margin_poll, margin_actual,
+    non_r_id, r_id}] for Senate (key (cycle, state, special)) and House (key (cycle, race_id))
+    generals; polls of runoffs and same-party matchups are dropped. The ids are the polled
+    candidates' 538 ids, the same ids as in 538's results.
     """
     out = []
     for r in read_rows(path):
@@ -351,7 +357,9 @@ def load_raw_polls(path: Path) -> list:
         out.append({"type": "House" if t == "House-G" else "Senate", "cycle": cycle, "key": key,
                     "pollster": r["pollster"], "partisan": r["partisan"] not in ("", "NA"),
                     "days": int(r["time_to_election"]), "n": float(r["samplesize"] or 0),
-                    "margin_poll": sign * float(r["margin_poll"]), "margin_actual": sign * float(r["margin_actual"])})
+                    "margin_poll": sign * float(r["margin_poll"]), "margin_actual": sign * float(r["margin_actual"]),
+                    "non_r_id": r["cand2_id"] if p1 == "REP" else r["cand1_id"],
+                    "r_id": r["cand1_id"] if p1 == "REP" else r["cand2_id"]})
     return out
 
 

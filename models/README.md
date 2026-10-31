@@ -43,4 +43,4 @@ One row per race, in the order of [`submission/templates/full_congress_track_tem
 **Rules:**
 - **No Kalshi prices.** A model never reads them. `decide.py` is the only code that sees the market.
 - **Shared data code.** Downloads and parsers that more than one model can use go in [`common.py`](../common.py). Everything specific to one model stays in its folder.
-- **Backtest before adopting.** A new model should beat [`ensemble`](ensemble/)'s out-of-sample scores (House log loss 0.080, Senate 0.180; the [`uniform_swing`](uniform_swing/) baseline is 0.139 for the House) before we rely on it.
+- **Backtest before adopting.** A new model should beat [`ensemble`](ensemble/)'s out-of-sample scores (House log loss 0.080, Senate 0.126; the [`uniform_swing`](uniform_swing/) baseline is 0.139 for the House) before we rely on it.
