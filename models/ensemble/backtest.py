@@ -204,7 +204,10 @@ def history(refresh: bool) -> list:
             if c is None or not c["contested"] or (prev_pres(y), st) not in pres:
                 continue
             inc = SIGN.get(rt["inc_party"], 0)
-            avg, n = poll_average(polls.get((y, st, special), []))
+            # Only polls of the deciding matchup count: 538 polled Dill (D), not King (I), in
+            # Maine 2012, and McAdams (D) against Miller, not Murkowski, in Alaska 2010.
+            matchup = [p for p in polls.get((y, st, special), []) if (p["non_r_id"], p["r_id"]) == (c["non_r_id"], c["r_id"])]
+            avg, n = poll_average(matchup)
             races.append({"chamber": "Senate", "cycle": y, "key": f"{st}-SEN{'-special' if special else ''}",
                           "pred": pres[(prev_pres(y), st)] + swing,
                           "x_run": inc if rt["inc_running"] else 0, "x_open": 0 if rt["inc_running"] else inc,

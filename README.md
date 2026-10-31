@@ -112,7 +112,7 @@ python3 forecast.py --model uniform_swing  # one model (repeatable)
 python3 forecast.py --refresh              # re-downloads the source data first
 python3 forecast.py --swing 0              # uniform_swing: overrides the national swing (0 = pure 2024 replay)
 python3 forecast.py --ensemble-d-correction  # ensemble: apply the generic-ballot D correction (worse in the backtest)
-python3 -m unittest discover tests         # 22 tests: parsers, leakage, calibration, outputs, no Kalshi in models
+python3 -m unittest discover tests         # 23 tests: parsers, leakage, calibration, outputs, no Kalshi in models
 ```
 
 A full run takes about 1¾ minutes, most of it the two leave-one-cycle-out backtests.
@@ -131,7 +131,7 @@ Every model writes `models/<name>/predictions.csv` in one shared format ([`model
 
 | Model | Status | Out-of-sample log loss, 2010–2022 |
 |---|---|---|
-| [`ensemble`](models/ensemble/) | **Built, submission model** | House **0.080**, Senate **0.180** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
+| [`ensemble`](models/ensemble/) | **Built, submission model** | House **0.080**, Senate **0.126** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
 | [`uniform_swing`](models/uniform_swing/) | Built (v2), baseline | House 0.139 (Student-t + incumbent running / open seat). v1 was 0.197. |
 | [`expert_ratings`](models/expert_ratings/) | Folded into `ensemble` | |
 | [`fundamentals`](models/fundamentals/) | Partly in `ensemble` (no FEC money yet) | |
@@ -145,9 +145,9 @@ Every model writes `models/<name>/predictions.csv` in one shared format ([`model
 
 A regression fit on 2,655 House and 242 Senate races, leave-one-cycle-out, combines them. A Student-t turns the margin into a probability. A news layer, researched for 105 competitive races and centred so it can't move the national environment, adds at most a couple of points.
 
-The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 79% chance of a non-R Senate majority. With the expected-points rule it makes 38 underdog picks and expects 51.4 points if Kalshi is right, against 45.3 for picking every Kalshi favorite.
+The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 77% chance of a non-R Senate majority. With the expected-points rule it makes 32 underdog picks and expects 50.8 points if Kalshi is right, against 45.3 for picking every Kalshi favorite.
 
-A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 79% → 55%) instead of being applied. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
+A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 77% → 50%) instead of being applied. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
 
 **`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.5 swing (generic ballot D+8.9 on Oct 30, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
 

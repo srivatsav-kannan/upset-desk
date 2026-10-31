@@ -118,6 +118,15 @@ class TestBacktest(unittest.TestCase):
         for r in self.races:
             self.assertIn(r["sign"], (1, -1))
 
+    def test_senate_polls_match_the_deciding_matchup(self):
+        """538 polled the Democrat, not King (I), in Maine; Murkowski (R) won Alaska 2010 as a write-in."""
+        senate = {(r["cycle"], r["key"]): r for r in self.races if r["chamber"] == "Senate"}
+        for key in [(2012, "ME-SEN"), (2018, "ME-SEN"), (2010, "AK-SEN"), (2010, "FL-SEN")]:
+            self.assertIsNone(senate[key]["poll"], key)
+        self.assertEqual(senate[(2010, "AK-SEN")]["sign"], -1)
+        self.assertFalse(senate[(2010, "AK-SEN")]["ind"])
+        self.assertIsNotNone(senate[(2014, "KS-SEN")]["poll"])  # Orman (I) was polled against Roberts
+
     def test_unrated_seat_side(self):
         """Unrated = Safe for the favorite: a crossover incumbent only within a few points of lean."""
         self.assertEqual(backtest.safe_side({"pred": 3.0, "x_run": -1}), -1)    # R incumbent, D+3 seat
