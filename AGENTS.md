@@ -67,7 +67,7 @@ Every model change should report the following, using leave-one-cycle-out CV on 
 
 ## Gotchas
 
-- **2026 district lines differ from 2024 in several states** because of mid-decade redistricting (TX, CA, NC, OH, UT; MO and VA are contested). District lean must be computed on the 2026 lines.
+- **2026 district lines differ from 2024 in several states** because of mid-decade redistricting (TX, CA, NC, OH, UT; VA is contested; Missouri's 2025 map was blocked for 2026, so MO stays on its 2022 lines). District lean must be computed on the 2026 lines.
 - **Top-two states (CA, WA)** can have same-party general elections. **AK and ME** use ranked-choice voting. **NE-SEN** has a competitive independent. **GA** has runoffs.
 - **Uncontested races** and races without a Kalshi market need explicit handling. Check the README's open questions before guessing.
 - **Kalshi data is messy.** Events can be candidate-named or party-named, and series tickers are inconsistent (`SENATEXX`, `SENATEPARTYXX`, `KXHOUSE…`). Validate the race-to-market mapping against Ballotpedia and fail loudly when something doesn't match.
@@ -77,6 +77,6 @@ Every model change should report the following, using leave-one-cycle-out CV on 
 - The pipeline runs end to end, or the part you touched does.
 - `python3 -m unittest discover tests` passes. It includes a leakage test (scrambling a held-out cycle's results must not change its forecasts) and a check that nothing under `models/` reads Kalshi.
 - The validators in `common.py` pass. `validate_predictions` checks each model's `predictions.csv`, and `validate_submission` checks every submission CSV. Both require race IDs in template order, every party D/R/I, and probabilities in [0, 1].
-- `candidate_name` comes from the Kalshi market's candidate where there is one, and is otherwise blank until candidate data is ingested.
+- `candidate_name` comes from the Kalshi market's candidate where there is one. Where the market is party-named, or there's no market, it comes from `data/overrides/candidate_names.csv`. `decide.py` fails if a pick has no real name.
 - If you changed a shared file (`common.py`, `decide.py`, `forecast.py`), every model's outputs are either unchanged or the change is explained.
 - The README is updated if you changed data sources, method or run instructions.

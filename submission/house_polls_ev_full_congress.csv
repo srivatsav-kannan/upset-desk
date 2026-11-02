@@ -1,5 +1,5 @@
 race_id,chamber,predicted_winner_party,candidate_name,win_probability
-AK-SEN,Senate,R,Republican party,0.6053
+AK-SEN,Senate,R,Dan Sullivan,0.6053
 AL-SEN,Senate,R,Barry Moore,1.0
 AR-SEN,Senate,R,Tom Cotton,1.0
 CO-SEN,Senate,D,John Hickenlooper,1.0
@@ -58,17 +58,17 @@ AZ-09,House,R,Paul Gosar,0.9998
 CA-01,House,D,Mike McGuire,0.9997
 CA-02,House,D,Jared Huffman,1.0
 CA-03,House,D,Ami Bera,0.9998
-CA-04,House,D,,0.9999
+CA-04,House,D,Mike Thompson,0.9999
 CA-05,House,R,Tom McClintock,0.9985
 CA-06,House,D,Richard Pan,0.9991
-CA-07,House,D,,0.9998
+CA-07,House,D,Mai Vang,0.9998
 CA-08,House,D,John Garamendi,1.0
 CA-09,House,D,Josh Harder,0.9998
 CA-10,House,D,Mark DeSaulnier,1.0
-CA-11,House,D,,1.0
-CA-12,House,D,,1.0
+CA-11,House,D,Scott Wiener,1.0
+CA-12,House,D,Lateefah Simon,1.0
 CA-13,House,D,Adam Gray,0.9939
-CA-14,House,D,,1.0
+CA-14,House,D,Aisha Wahab,1.0
 CA-15,House,D,Kevin Mullin,1.0
 CA-16,House,D,Sam Liccardo,1.0
 CA-17,House,D,Ro Khanna,1.0
@@ -83,18 +83,18 @@ CA-25,House,D,Raul Ruiz,0.9995
 CA-26,House,D,Jacqui Irwin,0.9998
 CA-27,House,D,George Whitesides,0.9997
 CA-28,House,D,Judy Chu,1.0
-CA-29,House,D,,1.0
+CA-29,House,D,Luz Maria Rivas,1.0
 CA-30,House,D,Laura Friedman,1.0
 CA-31,House,D,Gil Cisneros,0.9998
 CA-32,House,D,Brad Sherman,1.0
 CA-33,House,D,Pete Aguilar,0.9997
-CA-34,House,D,,1.0
+CA-34,House,D,Jimmy Gomez,1.0
 CA-35,House,D,Norma Torres,0.9997
 CA-36,House,D,Ted Lieu,1.0
-CA-37,House,D,,1.0
+CA-37,House,D,Sydney Kamlager-Dove,1.0
 CA-38,House,D,Hilda Solis,0.9998
 CA-39,House,D,Mark Takano,0.9997
-CA-40,House,R,,0.996
+CA-40,House,R,Ken Calvert,0.996
 CA-41,House,D,Linda Sánchez,0.9999
 CA-42,House,D,Robert Garcia,0.9998
 CA-43,House,D,Maxine Waters,1.0
@@ -207,12 +207,12 @@ KY-03,House,D,Morgan McGarvey,0.9999
 KY-04,House,R,Ed Gallrein,0.9998
 KY-05,House,R,Hal Rogers,1.0
 KY-06,House,R,Ralph Alvarado,0.5837
-LA-01,House,R,Republican party,0.9999
-LA-02,House,D,Democratic party,1.0
-LA-03,House,R,Republican party,0.9999
-LA-04,House,R,Republican party,0.9998
-LA-05,House,R,Republican party,0.9998
-LA-06,House,R,Republican party,0.9996
+LA-01,House,R,Steve Scalise,0.9999
+LA-02,House,D,Troy Carter,1.0
+LA-03,House,R,Clay Higgins,0.9999
+LA-04,House,R,Mike Johnson,0.9998
+LA-05,House,R,Republican field (open primary),0.9998
+LA-06,House,R,Republican field (open primary),0.9996
 MA-01,House,D,Richard Neal,0.9999
 MA-02,House,D,Jim McGovern,1.0
 MA-03,House,D,Lori Trahan,0.9999

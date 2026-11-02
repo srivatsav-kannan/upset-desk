@@ -61,7 +61,7 @@ The plan is deterministic first and AI later. Each phase has to beat the previou
 ### Special cases to handle
 
 - **Mid-decade redistricting.** New maps for 2026 in TX, CA (Prop 50), NC, OH, UT and others, and the status of MO and VA is contested. District lean must be recomputed on the **new lines**. Old-district results don't carry over directly.
-  - **Missouri mismatch, still open.** The Census Bureau's 2026 district lines (TIGER/Line `cd120`, released 2026-10-06) match The Downballot's 2026 sheet in every state except Missouri. Census has Missouri's new 2025 map, but The Downballot, and so our predictions, keep Missouri on its 2022 lines. If the new map is in effect for November, our 8 Missouri predictions are for the wrong districts. Found while building the [visualizer](visualizer/), which draws Missouri on its old lines so the shapes match the predictions.
+  - **Missouri: settled, the 2022 lines.** Census's 2026 lines (TIGER/Line `cd120`) carry Missouri's 2025 map, but courts blocked it for November. The Missouri Supreme Court ruled on Sep 3, 2026 that the referendum petition suspends the map, and the U.S. Supreme Court stayed the federal orders that would have revived it (Sep 10 and 25). The Secretary of State [directed](https://abc17news.com/news/missouri/2026/09/10/hoskins-pledges-to-use-2022-missouri-congressional-map-after-u-s-supreme-court-ruling/) election authorities to use the 2022 map. The 2025 map is on the Nov 3 ballot as Proposition A, for 2028 onward. The Downballot's sheet, our predictions and the [visualizer](visualizer/) all already use the 2022 lines, so nothing changes.
 - **Top-two primaries (CA, WA).** Some generals pit two candidates from the same party against each other. The party pick is then trivial and the candidate pick is what matters.
 - **Ranked-choice / top-four (AK, ME).** NE-SEN has a strong independent (Osborn).
 - **GA runoff rules, and uncontested seats.** Uncontested seats are effectively locked.
@@ -169,7 +169,7 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [x] One folder per model, with a shared predictions format and decision step ([models/](models/))
 - [x] Interactive map of each model's predictions on the 2026 lines ([visualizer/](visualizer/))
 - [x] Redistricting view: each redrawn House district on its 2024 and 2026 lines, by 2024 presidential margin ([visualizer/](visualizer/README.md#what-it-shows))
-- [ ] Resolve the Missouri map mismatch (see [Special cases](#special-cases-to-handle))
+- [x] Resolve the Missouri map mismatch (2022 lines are in force) (see [Special cases](#special-cases-to-handle))
 - [x] Baseline v2: Student-t + incumbent running / open seat, with 2026 incumbents and retirements from Wikipedia ([v2](models/uniform_swing/README.md#baseline-v2-student-t--incumbency))
 - [x] Senate backtest of the tail before trusting Senate long-shot picks (the ensemble's Senate backtest, 242 races)
 - [x] Ensemble: expert ratings + Senate polls + fundamentals, stacked and backtested on 2010–2022 House and Senate, with a news layer and a seat simulation ([ensemble](models/ensemble/))

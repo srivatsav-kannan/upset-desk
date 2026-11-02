@@ -254,6 +254,16 @@ class TestOutputs(unittest.TestCase):
             common.validate_submission(f, templates[track])
             with open(f, newline="") as fh:
                 self.assertEqual(next(csv.reader(fh)), list(templates[track][0].keys()))
+            for r in common.read_rows(f):  # a real candidate on every row, never "Republican party"
+                self.assertRegex(r["candidate_name"], r"\S", (f.name, r["race_id"]))
+                self.assertNotRegex(r["candidate_name"], re.compile(r"\bparty$", re.I), (f.name, r["race_id"]))
+
+    def test_name_overrides_are_sourced(self):
+        """Hard rule 2: every hand fix carries a source URL and a note."""
+        for r in common.read_rows(common.OVERRIDES / "candidate_names.csv"):
+            self.assertRegex(r["source"], r"^https://", r)
+            self.assertTrue(r["note"].strip(), r)
+            self.assertIn(r["party"], ("D", "R", "I"), r)
 
     def test_models_never_read_kalshi(self):
         """Hard rule 4: only decide.py touches market prices."""

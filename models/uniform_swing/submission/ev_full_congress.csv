@@ -1,5 +1,5 @@
 race_id,chamber,predicted_winner_party,candidate_name,win_probability
-AK-SEN,Senate,R,Republican party,0.8701
+AK-SEN,Senate,R,Dan Sullivan,0.8701
 AL-SEN,Senate,D,Everett Wess,0.0155
 AR-SEN,Senate,R,Tom Cotton,0.9899
 CO-SEN,Senate,R,Mark Baisley,0.0087
@@ -58,17 +58,17 @@ AZ-09,House,D,Dani Sterbinsky,0.0096
 CA-01,House,R,James Gallagher,0.0252
 CA-02,House,R,Robin Littau,0.0027
 CA-03,House,D,Ami Bera,0.9906
-CA-04,House,D,,0.9938
+CA-04,House,D,Mike Thompson,0.9938
 CA-05,House,D,Michael Masuda,0.0355
-CA-06,House,R,Republican party,0.0212
-CA-07,House,D,,0.9928
+CA-06,House,R,No Republican on ballot,0.0212
+CA-07,House,D,Mai Vang,0.9928
 CA-08,House,R,Rudy Recile,0.0015
 CA-09,House,R,John McBride,0.0083
 CA-10,House,D,Mark DeSaulnier,0.9985
-CA-11,House,D,,0.9996
-CA-12,House,D,,0.9997
+CA-11,House,D,Scott Wiener,0.9996
+CA-12,House,D,Lateefah Simon,0.9997
 CA-13,House,R,Kevin Lincoln,0.0318
-CA-14,House,D,,0.9986
+CA-14,House,D,Aisha Wahab,0.9986
 CA-15,House,D,Kevin Mullin,0.9993
 CA-16,House,D,Sam Liccardo,0.9993
 CA-17,House,D,Ro Khanna,0.9989
@@ -83,18 +83,18 @@ CA-25,House,R,Joe Males,0.0154
 CA-26,House,D,Jacqui Irwin,0.9918
 CA-27,House,R,Jason Gibbs,0.0099
 CA-28,House,D,Judy Chu,0.9974
-CA-29,House,D,,0.9985
+CA-29,House,D,Luz Maria Rivas,0.9985
 CA-30,House,D,Laura Friedman,0.9989
 CA-31,House,R,Eric Ching,0.0077
 CA-32,House,R,Larry Thompson,0.0026
 CA-33,House,R,Stephanie Vargas,0.0098
-CA-34,House,D,,0.9994
+CA-34,House,D,Jimmy Gomez,0.9994
 CA-35,House,R,Mike Cargile,0.0122
 CA-36,House,R,Houston Brignano,0.0011
-CA-37,House,D,,0.9996
+CA-37,House,D,Sydney Kamlager-Dove,0.9996
 CA-38,House,R,Pedro Antonio Casas,0.0131
 CA-39,House,R,Steve Manos,0.0101
-CA-40,House,R,,0.8457
+CA-40,House,R,Ken Calvert,0.8457
 CA-41,House,D,Linda Sánchez,0.9937
 CA-42,House,R,Brian Burley,0.007
 CA-43,House,D,Maxine Waters,0.9993
@@ -207,14 +207,14 @@ KY-03,House,D,Morgan McGarvey,0.9958
 KY-04,House,R,Ed Gallrein,0.9911
 KY-05,House,R,Hal Rogers,0.9991
 KY-06,House,R,Ralph Alvarado,0.8144
-LA-01,House,R,Republican party,0.9951
-LA-02,House,D,Democratic party,0.9993
-LA-03,House,D,Democratic party,0.0059
-LA-04,House,R,Republican party,0.993
-LA-05,House,D,Democratic party,0.0105
-LA-06,House,D,Democratic party,0.0233
-MA-01,House,R,Republican party,0.0067
-MA-02,House,R,Republican party,0.0039
+LA-01,House,R,Steve Scalise,0.9951
+LA-02,House,D,Troy Carter,0.9993
+LA-03,House,D,Democratic field (open primary),0.0059
+LA-04,House,R,Mike Johnson,0.993
+LA-05,House,D,Democratic field (open primary),0.0105
+LA-06,House,D,Democratic field (open primary),0.0233
+MA-01,House,R,No Republican on ballot,0.0067
+MA-02,House,R,No Republican on ballot,0.0039
 MA-03,House,D,Lori Trahan,0.9958
 MA-04,House,R,Tom Stalcup,0.0039
 MA-05,House,D,Katherine Clark,0.999
@@ -459,7 +459,7 @@ WA-08,House,R,Spencer Meline,0.0155
 WA-09,House,D,Adam Smith,0.999
 WA-10,House,R,Chris D. Chung,0.0045
 WI-01,House,D,Mitchell Berman,0.5604
-WI-02,House,R,Republican party,0.0013
+WI-02,House,R,No Republican on ballot,0.0013
 WI-03,House,R,Derrick Van Orden,0.6267
 WI-04,House,D,Gwen Moore,0.9994
 WI-05,House,D,Andrew Beck,0.0287

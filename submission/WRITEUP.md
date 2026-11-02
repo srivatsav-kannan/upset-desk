@@ -38,8 +38,8 @@ Left out: FEC money and demographics. Lean and ratings already carry most of tha
 - **We lean on the raters.** If they herd, so do we.
 - **The news layer isn't backtested.** You can't rerun LLM research on 2018 without leaking the result. It's capped small for that reason.
 - **Thin House polling.** Only 57 of 435 districts have recent polls. The other 378 run on lean, incumbency and ratings.
-- **Missouri lines.** Our 8 Missouri predictions use the 2022 lines. If the 2025 map is in force, they're for the wrong districts.
-- **Markets and names.** 9 California same-party races have no Kalshi market, so we don't know how they're scored. Party-named markets (AK-SEN, Louisiana) put a party where `candidate_name` should be.
+- **No market in 9 races.** These are California same-party races, so we don't know how they're scored. The party pick is locked anyway, and we name the primary leader.
+- **AK-SEN cuts against us.** Our biggest Senate upset call is Sullivan (R) at 61%, but Peltola led the top-four primary 49.5% to 41.4%. Primary results aren't a model input, so the model hasn't seen that.
 - **Odd systems.** Alaska's RCV and Nebraska's independent (Osborn) are modelled as one non-Republican against the Republican.
 
 ## Link to visualization, slides, or extra explanation (optional)

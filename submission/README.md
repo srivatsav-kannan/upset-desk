@@ -26,7 +26,7 @@ The 9 races with no market are scored at an unknown price; they're also excluded
 
 | Race | Pick | Ours | Kalshi |
 |---|---|---|---|
-| AK-SEN | R (Sullivan) | 61% | 29% |
+| AK-SEN | Sullivan (R) | 61% | 29% |
 | OH-SEN | Husted (R) | 35% | 29% |
 | TX-23 | Herrera (R) | 80% | 49% |
 | TX-35 | De La Cruz (R) | 51% | 25% |
@@ -52,6 +52,11 @@ The 9 races with no market are scored at an unknown price; they're also excluded
 
 The bottom half are cheap tickets: a low chance each, but worth 3–6 points when they hit, and they mostly hit together in an R-leaning national miss.
 
-**Known quirks in the CSV:**
-- `candidate_name` comes from the Kalshi market. Party-named markets give "Republican party" / "Democratic party" (AK-SEN and LA-01 through LA-06). The 9 California same-party top-two races with no market have a blank name.
-- `win_probability` is our probability for the party we picked, so for underdog picks it's below 0.5. That's on purpose: it's our honest number, not a confidence score.
+**Names.** `candidate_name` comes from the Kalshi market. Where the market only names a party, or there's no market, it comes from [`data/overrides/candidate_names.csv`](../data/overrides/candidate_names.csv), which has a source and a note for every row:
+- **AK-SEN:** Dan Sullivan (R) and Mary Peltola (D). Kalshi's market is party-named.
+- **Louisiana:** Nov 3 is an open all-party primary, with a Dec 12 runoff if nobody passes 50%. Incumbents are named in LA-01 to LA-04. The open seats LA-05 and LA-06 have six Republicans each and no nominee, so they read "Republican field (open primary)". Kalshi prices the party there, not a candidate.
+- **Same-party California races** (CA-04, 07, 11, 12, 14, 29, 34, 37 D vs D; CA-40 R vs R) have no market. The party pick is locked, and we name the June primary leader. In CA-07 that's Mai Vang, not the incumbent Matsui, 31.2% to 29.1%.
+
+`decide.py` fails if any pick ends up without a real name, and a test checks every submission file.
+
+`win_probability` is our probability for the party we picked, so for underdog picks it's below 0.5. That's on purpose: it's our honest number, not a confidence score.

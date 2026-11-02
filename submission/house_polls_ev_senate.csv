@@ -1,5 +1,5 @@
 race_id,chamber,predicted_winner_party,candidate_name,win_probability
-AK-SEN,Senate,R,Republican party,0.6053
+AK-SEN,Senate,R,Dan Sullivan,0.6053
 AL-SEN,Senate,R,Barry Moore,1.0
 AR-SEN,Senate,R,Tom Cotton,1.0
 CO-SEN,Senate,D,John Hickenlooper,1.0

@@ -73,7 +73,7 @@ The build uses relative paths, so it works under the `/election-prediction/` sub
   - **Simplification:** old and new districts are simplified together, so a boundary that didn't move is drawn identically on both maps. This also adds a few points along the borders of the redrawn states, so the shapes of their neighbors shift very slightly.
   - **Dashed overlay:** each map's interior district lines in the redrawn states, minus the segments both maps share.
   - **Size:** the file grows from about 270 to 380 KB gzipped.
-- **Missouri is the one exception.** Census has Missouri's new 2025 map, but The Downballot's 2026 sheet, and so every model, keeps Missouri on its 2022 lines. The map draws Missouri on its 2024 Census lines so the shapes match the numbers. If Missouri votes on the new map in 2026, our Missouri predictions are for the wrong districts. See the main README's special cases.
+- **Missouri is the one exception.** Census has Missouri's new 2025 map, but The Downballot's 2026 sheet, and so every model, keeps Missouri on its 2022 lines. The map draws Missouri on its 2024 Census lines so the shapes match the numbers. Courts blocked the new map for 2026, so these are the right lines (see the main README's special cases).
 
 ## Code
 

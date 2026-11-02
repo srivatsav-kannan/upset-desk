@@ -19,13 +19,16 @@ import re
 import time
 from pathlib import Path
 
-from common import (STATES, cached, http_get, load_template, read_rows, validate_predictions, validate_submission,
-                    write_csv)
+from common import (OVERRIDES, STATES, cached, http_get, load_template, read_rows, validate_predictions,
+                    validate_submission, write_csv)
 
 KALSHI_API = "https://api.elections.kalshi.com/trade-api/v2"
 # Series that hold 2026 congressional winner markets (one event per race).
 KALSHI_SERIES = re.compile(r"^(KX)?SENATE[A-Z]{2}S?$|^KXHOUSERACE$|^(KX)?HOUSE[A-Z]{2}(\d{1,2}|AL)$")
 KALSHI_FLOOR = 0.01  # scoring floors Kalshi's probability at 1%
+# Party-named Kalshi markets ("Republican party") carry no candidate; their names, and those of races
+# with no market, come from data/overrides/candidate_names.csv.
+PARTY_NAMED = re.compile(r"^(Democratic|Republican|Independent) party$", re.I)
 # Portfolio strategies: the expected-points rule, keeping an underdog pick only when its expected
 # points beat the Kalshi favorite's by at least this share (0 = the plain rule).
 EDGE_THRESHOLDS = [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
@@ -90,6 +93,11 @@ def price(market: dict) -> float:
     return (bid + ask) / 2 if bid > 0 and ask > 0 else float(market["last_price_dollars"] or 0)
 
 
+def candidate_names() -> dict:
+    """{(race_id, party): name} for races whose Kalshi market names no candidate, or that have none."""
+    return {(r["race_id"], r["party"]): r["candidate_name"] for r in read_rows(OVERRIDES / "candidate_names.csv")}
+
+
 def load_kalshi(path: Path) -> tuple:
     """Return (retrieved_utc, {race_id: {event, volume, cands: {party: {name, p}}}}).
 
@@ -97,6 +105,7 @@ def load_kalshi(path: Path) -> tuple:
     (e.g. a party market and a candidate market) the one with the most volume wins.
     """
     snap = json.loads(path.read_text())
+    names = candidate_names()
     races = {}
     for e in snap["events"]:
         rid = kalshi_race_id(e["title"] or "")
@@ -112,7 +121,8 @@ def load_kalshi(path: Path) -> tuple:
             party = kalshi_party(m)
             p = price(m) / total
             if party not in cands or p > cands[party]["p"]:  # one entry per party: its strongest
-                cands[party] = {"name": m["yes_sub_title"], "p": p}
+                name = m["yes_sub_title"]
+                cands[party] = {"name": names.get((rid, party), name) if PARTY_NAMED.match(name) else name, "p": p}
         races[rid] = {"event": e["event_ticker"], "volume": volume, "cands": cands}
     return snap["retrieved_utc"], races
 
@@ -257,6 +267,7 @@ def run(model_dir: Path, refresh: bool) -> dict:
     # Submissions in the official template format: model favorite (favorite_*), EV rule (ev_*),
     # and, with simulations, the chosen portfolio strategy (portfolio_*; model favorite where no market).
     picks = {r["race_id"]: r for r in compare}
+    names = candidate_names()
     for tmpl, track, scope in [("senate_track_template.csv", "senate", "Senate"),
                                ("full_congress_track_template.csv", "full_congress", "All")]:
         template = load_template(tmpl)
@@ -267,7 +278,9 @@ def run(model_dir: Path, refresh: bool) -> dict:
                 r, mk = picks[t["race_id"]], market.get(t["race_id"])
                 party = chosen[scope].get(t["race_id"], r["model_favorite"]) if prefix == "portfolio" else r[choose]
                 p_model = r["model_p_r"] if party == "R" else 1 - r["model_p_r"]
-                name = mk["cands"].get(party, {}).get("name", "") if mk else ""
+                name = mk["cands"].get(party, {}).get("name", "") if mk else names.get((t["race_id"], party), "")
+                assert name and not PARTY_NAMED.match(name), \
+                    f"{t['race_id']}: no candidate name for {party}; add it to data/overrides/candidate_names.csv"
                 rows.append({**t, "predicted_winner_party": party, "candidate_name": name,
                              "win_probability": round(p_model, 4)})
             out = model_dir / "submission" / f"{prefix}_{track}.csv"
