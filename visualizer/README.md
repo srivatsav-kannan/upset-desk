@@ -33,12 +33,13 @@ The site shows the **submission model**: whichever model's `portfolio_full_congr
   - **what drives the forecast**, in four plain lines: how the area votes, the expert ratings, the polls, and the candidate and news research;
   - **past results**: the presidential vote inside the 2026 lines, and every general election for that seat since 2012 (Senate: the same seat back to 2002), with a note where the lines changed.
 - **All races.** Every race in one table: search by state, district or candidate; filter to competitive races, seats changing party, or our upset calls; sort by state, closeness, or the size of the upset. Phones get one card per race.
-- **How it works.** The method as a short illustrated essay: the scoring rule, the four kinds of evidence, the out-of-sample track record and calibration, the seat simulation, how picks are made (with the break-even line for an upset call), and the main risks. Every number is read from the model's result files.
+- **Our prediction strategy.** The method as a short illustrated essay: the scoring rule, the four kinds of evidence, the out-of-sample track record and calibration, the seat simulation, how picks are made (with the break-even line for an upset call), and the main risks. Every number is read from the model's result files.
 - **Redistricting view** (House only): nine states redrew for 2026 (AL, CA, FL, LA, NC, OH, TN, TX, UT), changing 145 districts.
   - **Color:** each redrawn district is shaded by the 2024 presidential margin (Harris − Trump, share of the total vote) inside its lines, in the same buckets and colors. Districts whose lines didn't change are gray.
   - **2024 map / 2026 map:** switches between the old and new lines. The other map's district lines are drawn dashed, only where they moved. A click zooms into a state, so you can flip back and forth on it.
   - **Sidebar:** seats each candidate carried among the redrawn districts on the shown map, the national total (Trump carried 230 seats on the 2024 lines and 234 on the 2026 lines), the change by state, and a table of every redrawn district.
   - **Data:** The Downballot's 2024 presidential results by district on the [2024 lines and the 2026 lines](https://www.the-downballot.com/p/the-downballots-calculations-of-presidential), read from the newest `data/raw/downballot/downballot_{2024,2026}_lines_*.csv`. A district counts as redrawn when its vote totals differ between the two sheets, the same test as `uniform_swing`'s `lines_changed`.
+- **Top and bottom bars:** the team name sits between a blue and a red dot, with a small arrow pointing to the strategy page. A bar along the bottom of every page lists the team with LinkedIn and GitHub links (`src/ui/TeamBar.tsx`; a missing link shows as a dimmed icon).
 - **Links:** the whole view lives in the URL (`?state=TX&race=TX-15`, `?tab=races`, `?view=redistricting&lines=2024`), so a link reopens exactly what you were looking at.
 
 ## Data it reads
@@ -104,7 +105,7 @@ The build uses relative paths, so it works under the `/election-prediction/` sub
 | `src/map/Legend.tsx`, `Tooltip.tsx`, `RaceTable.tsx` | Seat sidebar, hover card, redistricting table |
 | `src/map/scale.ts`, `src/map/redistricting.ts`, `src/ui/words.ts` | Shades and buckets; redistricting labels; every plain-language label |
 | `src/three/State3D.tsx` | The 3D state: extruded districts, lighting and shadows, camera intro, hover and selection |
-| `src/views/StateView.tsx`, `RacePanel.tsx`, `RacesView.tsx`, `MethodView.tsx` | State view, race panel, all-races table, How it works |
+| `src/views/StateView.tsx`, `RacePanel.tsx`, `RacesView.tsx`, `MethodView.tsx` | State view, race panel, all-races table, Our prediction strategy |
 | `scripts/build-geo.mjs` | Census shapefiles → `src/geo/us-2026.json`, including the 2024 lines of redrawn states |
 | `scripts/build-history.mjs` | 538 results archive + The Downballot → `src/data/history.json` |
 

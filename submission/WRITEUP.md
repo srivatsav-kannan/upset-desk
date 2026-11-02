@@ -46,7 +46,7 @@ Left out: FEC money and demographics. Lean and ratings already carry most of tha
 
 https://srivatsav-kannan.github.io/election-prediction/ (once GitHub Pages is turned on, see the checklist)
 
-No slide deck is required. The site is our explanation: an interactive map of all 470 races, a 3D view of each state, a panel for every race (who's favored, why, our call and what it's worth, past results), a searchable table, and a How it works essay with the track record and the pick strategy. It's written for a general audience, with no model jargon.
+No slide deck is required. The site is our explanation: an interactive map of all 470 races, a 3D view of each state, a panel for every race (who's favored, why, our call and what it's worth, past results), a searchable table, and an "Our prediction strategy" page with the track record and the pick strategy. It's written for a general audience, with no model jargon.
 
 ## Anything else you want to tell us?
 

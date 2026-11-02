@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { OUTLOOK, SUBMISSION_ID } from "./data/forecast";
 import { MODELS, MODEL_ERRORS, type Chamber } from "./data/models";
 import { raceViews } from "./data/races";
@@ -9,6 +9,7 @@ import { Legend, RedistrictingLegend } from "./map/Legend";
 import { RedistrictingTable } from "./map/RaceTable";
 import { shapesMismatch } from "./map/redistricting";
 import { regionsFor, type ViewMode } from "./map/regions";
+import { TeamBar } from "./ui/TeamBar";
 import { pct } from "./ui/words";
 import { MethodView } from "./views/MethodView";
 import { RacePanel } from "./views/RacePanel";
@@ -19,7 +20,7 @@ type Tab = "map" | "races" | "method";
 const TABS: [Tab, string][] = [
   ["map", "Map"],
   ["races", "All races"],
-  ["method", "How it works"],
+  ["method", "Our prediction strategy"],
 ];
 
 interface View {
@@ -150,9 +151,20 @@ export function App() {
         </a>
         <nav className="tabs" aria-label="Sections">
           {TABS.map(([t, label]) => (
-            <button key={t} type="button" aria-current={t === view.tab ? "page" : undefined} onClick={() => setView((v) => ({ ...v, tab: t, race: null }))}>
-              {label}
-            </button>
+            <Fragment key={t}>
+              {t === "method" && view.tab !== "method" && (
+                <span className="tab-hint" aria-hidden="true">
+                  how we did it
+                  <svg viewBox="0 0 34 14">
+                    <path d="M2 9c8-6 18-7 28-2" />
+                    <path d="M25 3.5l5.5 3.5-5 4" />
+                  </svg>
+                </span>
+              )}
+              <button type="button" aria-current={t === view.tab ? "page" : undefined} onClick={() => setView((v) => ({ ...v, tab: t, race: null }))}>
+                {label}
+              </button>
+            </Fragment>
           ))}
         </nav>
       </header>
@@ -246,6 +258,8 @@ export function App() {
 
       {view.tab === "races" && <RacesView views={views} onSelect={openRace} selectedId={view.race} />}
       {view.tab === "method" && <MethodView views={views} />}
+
+      <TeamBar />
 
       {selected && (
         <>

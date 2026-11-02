@@ -325,7 +325,7 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
   return (
     <article className="method">
       <header className="method-hero">
-        <div className="eyebrow">How it works</div>
+        <div className="eyebrow">Our prediction strategy</div>
         <h2>How we forecast every race, and where we bet against the market</h2>
         <p className="lede">
           We forecast all 470 House and Senate races on the 2026 ballot and then choose a candidate to back in each one. Usually that's the
