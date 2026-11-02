@@ -44,9 +44,9 @@ Left out: FEC money and demographics. Lean and ratings already carry most of tha
 
 ## Link to visualization, slides, or extra explanation (optional)
 
-No slide deck is required. The form only asks for this link if we want the bonus award, and even then a deck is optional. Our best asset is the interactive map in [`visualizer/`](../visualizer/). It shows every race on the 2026 lines, plus a redistricting view and per-race tooltips. Options:
-- **Link the repo README.** Zero work, but the repo has to be public or shared first anyway.
-- **Publish the map on GitHub Pages.** The workflow already exists. It needs a one-time setup by the repo owner, and the site is public.
+https://srivatsav-kannan.github.io/election-prediction/ (once GitHub Pages is turned on, see the checklist)
+
+No slide deck is required. The site is our explanation: an interactive map of all 470 races, a 3D view of each state, a panel for every race (who's favored, why, our call and what it's worth, past results), a searchable table, and a How it works essay with the track record and the pick strategy. It's written for a general audience, with no model jargon.
 
 ## Anything else you want to tell us?
 
@@ -59,5 +59,6 @@ Everything reproduces from code: `python3 forecast.py` regenerates every CSV in 
 - [ ] Upload `house_polls_portfolio_full_congress.csv` to Google Drive and set it to "anyone with the link can view".
 - [ ] Make the repo public, or add dwgan@stanford.edu and arsalem@stanford.edu as collaborators. **It's private right now.**
 - [ ] Team name, full names and Stanford emails of all three of us, in the same order.
-- [ ] Track: Full Congress. Bonus award: yes, if we link the map.
+- [ ] Turn on GitHub Pages (Settings → Pages → Source: GitHub Actions; needs the repo public, or GitHub Pro), then check the link above loads.
+- [ ] Track: Full Congress. Bonus award: yes.
 - [ ] Tick the three acknowledgement boxes.

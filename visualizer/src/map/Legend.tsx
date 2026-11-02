@@ -31,10 +31,10 @@ const MIN_LABEL_PX = 20;
 
 const { lean, likely, safe } = MARGIN_STEPS;
 const RANGE: Record<Bucket, string> = {
-  safe: `${safe}+ pt`,
-  likely: `${likely}–${safe} pt`,
-  lean: `${lean}–${likely} pt`,
-  tilt: `under ${lean} pt`,
+  safe: `by ${safe}+`,
+  likely: `by ${likely}–${safe}`,
+  lean: `by ${lean}–${likely}`,
+  tilt: `within ${lean}`,
 };
 
 /** Safest Republican at the top, through the tilts (and independents), to safest Democrat at the bottom. */
@@ -69,7 +69,7 @@ function SeatBar({ r, d, independents, unit }: { r: Arm; d: Arm; independents: n
     order.map((b) => ({
       key: `${side}-${b}`,
       label: `${BUCKET_LABEL[b]} ${a.short}`,
-      range: `Margin ${RANGE[b]}`,
+      range: `Projected to win ${RANGE[b]} points`,
       count: a.counts[b],
       className: `seat-seg seat-seg-${b}`,
       fill: `var(--${side}-${b})`,
@@ -170,7 +170,11 @@ export function Legend({ regions, chamber }: { regions: Region[]; chamber: Chamb
   }
 
   return (
-    <section className="legend" aria-label="Seats by projected margin">
+    <section className="legend" aria-label="Seats by projected winner">
+      <h2 className="legend-title">
+        {chamber === "Senate" ? `The ${wins.D + wins.R + wins.I} Senate seats on the ballot` : `All ${wins.D + wins.R + wins.I} House seats`}
+        <span>by who's favored, and how strongly</span>
+      </h2>
       <SeatBar
         r={{ name: PARTY_NAME.R, short: "R", total: wins.R, counts: counts.r }}
         d={{ name: PARTY_NAME.D, short: "D", total: wins.D, counts: counts.d }}

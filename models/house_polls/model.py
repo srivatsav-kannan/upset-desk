@@ -143,7 +143,7 @@ def run(args) -> None:
     # the non-Republican, and Senate seats plus the non-Republican seats not up this year.
     senate_base = read_rows(MODELS / "uniform_swing" / "results" / "senate_2024_baseline.csv")
     holdover = ens_model.SENATE_DEM_CAUCUS_NOW - sum(r["incumbent_party"] in ("D", "I") for r in senate_base)
-    summary = []
+    summary, dist = [], []
     for ch, need, extra in (("House", 218, 0), ("Senate", 51, holdover)):
         rows = [o for p, o in zip(preds, outcomes) if p["chamber"] == ch]
         xs = [extra + sum(o[k] == "1" for o in rows) for k in range(SIMS)]
@@ -151,7 +151,10 @@ def run(args) -> None:
                         "p05": ens_model.quantile(xs, 0.05), "median": ens_model.quantile(xs, 0.5),
                         "p95": ens_model.quantile(xs, 0.95), "p_non_r_majority": round(sum(x >= need for x in xs) / SIMS, 4),
                         "majority_needs": need, "simulations": SIMS, "seed": SEED})
+        dist += [{"scenario": "central", "chamber": ch, "non_r_seats": n, "probability": round(xs.count(n) / SIMS, 5)}
+                 for n in sorted(set(xs))]
     write_csv(RESULTS / "simulation_summary.csv", summary, list(summary[0].keys()))
+    write_csv(RESULTS / "seat_distribution.csv", dist, list(dist[0].keys()))
     write_csv(RESULTS / "race_changes.csv", changes, list(changes[0].keys()))
     write_csv(RESULTS / "house_polls_2026.csv", poll_rows, list(poll_rows[0].keys()))
     write_csv(RESULTS / "race_explain.csv", explain, list(explain[0].keys()))

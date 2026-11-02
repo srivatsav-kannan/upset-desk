@@ -1,42 +1,89 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { OUTLOOK, SUBMISSION_ID } from "./data/forecast";
 import { MODELS, MODEL_ERRORS, type Chamber } from "./data/models";
+import { raceViews } from "./data/races";
 import { LINES_YEARS, loadRedistricting, type LinesYear, type Redistricting } from "./data/redistricting";
 import { ElectionMap } from "./map/ElectionMap";
 import { loadGeometry, type UsGeometry } from "./map/geo";
 import { Legend, RedistrictingLegend } from "./map/Legend";
-import { RaceTable, RedistrictingTable } from "./map/RaceTable";
+import { RedistrictingTable } from "./map/RaceTable";
 import { shapesMismatch } from "./map/redistricting";
 import { regionsFor, type ViewMode } from "./map/regions";
+import { pct } from "./ui/words";
+import { MethodView } from "./views/MethodView";
+import { RacePanel } from "./views/RacePanel";
+import { RacesView } from "./views/RacesView";
+import { StateView } from "./views/StateView";
 
-const CHAMBERS: Chamber[] = ["Senate", "House"];
-const MODES: [ViewMode, string][] = [
-  ["forecast", "Forecast"],
-  ["redistricting", "Redistricting"],
+type Tab = "map" | "races" | "method";
+const TABS: [Tab, string][] = [
+  ["map", "Map"],
+  ["races", "All races"],
+  ["method", "How it works"],
 ];
 
 interface View {
+  tab: Tab;
+  /** A model folder; the team's submission unless the link names another (for the team's own checks). */
   modelId: string;
   chamber: Chamber;
   mode: ViewMode;
   year: LinesYear;
+  state: string | null;
+  race: string | null;
 }
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
-/**
- * The view lives in the URL (?model=...&chamber=...&view=...&lines=...) so a link opens the same
- * map. Redistricting is a House view, so it overrides the chamber.
- */
+/** The whole view lives in the URL, so any link reopens exactly what you were looking at. */
 function viewFromUrl(): View {
   const q = new URLSearchParams(window.location.search);
-  const model = MODELS.find((m) => m.id === q.get("model")) ?? MODELS[0];
+  const model = MODELS.find((m) => m.id === q.get("model")) ?? MODELS.find((m) => m.id === SUBMISSION_ID) ?? MODELS[0];
+  const tab = (TABS.find(([t]) => t === q.get("tab"))?.[0] ?? "map") as Tab;
   const mode = q.get("view") === "redistricting" ? "redistricting" : "forecast";
+  const race = q.get("race");
   return {
+    tab,
     modelId: model?.id ?? "",
     chamber: mode === "forecast" && q.get("chamber") === "senate" ? "Senate" : "House",
     mode,
     year: q.get("lines") === "2024" ? 2024 : 2026,
+    state: q.get("state")?.toUpperCase().slice(0, 2) ?? null,
+    race: race && model?.races.has(race) ? race : null,
   };
+}
+
+function urlOf(view: View): string {
+  const q = new URLSearchParams();
+  if (view.tab !== "map") q.set("tab", view.tab);
+  if (view.modelId !== SUBMISSION_ID) q.set("model", view.modelId);
+  if (view.tab === "map") {
+    q.set("chamber", view.chamber.toLowerCase());
+    if (view.mode === "redistricting") q.set("view", "redistricting");
+    if (view.mode === "redistricting") q.set("lines", String(view.year));
+    if (view.state) q.set("state", view.state);
+  }
+  if (view.race) q.set("race", view.race);
+  const s = q.toString();
+  return s ? `?${s}` : window.location.pathname;
+}
+
+function Outlook({ chamber, active, onClick }: { chamber: Chamber; active: boolean; onClick: () => void }) {
+  const o = OUTLOOK[chamber];
+  if (!o) return null;
+  const dem = o.pMajority >= 0.5;
+  return (
+    <button type="button" className={active ? "outlook-card outlook-active" : "outlook-card"} onClick={onClick} aria-pressed={active}>
+      <span className="outlook-chamber">{chamber}</span>
+      <span className={`outlook-big ${dem ? "text-d" : "text-r"}`}>{pct(dem ? o.pMajority : 1 - o.pMajority)}</span>
+      <span className="outlook-text">
+        chance {dem ? (chamber === "Senate" ? "Democrats and allied independents win" : "Democrats win") : "Republicans keep"} control
+      </span>
+      <span className="outlook-seats">
+        {o.median} seats in the typical outcome · {o.low}–{o.high} in 9 of 10
+      </span>
+    </button>
+  );
 }
 
 export function App() {
@@ -45,7 +92,6 @@ export function App() {
   const [geoError, setGeoError] = useState<string | null>(null);
   const [redistricting, setRedistricting] = useState<Redistricting | null>(null);
   const [redistrictingError, setRedistrictingError] = useState<string | null>(null);
-  const [showTable, setShowTable] = useState(false);
   const model = MODELS.find((m) => m.id === view.modelId);
 
   useEffect(() => {
@@ -54,21 +100,13 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search);
-    q.set("model", view.modelId);
-    q.set("chamber", view.chamber.toLowerCase());
-    q.set("view", view.mode);
-    if (view.mode === "redistricting") q.set("lines", String(view.year));
-    else q.delete("lines");
-    window.history.replaceState(null, "", `?${q}`);
+    window.history.replaceState(null, "", urlOf(view));
   }, [view]);
 
-  // Without its data (or with shapes that don't match it) the redistricting view is unavailable.
   const linesError = redistrictingError ?? (geo && redistricting ? shapesMismatch(geo, redistricting) : null);
   useEffect(() => {
     if (linesError) console.error(linesError);
   }, [linesError]);
-  // Non-null exactly when the redistricting view is showing.
   const shownLines = view.mode === "redistricting" && !linesError ? redistricting : null;
   const mode: ViewMode = shownLines ? "redistricting" : "forecast";
   const year: LinesYear = shownLines ? view.year : 2026;
@@ -77,13 +115,20 @@ export function App() {
     () => (geo ? regionsFor(geo, view.chamber, model, redistricting, year) : []),
     [geo, view.chamber, model, redistricting, year],
   );
-  // Wait for the sheets too, so a redistricting link doesn't flash the forecast first.
+  const views = useMemo(() => (model ? raceViews(model) : new Map()), [model]);
+  const redrawn = useMemo(() => new Set(geo?.redrawn ?? []), [geo]);
   const linesLoaded = redistricting !== null || redistrictingError !== null;
+
+  const openRace = useCallback((race: string) => setView((v) => ({ ...v, race })), []);
+  const closeRace = useCallback(() => setView((v) => ({ ...v, race: null })), []);
+  const openState = useCallback((state: string) => setView((v) => ({ ...v, state, race: null })), []);
+  const closeState = useCallback(() => setView((v) => ({ ...v, state: null, race: null })), []);
+  const selected = view.race ? views.get(view.race) : undefined;
 
   if (!model) {
     return (
       <main className="empty">
-        <p>No model predictions found. Each model writes models/&lt;name&gt;/predictions.csv.</p>
+        <p>No forecast found.</p>
         {MODEL_ERRORS.map((e) => (
           <p key={e} className="error">
             {e}
@@ -93,89 +138,106 @@ export function App() {
     );
   }
 
+  const ready = geo && linesLoaded;
   return (
     <div className="app">
-      <header className="controls">
-        <h1>2026 Congress</h1>
-        <label className="model-picker">
-          <span className="visually-hidden">Model</span>
-          <select value={model.id} onChange={(e) => setView((v) => ({ ...v, modelId: e.target.value }))}>
-            {MODELS.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="segmented" role="group" aria-label="Chamber">
-          {CHAMBERS.map((c) => (
-            <button
-              key={c}
-              type="button"
-              aria-pressed={c === view.chamber}
-              onClick={() => setView((v) => ({ ...v, chamber: c, mode: c === "Senate" ? "forecast" : v.mode }))}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-        <div className="segmented" role="group" aria-label="View">
-          {MODES.map(([m, label]) => (
-            <button
-              key={m}
-              type="button"
-              aria-pressed={m === mode}
-              disabled={m === "redistricting" && !!linesError}
-              title={m === "redistricting" ? (linesError ?? "House districts redrawn for 2026, on the old and new lines") : undefined}
-              onClick={() => setView((v) => ({ ...v, mode: m, chamber: m === "redistricting" ? "House" : v.chamber }))}
-            >
+      <header className="topbar">
+        <a className="brand" href={window.location.pathname} onClick={(e) => (e.preventDefault(), setView((v) => ({ ...v, tab: "map", state: null, race: null })))}>
+          <span className="brand-mark" aria-hidden="true">
+            <span />
+            <span />
+          </span>
+          <span className="brand-text">
+            <strong>2026 Congress</strong>
+            <span>Model Citizens forecast</span>
+          </span>
+        </a>
+        <nav className="tabs" aria-label="Sections">
+          {TABS.map(([t, label]) => (
+            <button key={t} type="button" aria-current={t === view.tab ? "page" : undefined} onClick={() => setView((v) => ({ ...v, tab: t, race: null }))}>
               {label}
             </button>
           ))}
-        </div>
-        {shownLines && (
-          <div className="segmented" role="group" aria-label="District lines">
-            {LINES_YEARS.map((y) => (
-              <button key={y} type="button" aria-pressed={y === year} onClick={() => setView((v) => ({ ...v, year: y }))}>
-                {y} lines
-              </button>
-            ))}
-          </div>
-        )}
-        <button type="button" className="table-toggle" aria-pressed={showTable} onClick={() => setShowTable((s) => !s)}>
-          Table
-        </button>
+        </nav>
       </header>
 
-      <div className="workspace">
-        <main className="stage">
-          {geo && linesLoaded ? (
-            <>
-              <div className="map-view" hidden={showTable}>
-                <ElectionMap geo={geo} chamber={view.chamber} mode={mode} year={year} regions={regions} modelName={model.name} />
+      {view.tab === "map" && (
+        <div className="map-page">
+          {!view.state && (
+            <div className="hero">
+              <Outlook chamber="House" active={view.chamber === "House" && mode === "forecast"} onClick={() => setView((v) => ({ ...v, chamber: "House", mode: "forecast" }))} />
+              <Outlook chamber="Senate" active={view.chamber === "Senate"} onClick={() => setView((v) => ({ ...v, chamber: "Senate", mode: "forecast" }))} />
+              <div className="hero-tools">
+                <button
+                  type="button"
+                  className="toggle"
+                  aria-pressed={mode === "redistricting"}
+                  disabled={!!linesError}
+                  onClick={() => setView((v) => ({ ...v, chamber: "House", mode: v.mode === "redistricting" ? "forecast" : "redistricting" }))}
+                >
+                  <span className="toggle-track" aria-hidden="true">
+                    <span />
+                  </span>
+                  Redrawn districts
+                </button>
+                {shownLines && (
+                  <div className="segmented" role="group" aria-label="District lines">
+                    {LINES_YEARS.map((y) => (
+                      <button key={y} type="button" aria-pressed={y === year} onClick={() => setView((v) => ({ ...v, year: y }))}>
+                        {y} map
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              {showTable &&
-                (shownLines ? (
-                  <RedistrictingTable regions={regions} modelName={model.name} />
-                ) : (
-                  <RaceTable regions={regions} chamber={view.chamber} modelName={model.name} />
-                ))}
-            </>
-          ) : (
-            <p className="status">{geoError ? `Couldn't load the map: ${geoError}` : "Loading map…"}</p>
+            </div>
           )}
-        </main>
-
-        {geo && linesLoaded && (
-          <aside className="sidebar">
-            {shownLines ? (
-              <RedistrictingLegend regions={regions} redistricting={shownLines} year={year} />
-            ) : (
-              <Legend regions={regions} chamber={view.chamber} />
+          <div className={view.state ? "workspace workspace-full" : "workspace"}>
+            <main className="stage">
+              {!ready ? (
+                <p className="status">{geoError ? `Couldn't load the map: ${geoError}` : "Loading map…"}</p>
+              ) : view.state ? (
+                <StateView stateId={view.state} geo={geo} views={views} selectedId={view.race} onSelect={openRace} onBack={closeState} />
+              ) : (
+                <ElectionMap
+                  geo={geo}
+                  chamber={view.chamber}
+                  mode={mode}
+                  year={year}
+                  regions={regions}
+                  views={views}
+                  onState={openState}
+                />
+              )}
+            </main>
+            {ready && !view.state && (
+              <aside className="sidebar">
+                {shownLines ? (
+                  <>
+                    <RedistrictingLegend regions={regions} redistricting={shownLines} year={year} />
+                    <details className="lines-table">
+                      <summary>Every redrawn district</summary>
+                      <RedistrictingTable regions={regions} />
+                    </details>
+                  </>
+                ) : (
+                  <Legend regions={regions} chamber={view.chamber} />
+                )}
+              </aside>
             )}
-          </aside>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {view.tab === "races" && <RacesView views={views} onSelect={openRace} selectedId={view.race} />}
+      {view.tab === "method" && <MethodView views={views} />}
+
+      {selected && (
+        <>
+          <div className="scrim" onClick={closeRace} aria-hidden="true" />
+          <RacePanel view={selected} redrawn={redrawn.has(selected.stateId)} onClose={closeRace} />
+        </>
+      )}
     </div>
   );
 }

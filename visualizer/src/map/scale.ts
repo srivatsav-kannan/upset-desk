@@ -5,7 +5,7 @@ export type Side = "d" | "r";
 
 /** Weakest to strongest. */
 export const BUCKETS: Bucket[] = ["tilt", "lean", "likely", "safe"];
-export const BUCKET_LABEL: Record<Bucket, string> = { tilt: "Tilt", lean: "Lean", likely: "Likely", safe: "Safe" };
+export const BUCKET_LABEL: Record<Bucket, string> = { tilt: "Toss-up", lean: "Lean", likely: "Likely", safe: "Safe" };
 
 /** Margin buckets in points (the same defaults as jacksonjude's USA Election Map). */
 export const MARGIN_STEPS = { safe: 15, likely: 5, lean: 1 };
@@ -45,7 +45,7 @@ export function formatMargin(race: Race): string {
 }
 
 export function formatProbability(p: number): string {
-  if (p > 0.995) return ">99%";
-  if (p < 0.005) return "<1%";
+  if (p >= 0.995) return ">99%";
+  if (p <= 0.005) return "<1%";
   return `${Math.round(p * 100)}%`;
 }

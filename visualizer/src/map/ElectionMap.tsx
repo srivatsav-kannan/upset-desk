@@ -4,18 +4,20 @@ import { select } from "d3-selection";
 import "d3-transition";
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
 import type { Chamber } from "../data/models";
+import type { RaceView } from "../data/races";
 import type { LinesYear } from "../data/redistricting";
 import type { BBox, UsGeometry } from "./geo";
 import { formatPres, linesFillOf, shiftLabel } from "./redistricting";
 import type { Region, ViewMode } from "./regions";
-import { BUCKET_LABEL, PARTY_NAME, bucketOf, fillOf, formatMargin, formatProbability } from "./scale";
+import { PARTY_NAME, bucketOf, fillOf } from "./scale";
+import { pct, ratingOf } from "../ui/words";
 import { Tooltip, type TooltipAnchor } from "./Tooltip";
 
 const MAX_ZOOM = 24;
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /** A race flashes on a model switch when this changes: its projected winner or its margin bucket. */
-const ratingOf = (r: Region) => (r.race ? `${r.race.winner} ${bucketOf(r.race)}` : "");
+const flashKey = (r: Region) => (r.race ? `${r.race.winner} ${bucketOf(r.race)}` : "");
 
 function ariaLabel(r: Region, mode: ViewMode, year: LinesYear): string {
   if (mode === "redistricting") {
@@ -25,7 +27,7 @@ function ariaLabel(r: Region, mode: ViewMode, year: LinesYear): string {
   }
   if (!r.race) return `${r.title}: no race`;
   const { race } = r;
-  return `${r.title}: ${formatMargin(race)}, ${PARTY_NAME[race.winner]} ${formatProbability(race.winProbability)} to win, ${BUCKET_LABEL[bucketOf(race)]} ${race.winner}`;
+  return `${r.title}: ${ratingOf(race)}, ${PARTY_NAME[race.winner]} ${pct(race.winProbability)} to win`;
 }
 
 /** The colored shapes. Memoized so hovering and zooming never re-render 435 paths. */
@@ -75,10 +77,12 @@ interface Props {
   /** Redistricting view: which map's lines the regions are drawn on. */
   year: LinesYear;
   regions: Region[];
-  modelName: string;
+  views: Map<string, RaceView>;
+  /** Forecast view: a click on a state opens it. */
+  onState: (stateId: string) => void;
 }
 
-export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Props) {
+export function ElectionMap({ geo, chamber, mode, year, regions, views, onState }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const [transform, setTransform] = useState<ZoomTransform>(zoomIdentity);
@@ -98,7 +102,7 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
         setTransform(e.transform);
         setAnchor(null); // the shapes just moved under the pointer; the next move re-targets
       });
-    // Double-click is left alone: in the House view a single click already zooms to the state.
+    // Double-click is left alone: a single click already opens (or, for redrawn lines, zooms to) the state.
     select(svg).call(behavior).on("dblclick.zoom", null);
     zoomRef.current = behavior;
     return () => {
@@ -147,8 +151,8 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
       setFlash(null);
       return;
     }
-    const before = new Map(prev.regions.map((r) => [r.id, ratingOf(r)]));
-    const changed = regions.filter((r) => before.get(r.id) !== ratingOf(r));
+    const before = new Map(prev.regions.map((r) => [r.id, flashKey(r)]));
+    const changed = regions.filter((r) => before.get(r.id) !== flashKey(r));
     setFlash((f) => ({ changed, count: changed.length, n: (f?.n ?? 0) + 1 }));
   }, [chamber, mode, year, regions]);
 
@@ -179,10 +183,12 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
     setAnchor({ region, x: box.left + box.width / 2, y: box.top + box.height / 2 });
   };
 
-  // In the House view a click on a state zooms into it (only from the full-country view).
+  // Forecast: a click opens the state. Redrawn lines: it zooms in, so both maps can be compared there.
   const onClick = (e: MouseEvent<SVGSVGElement>) => {
     const region = regionAt(e.target);
-    if (region && chamber === "House" && transform.k < 1.5) fitBox(region.stateBBox);
+    if (!region) return;
+    if (mode === "forecast") onState(region.stateId);
+    else if (transform.k < 1.5) fitBox(region.stateBBox);
   };
 
   const active = anchor ? byId.get(anchor.region.id) : undefined;
@@ -192,7 +198,7 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
   const label =
     mode === "redistricting"
       ? `Map of House districts on the ${year} lines, redrawn districts colored by 2024 presidential margin.`
-      : `Map of 2026 ${chamber} races, colored by projected margin. ${modelName}.`;
+      : `Map of 2026 ${chamber} races, colored by how strongly each is favored. Select a state for its races.`;
 
   return (
     <div className="map-frame">
@@ -253,7 +259,7 @@ export function ElectionMap({ geo, chamber, mode, year, regions, modelName }: Pr
       <p className="visually-hidden" aria-live="polite">
         {flash && `${flash.count} ${flash.count === 1 ? "race" : "races"} changed rating.`}
       </p>
-      <Tooltip anchor={anchor} chamber={chamber} mode={mode} year={year} modelName={modelName} />
+      <Tooltip anchor={anchor} chamber={chamber} mode={mode} year={year} views={views} />
     </div>
   );
 }

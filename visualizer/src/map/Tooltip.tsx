@@ -1,9 +1,11 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import type { Chamber } from "../data/models";
+import type { RaceView } from "../data/races";
 import { LINES_YEARS, type LinesYear } from "../data/redistricting";
 import { flipOf, formatPres, presFillOf, shiftLabel } from "./redistricting";
 import type { Region, ViewMode } from "./regions";
-import { BUCKET_LABEL, PARTY_NAME, bucketOf, fillOf, formatMargin, formatProbability } from "./scale";
+import { PARTY_NAME, fillOf } from "./scale";
+import { lastName, pct, ratingOf } from "../ui/words";
 
 export interface TooltipAnchor {
   region: Region;
@@ -15,20 +17,20 @@ export interface TooltipAnchor {
 const OFFSET = 14;
 
 /** The district's 2024 presidential margin on the shown map, then on both maps if it was redrawn. */
-function LinesCard({ region, year, modelName }: { region: Region; year: LinesYear; modelName: string }) {
+function LinesCard({ region, year }: { region: Region; year: LinesYear }) {
   const { lines, race } = region;
   if (!lines) return <div className="tooltip-meta">No presidential results</div>;
   const flip = flipOf(lines);
   return (
     <>
       <div className="tooltip-value">{formatPres(lines.vote[year].margin)}</div>
-      <div className="tooltip-caption">2024 presidential vote, {year} lines</div>
+      <div className="tooltip-caption">2024 vote for president, inside the {year} lines</div>
       {lines.redrawn ? (
         <>
           {LINES_YEARS.map((y) => (
             <div key={y} className={y === year ? "tooltip-row tooltip-row-current" : "tooltip-row"}>
               <span className="line-key" style={{ background: presFillOf(lines.vote[y].margin) }} aria-hidden="true" />
-              <span>{y} lines</span>
+              <span>{y} map</span>
               <span className="tooltip-num">{formatPres(lines.vote[y].margin)}</span>
             </div>
           ))}
@@ -38,16 +40,9 @@ function LinesCard({ region, year, modelName }: { region: Region; year: LinesYea
           </div>
         </>
       ) : (
-        <div className="tooltip-meta">
-          Lines unchanged
-          {region.stateId === "MO" && ". Missouri's new 2025 map isn't shown: our predictions use its old lines."}
-        </div>
+        <div className="tooltip-meta">Lines unchanged for 2026</div>
       )}
-      {race && (
-        <div className="tooltip-meta">
-          2026 forecast {formatMargin(race)} · {modelName}
-        </div>
-      )}
+      {race && <div className="tooltip-meta">2026 forecast: {ratingOf(race)}</div>}
     </>
   );
 }
@@ -58,46 +53,31 @@ interface Props {
   chamber: Chamber;
   mode: ViewMode;
   year: LinesYear;
-  modelName: string;
+  views: Map<string, RaceView>;
 }
 
-/** Values lead, labels follow: the margin is the strong element, the race name sits above it. */
-function TooltipBody({ region, chamber, mode, year, modelName }: Omit<Props, "anchor"> & { region: Region }) {
-  const { race, lines } = region;
+/** The leader's name and chance lead; the rating and a hint follow. */
+function TooltipBody({ region, chamber, mode, year, views }: Omit<Props, "anchor"> & { region: Region }) {
+  const { race } = region;
+  const view = race ? views.get(race.raceId) : undefined;
+  const leader = view ? (race?.winner === "R" ? view.extras.candidates.r : view.extras.candidates.other) : "";
   return (
     <>
       <div className="tooltip-title">{region.title}</div>
       {mode === "redistricting" ? (
-        <LinesCard region={region} year={year} modelName={modelName} />
+        <LinesCard region={region} year={year} />
       ) : race ? (
         <>
-          <div className="tooltip-value">{formatMargin(race)}</div>
-          <div className="tooltip-row">
+          <div className="tooltip-row tooltip-lead">
             <span className="line-key" style={{ background: fillOf(race) }} aria-hidden="true" />
-            <span>{PARTY_NAME[race.winner]}</span>
-            <span className="tooltip-num">{formatProbability(race.winProbability)} to win</span>
+            <span>{leader ? lastName(leader) : PARTY_NAME[race.winner]}</span>
+            <span className="tooltip-num">{pct(race.winProbability)}</span>
           </div>
-          <div className="tooltip-meta">
-            {BUCKET_LABEL[bucketOf(race)]} {race.winner} · {modelName}
-          </div>
-          {lines?.redrawn && (
-            <div className="tooltip-meta">
-              Redrawn for 2026: {formatPres(lines.vote[2024].margin)} → {formatPres(lines.vote[2026].margin)} (2024 vote)
-            </div>
-          )}
-          {race.explain.length > 0 && (
-            <dl className="tooltip-explain">
-              {race.explain.map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
+          <div className="tooltip-meta">{ratingOf(race)}</div>
+          <div className="tooltip-hint">Click to explore {region.stateName}</div>
         </>
       ) : (
-        <div className="tooltip-meta">{chamber === "Senate" ? "No Senate race in 2026" : "No prediction"}</div>
+        <div className="tooltip-meta">{chamber === "Senate" ? "No Senate race in 2026" : "No forecast"}</div>
       )}
     </>
   );
@@ -119,7 +99,7 @@ export function Tooltip({ anchor, ...rest }: Props) {
     const el = ref.current;
     if (!el || !region) return;
     setSize({ width: el.offsetWidth, height: el.offsetHeight });
-  }, [region, rest.mode, rest.year, rest.modelName]);
+  }, [region, rest.mode, rest.year]);
 
   // Keep the box inside the viewport: flip to the other side of the pointer near an edge.
   let left = 0;
