@@ -141,6 +141,12 @@ export function extrasFor(raceId: string): RaceExtras {
   };
 }
 
+/** Our pick is a candidate our own forecast expects to lose: a strategic pick against the market. */
+export function isStrategic(view: { race: { winner: Party }; extras: RaceExtras }): boolean {
+  const { call, market } = view.extras;
+  return !!call && !!market && call.party !== view.race.winner;
+}
+
 /** Points a correct call scores: −log₂ of the market's probability for it, floored at 1%. */
 export const pointsFor = (p: number): number => -Math.log2(Math.max(p, 0.01));
 

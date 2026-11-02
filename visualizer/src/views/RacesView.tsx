@@ -1,22 +1,21 @@
 import { useDeferredValue, useMemo, useState } from "react";
-import { marketProbability } from "../data/forecast";
+import { isStrategic, marketProbability } from "../data/forecast";
 import type { Party } from "../data/models";
 import { readingOrder, type RaceView } from "../data/races";
 import { bucketOf, fillOf } from "../map/scale";
 import { PARTY_LONG, lastName, pct, ratingOf } from "../ui/words";
 
 type Chamber = "All" | "Senate" | "House";
-type Filter = "all" | "close" | "upsets" | "flips";
+type Filter = "all" | "close" | "strategic" | "flips";
 
 const FILTERS: [Filter, string][] = [
   ["all", "All races"],
   ["close", "Competitive"],
   ["flips", "Changing party"],
-  ["upsets", "Our upset calls"],
+  ["strategic", "Strategic picks"],
 ];
 
 const partyVar = (p: Party) => (p === "R" ? "var(--r-likely)" : "var(--d-likely)");
-const isUpset = (v: RaceView) => !!v.extras.market && !!v.extras.call && v.extras.call.party !== v.extras.market.favorite;
 /** The party that won this seat last time it was on the ballot. */
 const lastWinner = (v: RaceView): Party | undefined => v.extras.history?.past[0]?.winner.party;
 const flips = (v: RaceView) => {
@@ -56,7 +55,7 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
         (chamber === "All" || v.chamber === chamber) &&
         (filter === "all" ||
           (filter === "close" && (bucketOf(v.race) === "tilt" || bucketOf(v.race) === "lean" || v.race.winProbability < 0.8)) ||
-          (filter === "upsets" && isUpset(v)) ||
+          (filter === "strategic" && isStrategic(v)) ||
           (filter === "flips" && flips(v))) &&
         terms.every((t) => index.get(v.id)?.includes(t)),
     );
@@ -65,7 +64,7 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
   }, [all, index, q, chamber, filter, descending]);
 
   const counts = useMemo(
-    () => ({ upsets: all.filter(isUpset).length, flips: all.filter(flips).length }),
+    () => ({ strategic: all.filter(isStrategic).length, flips: all.filter(flips).length }),
     [all],
   );
 
@@ -91,7 +90,7 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
           {FILTERS.map(([f, label]) => (
             <button key={f} type="button" className="chip" aria-pressed={f === filter} onClick={() => setFilter(f)}>
               {label}
-              {f === "upsets" && <span className="chip-count">{counts.upsets}</span>}
+              {f === "strategic" && <span className="chip-count">{counts.strategic}</span>}
               {f === "flips" && <span className="chip-count">{counts.flips}</span>}
             </button>
           ))}
@@ -115,7 +114,7 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
               <th scope="col">Matchup and our forecast</th>
               <th scope="col">Rating</th>
               <th scope="col">Prediction market</th>
-              <th scope="col">Our call</th>
+              <th scope="col">Our pick</th>
             </tr>
           </thead>
           <tbody>
@@ -179,7 +178,7 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
                       <span className="call-inline">
                         <span className={`party-dot party-dot-${extras.call.party}`} aria-hidden="true" />
                         {lastName(extras.call.name)}
-                        {isUpset(v) && <span className="badge-upset">Upset</span>}
+                        {isStrategic(v) && <span className="badge-upset">Strategic</span>}
                       </span>
                     )}
                   </td>

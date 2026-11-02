@@ -9,7 +9,7 @@ GA-SEN,Senate,13.42,0.0003,SENATEGA-26,0.0344,-0.0341,D,D,D,Jon Ossoff,0.9997,0.
 IA-SEN,Senate,-1.07,0.607,SENATEIA-26,0.525,0.082,R,R,R,Ashley Hinson,0.607,0.525,0.9296,0.5642,0.5642,0.5642,False,Ashley Hinson,Josh Turek
 ID-SEN,Senate,-13.07,0.9996,SENATEID-26,0.9637,0.0359,R,R,R,Jim Risch,0.9996,0.9637,0.0534,0.0534,0.0534,0.0534,False,Jim Risch,Todd Achilles
 IL-SEN,Senate,21.09,0.0,SENATEIL-26,0.016,-0.016,D,D,D,Juliana Stratton,1.0,0.984,0.0232,0.0232,0.0232,0.0232,False,Don Tracy,Juliana Stratton
-KS-SEN,Senate,1.05,0.3946,SENATEKS-26,0.401,-0.0064,D,D,R,Roger Marshall,0.3946,0.401,1.3184,0.5202,0.4476,0.4476,True,Roger Marshall,Adam Hamilton
+KS-SEN,Senate,1.05,0.3946,SENATEKS-26,0.401,-0.0064,D,D,D,Adam Hamilton,0.6054,0.599,0.7393,0.4476,0.4476,0.4476,False,Roger Marshall,Adam Hamilton
 KY-SEN,Senate,-24.55,1.0,SENATELA-26,0.959,0.041,R,R,R,Andy Barr,1.0,0.959,0.0605,0.0605,0.0605,0.0605,False,Andy Barr,Charles Booker
 LA-SEN,Senate,-7.19,0.9659,KXSENATELA-26NOV,0.8636,0.1023,R,R,R,Julia Letlow,0.9659,0.8636,0.2115,0.2043,0.2043,0.2043,False,Julia Letlow,Jamie Davis
 MA-SEN,Senate,32.03,0.0,SENATEMA-26,0.013,-0.013,D,D,D,Ed Markey,1.0,0.987,0.0189,0.0189,0.0189,0.0189,False,John Deaton,Ed Markey
@@ -19,7 +19,7 @@ MN-SEN,Senate,10.24,0.0047,SENATEMN-26,0.0843,-0.0796,D,D,D,Peggy Flanagan,0.995
 MS-SEN,Senate,-9.32,0.9909,SENATEMS-26,0.865,0.1259,R,R,R,Cindy Hyde-Smith,0.9909,0.865,0.2092,0.2073,0.2073,0.2073,False,Cindy Hyde-Smith,Scott Colom
 MT-SEN,Senate,-11.99,0.9989,SENATEMT-26,0.8959,0.103,R,R,R,Kurt Alme,0.9989,0.8959,0.1586,0.1584,0.1584,0.1584,False,Kurt Alme,Seth Bodnar
 NC-SEN,Senate,13.44,0.0003,SENATENC-26,0.028,-0.0277,D,D,D,Roy Cooper,0.9997,0.972,0.041,0.041,0.041,0.041,False,Michael Whatley,Roy Cooper
-NE-SEN,Senate,-2.78,0.7617,SENATENE-26,0.6919,0.0698,R,R,I,Dan Osborn,0.2383,0.3036,1.7196,0.4098,0.4048,0.4048,True,Pete Ricketts,Dan Osborn
+NE-SEN,Senate,-2.78,0.7617,SENATENE-26,0.6919,0.0698,R,R,R,Pete Ricketts,0.7617,0.6919,0.5314,0.4048,0.4048,0.4048,False,Pete Ricketts,Dan Osborn
 NH-SEN,Senate,9.8,0.0065,SENATENH-26,0.0774,-0.0709,D,D,D,Chris Pappas,0.9935,0.9226,0.1163,0.1155,0.1155,0.1155,False,John E. Sununu,Chris Pappas
 NJ-SEN,Senate,25.32,0.0,SENATENJ-26,0.016,-0.016,D,D,D,Cory Booker,1.0,0.984,0.0233,0.0233,0.0233,0.0233,False,Justin Murphy,Cory Booker
 NM-SEN,Senate,20.77,0.0,SENATENM-26,0.0135,-0.0135,D,D,D,Ben Ray Luján,1.0,0.9865,0.0196,0.0196,0.0196,0.0196,False,Larry E. Marker,Ben Ray Luján
@@ -30,7 +30,7 @@ RI-SEN,Senate,30.51,0.0,SENATERI-26,0.0115,-0.0115,D,D,D,Jack Reed,1.0,0.9885,0.
 SC-SEN,Senate,-4.9,0.893,SENATESC-26,0.685,0.208,R,R,R,Darline Graham,0.893,0.685,0.5458,0.4874,0.4874,0.4874,False,Darline Graham,Annie Andrews
 SD-SEN,Senate,-14.69,0.9999,SENATESD-26,0.9398,0.0601,R,R,R,Mike Rounds,0.9999,0.9398,0.0895,0.0895,0.0895,0.0895,False,Mike Rounds,Brian Bengs
 TN-SEN,Senate,-26.3,1.0,SENATETN-26,0.9755,0.0245,R,R,R,Bill Hagerty,1.0,0.9755,0.0359,0.0359,0.0359,0.0359,False,Bill Hagerty,Marquita Bradshaw
-TX-SEN,Senate,2.76,0.2423,SENATETX-26,0.285,-0.0427,D,D,R,Ken Paxton,0.2423,0.285,1.811,0.4389,0.3667,0.3667,True,Ken Paxton,James Talarico
+TX-SEN,Senate,2.76,0.2423,SENATETX-26,0.285,-0.0427,D,D,D,James Talarico,0.7577,0.715,0.484,0.3667,0.3667,0.3667,False,Ken Paxton,James Talarico
 VA-SEN,Senate,25.28,0.0,SENATEVA-26,0.012,-0.012,D,D,D,Mark Warner,1.0,0.988,0.0174,0.0174,0.0174,0.0174,False,Bert Mizusawa,Mark Warner
 WV-SEN,Senate,-30.63,1.0,SENATEWV-26,0.986,0.014,R,R,R,Shelley Moore Capito,1.0,0.986,0.0203,0.0203,0.0203,0.0203,False,Shelley Moore Capito,Rachel Fetty Anderson
 WY-SEN,Senate,-30.14,1.0,SENATEWY-26,0.989,0.011,R,R,R,Harriet Hageman,1.0,0.989,0.016,0.016,0.016,0.016,False,Harriet Hageman,James Byrd
@@ -114,7 +114,7 @@ CO-04,House,-11.04,0.942,KXHOUSERACE-CO04-26,0.6212,0.3208,R,R,R,Lauren Boebert,
 CO-05,House,-3.48,0.6932,KXHOUSERACE-CO05-26,0.555,0.1382,R,R,R,Jeff Crank,0.6932,0.555,0.8494,0.5888,0.5888,0.5888,False,Jeff Crank,Jessica Killin
 CO-06,House,30.4,0.0001,KXHOUSERACE-CO06-26,0.0175,-0.0174,D,D,D,Jason Crow,0.9999,0.9825,0.0255,0.0255,0.0255,0.0255,False,Jason Clark,Jason Crow
 CO-07,House,28.55,0.0001,KXHOUSERACE-CO07-26,0.013,-0.0129,D,D,D,Brittany Pettersen,0.9999,0.987,0.0189,0.0189,0.0189,0.0189,False,Tim Bennett,Brittany Pettersen
-CO-08,House,9.76,0.0814,HOUSECO8-26,0.125,-0.0436,D,D,R,Gabe Evans,0.0814,0.125,3.0,0.2442,0.177,0.177,True,Gabe Evans,Manny Rutinel
+CO-08,House,9.76,0.0814,HOUSECO8-26,0.125,-0.0436,D,D,D,Manny Rutinel,0.9186,0.875,0.1926,0.177,0.177,0.177,False,Gabe Evans,Manny Rutinel
 CT-01,House,30.61,0.0,KXHOUSERACE-CT01-26,0.0155,-0.0155,D,D,D,Luke Bronin,1.0,0.9845,0.0226,0.0226,0.0226,0.0226,False,Amy Chai,Luke Bronin
 CT-02,House,25.75,0.0004,KXHOUSERACE-CT02-26,0.02,-0.0196,D,D,D,Joe Courtney,0.9996,0.98,0.0291,0.0291,0.0291,0.0291,False,George Austin,Joe Courtney
 CT-03,House,28.19,0.0001,KXHOUSERACE-CT03-26,0.0212,-0.0211,D,D,D,Rosa DeLauro,0.9999,0.9788,0.031,0.031,0.031,0.031,False,Christopher Lancia,Rosa DeLauro
@@ -134,7 +134,7 @@ FL-10,House,31.04,0.0,KXHOUSERACE-FL10-26,0.0185,-0.0185,D,D,D,Maxwell Frost,1.0
 FL-11,House,-17.33,0.9918,KXHOUSERACE-FL11-26,0.875,0.1168,R,R,R,Joe Strada,0.9918,0.875,0.1926,0.1911,0.1911,0.1911,False,Joe Strada,James Pericola
 FL-12,House,-16.5,0.9891,KXHOUSERACE-FL12-26,0.865,0.1241,R,R,R,Gus Bilirakis,0.9891,0.865,0.2092,0.2069,0.2069,0.2069,False,Gus Bilirakis,Kimberly Overman
 FL-13,House,-7.35,0.8551,HOUSEFL13-26,0.645,0.2101,R,R,R,Anna Paulina Luna,0.8551,0.645,0.6326,0.5409,0.5409,0.5409,False,Anna Paulina Luna,Leela Gray
-FL-14,House,5.05,0.2323,KXHOUSERACE-FL14-26,0.255,-0.0227,D,D,R,Mike Beltran,0.2323,0.255,1.9714,0.4579,0.326,0.326,True,Mike Beltran,Kathy Castor
+FL-14,House,5.05,0.2323,KXHOUSERACE-FL14-26,0.255,-0.0227,D,D,D,Kathy Castor,0.7677,0.745,0.4247,0.326,0.326,0.326,False,Mike Beltran,Kathy Castor
 FL-15,House,-21.71,0.9983,KXHOUSERACE-FL15-26,0.9364,0.0619,R,R,R,Laurel Lee,0.9983,0.9364,0.0947,0.0946,0.0946,0.0946,False,Laurel Lee,Robert People
 FL-16,House,-11.28,0.9457,KXHOUSERACE-FL16-26,0.755,0.1907,R,R,R,Sydney Gruters,0.9457,0.755,0.4055,0.3835,0.3835,0.3835,False,Sydney Gruters,Kelly Kirschner
 FL-17,House,-23.17,0.999,KXHOUSERACE-FL17-26,0.9669,0.0321,R,R,R,Greg Steube,0.999,0.9669,0.0486,0.0486,0.0486,0.0486,False,Greg Steube,Matthew Montavon
@@ -167,7 +167,7 @@ HI-01,House,32.3,0.0,KXHOUSERACE-HI01-26,0.0185,-0.0185,D,D,D,Ed Case,1.0,0.9815
 HI-02,House,31.1,0.0,KXHOUSERACE-HI02-26,0.0255,-0.0255,D,D,D,Jill Tokuda,1.0,0.9745,0.0373,0.0373,0.0373,0.0373,False,Brenton Awa,Jill Tokuda
 IA-01,House,8.39,0.1139,HOUSEIA1-26,0.0805,0.0334,D,D,R,Mariannette Miller-Meeks,0.1139,0.0805,3.6355,0.4142,0.1483,0.1483,True,Mariannette Miller-Meeks,Christina Bohannan
 IA-02,House,3.12,0.3253,KXHOUSERACE-IA02-26,0.2886,0.0367,D,D,R,Joe Mitchell,0.3253,0.2886,1.7931,0.5833,0.3314,0.3314,True,Joe Mitchell,Lindsay James
-IA-03,House,9.36,0.09,HOUSEIA3-26,0.1608,-0.0708,D,D,R,Zach Nunn,0.09,0.1608,2.6366,0.2372,0.2302,0.2302,True,Zach Nunn,Sarah Trone Garriott
+IA-03,House,9.36,0.09,HOUSEIA3-26,0.1608,-0.0708,D,D,D,Sarah Trone Garriott,0.91,0.8392,0.2529,0.2302,0.2302,0.2302,False,Zach Nunn,Sarah Trone Garriott
 IA-04,House,-25.8,0.9997,KXHOUSERACE-IA04-26,0.9815,0.0182,R,R,R,Chris McGowan,0.9997,0.9815,0.027,0.027,0.027,0.027,False,Chris McGowan,Dave Dawson
 ID-01,House,-32.02,1.0,KXHOUSERACE-ID01-26,0.9798,0.0202,R,R,R,Russ Fulcher,1.0,0.9798,0.0295,0.0295,0.0295,0.0295,False,Russ Fulcher,Kaylee Peterson
 ID-02,House,-24.95,0.9995,KXHOUSERACE-ID02-26,0.9723,0.0272,R,R,R,Mike Simpson,0.9995,0.9723,0.0405,0.0405,0.0405,0.0405,False,Mike Simpson,Elinor Gilbreath
@@ -235,7 +235,7 @@ ME-02,House,-1.79,0.6024,HOUSEME2-26,0.555,0.0474,R,R,R,Paul LePage,0.6024,0.555
 MI-01,House,-21.63,0.9983,KXHOUSERACE-MI01-26,0.8762,0.1221,R,R,R,Jack Bergman,0.9983,0.8762,0.1906,0.1903,0.1903,0.1903,False,Jack Bergman,Callie Barr
 MI-02,House,-26.25,0.9997,KXHOUSERACE-MI02-26,0.987,0.0127,R,R,R,John Moolenaar,0.9997,0.987,0.0189,0.0189,0.0189,0.0189,False,John Moolenaar,Benjamin Ambrose
 MI-03,House,25.2,0.0004,HOUSEMI3-26,0.0354,-0.035,D,D,D,Hillary Scholten,0.9996,0.9646,0.052,0.052,0.052,0.052,False,Terri DeBoer,Hillary Scholten
-MI-04,House,2.66,0.3495,HOUSEMI4-26,0.385,-0.0355,D,D,R,Bill Huizenga,0.3495,0.385,1.3771,0.4813,0.4562,0.4562,True,Bill Huizenga,Sean McCann
+MI-04,House,2.66,0.3495,HOUSEMI4-26,0.385,-0.0355,D,D,D,Sean McCann,0.6505,0.615,0.7013,0.4562,0.4562,0.4562,False,Bill Huizenga,Sean McCann
 MI-05,House,-25.07,0.9995,KXHOUSERACE-MI05-26,0.9499,0.0496,R,R,R,Tim Walberg,0.9995,0.9499,0.0741,0.0741,0.0741,0.0741,False,Tim Walberg,Christian Vukasovich
 MI-06,House,31.76,0.0,KXHOUSERACE-MI06-26,0.0156,-0.0156,D,D,D,Debbie Dingell,1.0,0.9844,0.0227,0.0227,0.0227,0.0227,False,Heather Smiley,Debbie Dingell
 MI-07,House,7.73,0.133,HOUSEMI7-26,0.225,-0.092,D,D,D,William Lawrence,0.867,0.775,0.3677,0.3188,0.3188,0.3188,False,Tom Barrett,William Lawrence
@@ -364,10 +364,10 @@ PA-03,House,51.59,0.0,KXHOUSERACE-PA03-26,0.0306,-0.0306,D,D,D,Chris Rabb,1.0,0.
 PA-04,House,28.87,0.0001,KXHOUSERACE-PA04-26,0.0276,-0.0275,D,D,D,Madeleine Dean,0.9999,0.9724,0.0404,0.0404,0.0404,0.0404,False,Aurora Stuski,Madeleine Dean
 PA-05,House,33.81,0.0,KXHOUSERACE-PA05-26,0.0146,-0.0146,D,D,D,Mary Gay Scanlon,1.0,0.9854,0.0212,0.0212,0.0212,0.0212,False,Nicholas Manganaro,Mary Gay Scanlon
 PA-06,House,27.17,0.0002,KXHOUSERACE-PA06-26,0.0131,-0.0129,D,D,D,Chrissy Houlahan,0.9998,0.9869,0.019,0.019,0.019,0.019,False,Marty Young,Chrissy Houlahan
-PA-07,House,9.82,0.08,HOUSEPA7-26,0.135,-0.055,D,D,R,Ryan Mackenzie,0.08,0.135,2.889,0.2311,0.1925,0.1925,True,Ryan Mackenzie,Bob Brooks
+PA-07,House,9.82,0.08,HOUSEPA7-26,0.135,-0.055,D,D,D,Bob Brooks,0.92,0.865,0.2092,0.1925,0.1925,0.1925,False,Ryan Mackenzie,Bob Brooks
 PA-08,House,4.95,0.2367,HOUSEPA8-26,0.135,0.1017,D,D,R,Rob Bresnahan,0.2367,0.135,2.889,0.6837,0.1597,0.1597,True,Rob Bresnahan,Paige Cognetti
 PA-09,House,-29.28,0.9999,KXHOUSERACE-PA09-26,0.9743,0.0256,R,R,R,Dan Meuser,0.9999,0.9743,0.0375,0.0375,0.0375,0.0375,False,Dan Meuser,Rachel Wallace
-PA-10,House,7.25,0.148,HOUSEPA10-26,0.1791,-0.0311,D,D,R,Scott Perry,0.148,0.1791,2.4811,0.3672,0.2426,0.2426,True,Scott Perry,Janelle Stelson
+PA-10,House,7.25,0.148,HOUSEPA10-26,0.1791,-0.0311,D,D,D,Janelle Stelson,0.852,0.8209,0.2847,0.2426,0.2426,0.2426,False,Scott Perry,Janelle Stelson
 PA-11,House,-22.29,0.9986,KXHOUSERACE-PA11-26,0.9733,0.0253,R,R,R,Lloyd Smucker,0.9986,0.9733,0.0391,0.039,0.039,0.039,False,Lloyd Smucker,Nancy Mannion
 PA-12,House,30.17,0.0001,KXHOUSERACE-PA12-26,0.0151,-0.015,D,D,D,Summer Lee,0.9999,0.9849,0.0219,0.0219,0.0219,0.0219,False,James Hayes,Summer Lee
 PA-13,House,-32.2,1.0,KXHOUSERACE-PA13-26,0.9889,0.0111,R,R,R,John Joyce,1.0,0.9889,0.016,0.016,0.016,0.016,False,John Joyce,Beth Farnham
@@ -450,7 +450,7 @@ VA-11,House,35.99,0.0,KXHOUSERACE-VA11-26,0.0175,-0.0175,D,D,D,James Walkinshaw,
 VT-AL,House,35.02,0.0,KXHOUSERACE-VTAL-26,0.013,-0.013,D,D,D,Becca Balint,1.0,0.987,0.0188,0.0188,0.0188,0.0188,False,Gerald Malloy,Becca Balint
 WA-01,House,33.83,0.0,KXHOUSERACE-WA01-26,0.0252,-0.0252,D,D,D,Suzan DelBene,1.0,0.9748,0.0369,0.0369,0.0369,0.0369,False,Mary Silva,Suzan DelBene
 WA-02,House,31.9,0.0,KXHOUSERACE-WA02-26,0.0185,-0.0185,D,D,D,Rick Larsen,1.0,0.9815,0.0269,0.0269,0.0269,0.0269,False,Edwin H. Feller,Rick Larsen
-WA-03,House,10.36,0.0695,HOUSEWA3-26,0.105,-0.0355,D,D,R,John Braun,0.0695,0.105,3.2515,0.226,0.1489,0.1489,True,John Braun,Marie Gluesenkamp Perez
+WA-03,House,10.36,0.0695,HOUSEWA3-26,0.105,-0.0355,D,D,D,Marie Gluesenkamp Perez,0.9305,0.895,0.16,0.1489,0.1489,0.1489,False,John Braun,Marie Gluesenkamp Perez
 WA-04,House,-21.04,0.9978,KXHOUSERACE-WA04-26,0.923,0.0748,R,R,R,Amanda McKinney,0.9978,0.923,0.1156,0.1153,0.1153,0.1153,False,Amanda McKinney,John Duresky
 WA-05,House,-13.68,0.973,KXHOUSERACE-WA05-26,0.835,0.138,R,R,R,Michael Baumgartner,0.973,0.835,0.2602,0.2531,0.2531,0.2531,False,Michael Baumgartner,Carmela Conroy
 WA-06,House,30.2,0.0001,KXHOUSERACE-WA06-26,0.015,-0.0149,D,D,D,Emily Randall,0.9999,0.985,0.0218,0.0218,0.0218,0.0218,False,Teresa Fox,Emily Randall

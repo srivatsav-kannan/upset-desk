@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { isStrategic } from "../data/forecast";
 import type { RaceView } from "../data/races";
 import { readingOrder } from "../data/races";
 import type { UsGeometry } from "../map/geo";
@@ -42,14 +43,14 @@ const leaderName = (v: RaceView) => {
 };
 
 function RaceCard({ view, active, onSelect }: { view: RaceView; active: boolean; onSelect: () => void }) {
-  const { race, extras } = view;
-  const upset = !!extras.market && !!extras.call && extras.call.party !== extras.market.favorite;
+  const { race } = view;
+  const strategic = isStrategic(view);
   return (
     <li>
       <button type="button" className={active ? "race-card race-card-active" : "race-card"} onClick={onSelect}>
         <span className="race-card-seat">
           {view.seat}
-          {upset && <span className="badge-upset">Upset call</span>}
+          {strategic && <span className="badge-upset">Strategic pick</span>}
         </span>
         <span className="race-card-lead">
           <span className="rating-swatch" style={{ background: fillOf(race) }} aria-hidden="true" />

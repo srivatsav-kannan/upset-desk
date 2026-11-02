@@ -30,6 +30,9 @@ KALSHI_FLOOR = 0.01  # scoring floors Kalshi's probability at 1%
 # is a rounding error (MT-02: 0.6% for us, 2% on Kalshi, 0.005 points) and the model's far tail
 # is the part we can check least, so the favorite is picked instead.
 MIN_CALL_P = 0.05
+# ...and only when we rate it strictly higher than the market does. An underdog can be worth more
+# points on average even when we agree with its price, because the scoring pays long shots so well;
+# this keeps every such pick a real disagreement with the market, not a bet on the payout alone.
 # Party-named Kalshi markets ("Republican party") carry no candidate; their names, and those of races
 # with no market, come from data/overrides/candidate_names.csv.
 PARTY_NAMED = re.compile(r"^(Democratic|Republican|Independent) party$", re.I)
@@ -157,7 +160,8 @@ def decide(p_d_model: float, market) -> dict:
     model = {"R": p_r, non_r: 1 - p_r}
     fav = "R" if p_r > 0.5 else non_r
     ev = {c: model.get(c, 0.0) * points(cands[c]["p"]) for c in cands}
-    pick = max((c for c in ev if c == fav or model.get(c, 0.0) >= MIN_CALL_P), key=ev.get)
+    pick = max((c for c in ev if c == fav or (model.get(c, 0.0) >= MIN_CALL_P and model.get(c, 0.0) > cands[c]["p"])),
+               key=ev.get)
     kalshi_fav = max(cands, key=lambda c: cands[c]["p"])
     return {
         "pick": pick, "pick_model_p": model.get(pick, 0.0), "model_favorite": fav,

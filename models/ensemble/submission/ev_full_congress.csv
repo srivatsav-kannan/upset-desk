@@ -9,7 +9,7 @@ GA-SEN,Senate,D,Jon Ossoff,0.9997
 IA-SEN,Senate,R,Ashley Hinson,0.607
 ID-SEN,Senate,R,Jim Risch,0.9996
 IL-SEN,Senate,D,Juliana Stratton,1.0
-KS-SEN,Senate,R,Roger Marshall,0.3946
+KS-SEN,Senate,D,Adam Hamilton,0.6054
 KY-SEN,Senate,R,Andy Barr,1.0
 LA-SEN,Senate,R,Julia Letlow,0.9659
 MA-SEN,Senate,D,Ed Markey,1.0
@@ -19,7 +19,7 @@ MN-SEN,Senate,D,Peggy Flanagan,0.9953
 MS-SEN,Senate,R,Cindy Hyde-Smith,0.9909
 MT-SEN,Senate,R,Kurt Alme,0.9989
 NC-SEN,Senate,D,Roy Cooper,0.9997
-NE-SEN,Senate,I,Dan Osborn,0.2383
+NE-SEN,Senate,R,Pete Ricketts,0.7617
 NH-SEN,Senate,D,Chris Pappas,0.9935
 NJ-SEN,Senate,D,Cory Booker,1.0
 NM-SEN,Senate,D,Ben Ray Luján,1.0
@@ -30,7 +30,7 @@ RI-SEN,Senate,D,Jack Reed,1.0
 SC-SEN,Senate,R,Darline Graham,0.893
 SD-SEN,Senate,R,Mike Rounds,0.9999
 TN-SEN,Senate,R,Bill Hagerty,1.0
-TX-SEN,Senate,R,Ken Paxton,0.2423
+TX-SEN,Senate,D,James Talarico,0.7577
 VA-SEN,Senate,D,Mark Warner,1.0
 WV-SEN,Senate,R,Shelley Moore Capito,1.0
 WY-SEN,Senate,R,Harriet Hageman,1.0
@@ -114,7 +114,7 @@ CO-04,House,R,Lauren Boebert,0.942
 CO-05,House,R,Jeff Crank,0.6932
 CO-06,House,D,Jason Crow,0.9999
 CO-07,House,D,Brittany Pettersen,0.9999
-CO-08,House,R,Gabe Evans,0.0814
+CO-08,House,D,Manny Rutinel,0.9186
 CT-01,House,D,Luke Bronin,1.0
 CT-02,House,D,Joe Courtney,0.9996
 CT-03,House,D,Rosa DeLauro,0.9999
@@ -134,7 +134,7 @@ FL-10,House,D,Maxwell Frost,1.0
 FL-11,House,R,Joe Strada,0.9918
 FL-12,House,R,Gus Bilirakis,0.9891
 FL-13,House,R,Anna Paulina Luna,0.8551
-FL-14,House,R,Mike Beltran,0.2323
+FL-14,House,D,Kathy Castor,0.7677
 FL-15,House,R,Laurel Lee,0.9983
 FL-16,House,R,Sydney Gruters,0.9457
 FL-17,House,R,Greg Steube,0.999
@@ -167,7 +167,7 @@ HI-01,House,D,Ed Case,1.0
 HI-02,House,D,Jill Tokuda,1.0
 IA-01,House,R,Mariannette Miller-Meeks,0.1139
 IA-02,House,R,Joe Mitchell,0.3253
-IA-03,House,R,Zach Nunn,0.09
+IA-03,House,D,Sarah Trone Garriott,0.91
 IA-04,House,R,Chris McGowan,0.9997
 ID-01,House,R,Russ Fulcher,1.0
 ID-02,House,R,Mike Simpson,0.9995
@@ -235,7 +235,7 @@ ME-02,House,R,Paul LePage,0.6024
 MI-01,House,R,Jack Bergman,0.9983
 MI-02,House,R,John Moolenaar,0.9997
 MI-03,House,D,Hillary Scholten,0.9996
-MI-04,House,R,Bill Huizenga,0.3495
+MI-04,House,D,Sean McCann,0.6505
 MI-05,House,R,Tim Walberg,0.9995
 MI-06,House,D,Debbie Dingell,1.0
 MI-07,House,D,William Lawrence,0.867
@@ -364,10 +364,10 @@ PA-03,House,D,Chris Rabb,1.0
 PA-04,House,D,Madeleine Dean,0.9999
 PA-05,House,D,Mary Gay Scanlon,1.0
 PA-06,House,D,Chrissy Houlahan,0.9998
-PA-07,House,R,Ryan Mackenzie,0.08
+PA-07,House,D,Bob Brooks,0.92
 PA-08,House,R,Rob Bresnahan,0.2367
 PA-09,House,R,Dan Meuser,0.9999
-PA-10,House,R,Scott Perry,0.148
+PA-10,House,D,Janelle Stelson,0.852
 PA-11,House,R,Lloyd Smucker,0.9986
 PA-12,House,D,Summer Lee,0.9999
 PA-13,House,R,John Joyce,1.0
@@ -450,7 +450,7 @@ VA-11,House,D,James Walkinshaw,1.0
 VT-AL,House,D,Becca Balint,1.0
 WA-01,House,D,Suzan DelBene,1.0
 WA-02,House,D,Rick Larsen,1.0
-WA-03,House,R,John Braun,0.0695
+WA-03,House,D,Marie Gluesenkamp Perez,0.9305
 WA-04,House,R,Amanda McKinney,0.9978
 WA-05,House,R,Michael Baumgartner,0.973
 WA-06,House,D,Emily Randall,0.9999

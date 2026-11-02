@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { CALIBRATION, OUTLOOK, SCORE, TRACK_RECORD, marketProbability, pointsFor, type ChamberOutlook } from "../data/forecast";
+import { CALIBRATION, OUTLOOK, SCORE, TRACK_RECORD, isStrategic, marketProbability, pointsFor, type ChamberOutlook } from "../data/forecast";
 import type { RaceView } from "../data/races";
-import { lastName, pct } from "../ui/words";
+import { PARTY_LONG, lastName, pct } from "../ui/words";
 
 const REPO = "https://github.com/srivatsav-kannan/election-prediction";
 
@@ -135,37 +135,93 @@ function Seats({ outlook, chamber }: { outlook: ChamberOutlook; chamber: "House"
   );
 }
 
-function UpsetScatter({ views }: { views: RaceView[] }) {
-  const pts = views.flatMap((v) => {
-    const { market, call } = v.extras;
-    if (!market || !call || call.party === market.favorite) return [];
-    return [{ v, m: marketProbability(market, call.party), p: call.probability, name: lastName(call.name) }];
+/** The three rules for picking against our own forecast (decide.py: EDGE, MIN_CALL_P, the market clause). */
+const EDGE = 1.25;
+const FLOOR = 0.05;
+const breakEven = (m: number) => (EDGE * pointsFor(1 - m)) / (pointsFor(m) + EDGE * pointsFor(1 - m));
+
+type Kind = "strategic" | "forecast" | "left";
+interface Dot {
+  v: RaceView;
+  m: number;
+  p: number;
+  kind: Kind;
+  name: string;
+}
+
+/** Every pick against the market, plus the bets the market rule turned down. */
+function picksAgainstMarket(views: RaceView[]): Dot[] {
+  return views.flatMap((v): Dot[] => {
+    const { market, call, candidates } = v.extras;
+    if (!market || !call) return [];
+    if (call.party !== market.favorite) {
+      return [{ v, m: marketProbability(market, call.party), p: call.probability, name: lastName(call.name), kind: isStrategic(v) ? "strategic" : "forecast" }];
+    }
+    // We stayed with the favorite. Would the underdog have passed every rule except the market one?
+    const u = market.favorite === "R" ? v.extras.nonRParty : "R";
+    const p = u === "R" ? 1 - v.race.pD : v.race.pD;
+    const m = marketProbability(market, u);
+    const worth = p * pointsFor(m) >= EDGE * (1 - p) * pointsFor(1 - m);
+    if (p >= FLOOR && p <= m && worth && p < 0.5) {
+      const name = u === "R" ? candidates.r : candidates.other;
+      return [{ v, m, p, name: name ? lastName(name) : PARTY_LONG[u], kind: "left" }];
+    }
+    return [];
   });
-  const W = 520;
-  const H = 300;
-  const pad = { l: 44, r: 16, t: 14, b: 38 };
-  const x = (m: number) => pad.l + (m / 0.5) * (W - pad.l - pad.r);
-  const y = (p: number) => H - pad.b - p * (H - pad.t - pad.b);
-  // Label the biggest disagreements first, skipping any label that would collide with one already placed.
-  const placed: { x: number; y: number }[] = [];
-  const labelled = new Set<string>();
-  for (const d of [...pts].sort((a, b) => b.p - b.m - (a.p - a.m))) {
-    const [lx, ly] = [x(d.m), y(d.p)];
-    if (placed.length < 6 && placed.every((q) => Math.abs(q.y - ly) > 14 || Math.abs(q.x - lx) > 110)) {
-      placed.push({ x: lx, y: ly });
-      labelled.add(d.v.id);
+}
+
+function PicksChart({ dots }: { dots: Dot[] }) {
+  const W = 580;
+  const H = 380;
+  const pad = { l: 46, r: 18, t: 18, b: 44 };
+  const X1 = 0.5;
+  const Y1 = 0.85;
+  const x = (m: number) => pad.l + (m / X1) * (W - pad.l - pad.r);
+  const y = (p: number) => H - pad.b - (p / Y1) * (H - pad.t - pad.b);
+  const ms = Array.from({ length: 99 }, (_, i) => 0.005 + i * 0.005);
+  const line = (f: (m: number) => number) => ms.map((m, i) => `${i ? "L" : "M"}${x(m).toFixed(1)},${y(f(m)).toFixed(1)}`).join("");
+  const lower = (m: number) => Math.max(m, breakEven(m), FLOOR);
+  // The band where a strategic pick qualifies: above all three rules, below even odds.
+  const band =
+    ms.map((m, i) => `${i ? "L" : "M"}${x(m).toFixed(1)},${y(Math.min(lower(m), 0.5)).toFixed(1)}`).join("") +
+    `L${x(X1).toFixed(1)},${y(0.5).toFixed(1)}L${x(ms[0]).toFixed(1)},${y(0.5).toFixed(1)}Z`;
+
+  // Label the most telling dots first. A label sits right of its dot, or left near the right edge,
+  // and is skipped if its box would overlap one already placed or another dot.
+  const LABEL_W = 118;
+  const placed: { x0: number; x1: number; y: number }[] = [];
+  const labels = new Map<string, "start" | "end">();
+  const priority = (d: Dot) => (d.kind === "forecast" ? 1 : 0) + (d.p - d.m);
+  for (const d of [...dots].filter((d) => d.kind !== "left").sort((a, b) => priority(b) - priority(a))) {
+    const [cx, cy] = [x(d.m), y(d.p)];
+    // Dots sitting on top of this one (ME-02 and KY-06) share its label rather than block it.
+    const others = dots.filter((o) => Math.hypot(x(o.m) - cx, y(o.p) - cy) > 5);
+    for (const side of ["start", "end"] as const) {
+      const [x0, x1] = side === "start" ? [cx + 8, cx + 8 + LABEL_W] : [cx - 8 - LABEL_W, cx - 8];
+      const clear =
+        x0 > pad.l - 20 &&
+        x1 < W &&
+        placed.every((q) => Math.abs(q.y - cy) > 14 || q.x1 < x0 || q.x0 > x1) &&
+        others.every((o) => Math.abs(y(o.p) - cy) > 8 || x(o.m) < x0 - 4 || x(o.m) > x1 + 4);
+      if (labels.size < 11 && clear) {
+        placed.push({ x0, x1, y: cy });
+        labels.set(d.v.id, side);
+        break;
+      }
     }
   }
-  // Our rule's break-even: the long shot's expected points beat the favorite's by EDGE.
-  const EDGE = 1.25;
-  const breakEven = Array.from({ length: 49 }, (_, i) => 0.01 + i * 0.01)
-    .map((m) => [m, (EDGE * pointsFor(1 - m)) / (pointsFor(m) + EDGE * pointsFor(1 - m))] as const)
-    .map(([m, p], i) => `${i ? "L" : "M"}${x(m).toFixed(1)},${y(p).toFixed(1)}`)
-    .join("");
+
+  const count = (k: Kind) => dots.filter((d) => d.kind === k).length;
   return (
-    <figure className="chart">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Our ${pts.length} upset calls: each sits above the line where our chance equals the market's.`}>
-        {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+    <figure className="chart picks-chart">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label={`Our picks against the market. ${count("forecast")} candidates our forecast favors sit above even odds; ${count("strategic")} strategic picks sit in the band above all three rules; ${count("left")} bets fell below the market line and were left out.`}
+      >
+        <rect className="zone-win" x={x(0)} y={y(Y1)} width={x(X1) - x(0)} height={y(0.5) - y(Y1)} />
+        <path className="zone-band" d={band} />
+        {[0, 0.25, 0.5, 0.75].map((t) => (
           <g key={t} className="grid">
             <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} />
             <text x={pad.l - 8} y={y(t) + 4} textAnchor="end">
@@ -178,26 +234,62 @@ function UpsetScatter({ views }: { views: RaceView[] }) {
             {Math.round(t * 100)}%
           </text>
         ))}
-        <line className="diagonal" x1={x(0)} y1={y(0)} x2={x(0.5)} y2={y(0.5)} />
-        <path className="break-even" d={breakEven} />
-        <text className="break-even-label" x={x(0.2)} y={y(0.2 * 0.62) + 26}>
-          worth the bet above this line
+        <text className="zone-label" x={x(0.012)} y={y(Y1) + 16}>
+          Our forecast favors them
         </text>
-        {pts.map((d) => (
-          <g key={d.v.id} className={`dot dot-${d.v.extras.call?.party}`}>
-            <circle cx={x(d.m)} cy={y(d.p)} r={5} />
-            {labelled.has(d.v.id) && (
-              <text x={x(d.m) + 8} y={y(d.p) + 4}>
-                {d.name} ({d.v.id})
+        <text className="zone-label zone-label-band" x={x(0.012)} y={y(0.5) + 16}>
+          Strategic picks
+        </text>
+        <line className="even-line" x1={x(0)} x2={x(X1)} y1={y(0.5)} y2={y(0.5)} />
+        <path className="rule rule-market" d={line((m) => m)} />
+        <path className="rule rule-edge" d={line(breakEven)} />
+        <line className="rule rule-floor" x1={x(0)} x2={x(X1)} y1={y(FLOOR)} y2={y(FLOOR)} />
+        <g className="rule-tags">
+          <g transform={`translate(${x(0.44)},${y(0.44) - 12})`}>
+            <circle r={8} className="tag tag-market" />
+            <text textAnchor="middle" y={3.5}>2</text>
+          </g>
+          <g transform={`translate(${x(0.47)},${y(breakEven(0.47)) + 16})`}>
+            <circle r={8} className="tag tag-edge" />
+            <text textAnchor="middle" y={3.5}>1</text>
+          </g>
+          <g transform={`translate(${x(0.485)},${y(FLOOR) - 11})`}>
+            <circle r={8} className="tag tag-floor" />
+            <text textAnchor="middle" y={3.5}>3</text>
+          </g>
+        </g>
+        {dots.map((d) => (
+          <g key={d.v.id} className={`pick-dot pick-dot-${d.kind}`}>
+            <circle cx={x(d.m)} cy={y(d.p)} r={d.kind === "left" ? 4.5 : 5.5} />
+            {labels.has(d.v.id) && (
+              <text
+                x={labels.get(d.v.id) === "end" ? x(d.m) - 9 : x(d.m) + 9}
+                y={y(d.p) + 4}
+                textAnchor={labels.get(d.v.id) === "end" ? "end" : "start"}
+              >
+                {d.name} <tspan className="pick-dot-id">{d.v.id}</tspan>
               </text>
             )}
           </g>
         ))}
-        <text className="axis-title" x={(W + pad.l) / 2} y={H - 4} textAnchor="middle">
-          Market's chance for our pick
+        <text className="axis-title" x={(W + pad.l) / 2} y={H - 6} textAnchor="middle">
+          The market's chance for the candidate
+        </text>
+        <text className="axis-title" transform={`translate(12,${(H - pad.b + pad.t) / 2}) rotate(-90)`} textAnchor="middle">
+          Our chance
         </text>
       </svg>
-      <figcaption>Our {pts.length} upset calls, with our chance for each candidate going up and the market's going across. The gray line marks where we agree with the market, and the gold line is where an upset call starts to pay off under our rule.</figcaption>
+      <figcaption className="picks-legend">
+        <span>
+          <i className="key-dot key-dot-strategic" /> Strategic pick ({count("strategic")})
+        </span>
+        <span>
+          <i className="key-dot key-dot-forecast" /> Our forecast's favorite, the market's underdog ({count("forecast")})
+        </span>
+        <span>
+          <i className="key-dot key-dot-left" /> Left out by rule 2 ({count("left")})
+        </span>
+      </figcaption>
     </figure>
   );
 }
@@ -207,7 +299,8 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
   const t = TRACK_RECORD;
   const right = (r: { races: number; wrong: number } | null) => (r ? r.races - r.wrong : 0);
   const share = (r: { races: number; wrong: number } | null) => (r ? `${(((r.races - r.wrong) / r.races) * 100).toFixed(1)}%` : "");
-  const upsets = list.filter((v) => v.extras.market && v.extras.call && v.extras.call.party !== v.extras.market.favorite).length;
+  const dots = useMemo(() => picksAgainstMarket(list), [list]);
+  const counts = { strategic: dots.filter((d) => d.kind === "strategic").length, forecast: dots.filter((d) => d.kind === "forecast").length };
 
   return (
     <article className="method">
@@ -335,34 +428,62 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
         <div className="eyebrow">The picks</div>
         <h3>From forecast to picks</h3>
         <p>
-          Long shots pay much more when they hit, and under this scoring an underdog the market prices fairly is worth more points on average
-          than the favorite. We still pick the favorite in almost every race because our forecast is usually more confident in the favorite
-          than the market is, which makes the safe call the better bet.
+          Everything above is the forecast: our honest estimate for each race, and it would be the same however the contest were scored.
+          Choosing a candidate to submit is a separate step, because the challenge pays more for calling an unlikely result. A correct pick
+          on a 90% favorite is worth 0.15 points, and a correct pick on a 25% underdog is worth 2.
         </p>
         <p>
-          We back an underdog only when our own odds make it clearly worth it. Its expected points have to beat the favorite's by at least a
-          quarter, and we have to give it at least a 1 in 20 chance, so every upset call is a candidate with a realistic path to winning. That
-          leaves {upsets} upset calls. In some of them we think the market badly underrates the underdog, and the rest are cheap tickets where
-          we roughly agree with the market but a win pays three or four times as much.
+          In almost every race we pick the candidate our forecast favors. In {counts.forecast} of them that candidate is the market's
+          underdog, which makes those picks a plain disagreement with the market. In {counts.strategic} more races we pick a candidate
+          our own forecast expects to lose, because backing them is the better bet. We make that kind of pick only when three things are
+          all true:
         </p>
-        <UpsetScatter views={list} />
+        <ol className="rules">
+          <li>
+            <span className="rule-n rule-n-edge">1</span>
+            <span>
+              <strong>It pays off on average, by a clear margin.</strong> Our chance for the underdog, times what a correct pick is worth,
+              comes to at least a quarter more than the same sum for the favorite.
+            </span>
+          </li>
+          <li>
+            <span className="rule-n rule-n-market">2</span>
+            <span>
+              <strong>We rate the underdog above the market.</strong> The scoring is generous enough that a long shot can pay off even at a
+              fair price, so this keeps every strategic pick a real disagreement with the market.
+            </span>
+          </li>
+          <li>
+            <span className="rule-n rule-n-floor">3</span>
+            <span>
+              <strong>The underdog has a real chance.</strong> We give them at least a 1 in 20 shot, so we never back a candidate with no
+              realistic path to winning.
+            </span>
+          </li>
+        </ol>
+        <PicksChart dots={dots} />
+        <p>
+          Each dot is a race where we pick against the market. The strategic picks sit in the gold band, which is everything above all
+          three rules and below even odds. The hollow circles are bets that clear rules 1 and 3 but where the market rates the underdog at
+          least as highly as we do, so we stay with the favorite.
+        </p>
         {SCORE.ours && SCORE.favorites && (
           <div className="stats">
             <div className="stat">
               <strong>{SCORE.ours.mean.toFixed(1)}</strong>
               <span>
-                points expected with our picks (80% of simulations: {SCORE.ours.low.toFixed(0)}–{SCORE.ours.high.toFixed(0)})
+                points expected with our picks, and {SCORE.ours.low.toFixed(0)} to {SCORE.ours.high.toFixed(0)} in 8 of 10 simulations
               </span>
             </div>
             <div className="stat">
               <strong>{SCORE.favorites.mean.toFixed(1)}</strong>
-              <span>points expected by picking every market favorite</span>
+              <span>points expected from picking every market favorite</span>
             </div>
           </div>
         )}
         <p className="muted">
-          Most of our upset calls are Republicans, because in those races the market leans further toward the Democrat than our forecast
-          does. They tend to win or lose together, which is why we keep only the strongest ones.
+          All {counts.strategic} strategic picks are Republicans, because in those races the market leans further toward the Democrat than
+          our forecast does. They will tend to win or lose together, which is the main risk in this part of the entry.
         </p>
       </section>
 
@@ -371,7 +492,7 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
         <h3>What could go wrong</h3>
         <ul className="risks">
           <li>
-            <strong>A single national surprise moves every race.</strong> If Democrats beat their polls, most of our upset calls miss
+            <strong>A single national surprise moves every race.</strong> If Democrats beat their polls, most of our strategic picks miss
             together.
           </li>
           <li>
@@ -382,7 +503,7 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
             <strong>Most House races have no polls,</strong> so 378 districts rely on vote history and expert ratings alone.
           </li>
           <li>
-            <strong>Alaska's Senate race is our biggest Senate upset call.</strong> We back Dan Sullivan, while Mary Peltola led the August
+            <strong>Alaska's Senate race is our biggest disagreement with the market.</strong> Our forecast favors Dan Sullivan, while Mary Peltola led the August
             primary 49.5% to 41.4%, a result our model doesn't take into account.
           </li>
         </ul>

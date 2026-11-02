@@ -114,7 +114,7 @@ CO-04,House,R,Lauren Boebert,0.942
 CO-05,House,R,Jeff Crank,0.5906
 CO-06,House,D,Jason Crow,0.9999
 CO-07,House,D,Brittany Pettersen,0.9999
-CO-08,House,R,Gabe Evans,0.0814
+CO-08,House,D,Manny Rutinel,0.9186
 CT-01,House,D,Luke Bronin,1.0
 CT-02,House,D,Joe Courtney,0.9996
 CT-03,House,D,Rosa DeLauro,0.9999
@@ -365,7 +365,7 @@ PA-04,House,D,Madeleine Dean,0.9999
 PA-05,House,D,Mary Gay Scanlon,1.0
 PA-06,House,D,Chrissy Houlahan,0.9998
 PA-07,House,D,Bob Brooks,0.951
-PA-08,House,R,Rob Bresnahan,0.1153
+PA-08,House,D,Paige Cognetti,0.8847
 PA-09,House,R,Dan Meuser,0.9999
 PA-10,House,D,Janelle Stelson,0.8913
 PA-11,House,R,Lloyd Smucker,0.9986
@@ -427,7 +427,7 @@ TX-30,House,D,Frederick Haynes III,1.0
 TX-31,House,R,John Carter,0.9987
 TX-32,House,R,Jace Yarbrough,0.9941
 TX-33,House,D,Colin Allred,1.0
-TX-34,House,R,Eric Flores,0.0775
+TX-34,House,D,Vicente Gonzalez,0.9225
 TX-35,House,R,Carlos De La Cruz,0.5062
 TX-36,House,R,Brian Babin,0.9994
 TX-37,House,D,Greg Casar,1.0
@@ -450,7 +450,7 @@ VA-11,House,D,James Walkinshaw,1.0
 VT-AL,House,D,Becca Balint,1.0
 WA-01,House,D,Suzan DelBene,1.0
 WA-02,House,D,Rick Larsen,1.0
-WA-03,House,R,John Braun,0.1014
+WA-03,House,D,Marie Gluesenkamp Perez,0.8986
 WA-04,House,R,Amanda McKinney,0.9978
 WA-05,House,R,Michael Baumgartner,0.973
 WA-06,House,D,Emily Randall,0.9999

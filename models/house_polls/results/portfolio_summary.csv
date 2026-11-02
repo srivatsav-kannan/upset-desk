@@ -1,17 +1,17 @@
 scope,strategy,underdog_picks,mean,sd,p10,median,p90,p_beat_kalshi_favorites,rival_lead,p_beat_rival,simulations,chosen
 Senate,Kalshi favorite,0,5.25,0.73,4.2,5.31,6.28,0.0,1.0,0.0,4000,False
 Senate,model favorite,1,6.14,1.09,4.62,6.29,7.58,0.6078,1.0,0.6078,4000,False
-Senate,"expected points, edge >= 0%",5,6.59,2.01,4.03,6.62,9.02,0.5895,1.0,0.5895,4000,False
-Senate,"expected points, edge >= 10%",4,6.58,2.21,3.64,6.36,9.47,0.7408,1.0,0.4995,4000,False
+Senate,"expected points, edge >= 0%",2,6.43,1.49,4.33,6.51,8.42,0.7005,1.0,0.7005,4000,False
+Senate,"expected points, edge >= 10%",2,6.43,1.49,4.33,6.51,8.42,0.7005,1.0,0.7005,4000,False
 Senate,"expected points, edge >= 25%",2,6.43,1.49,4.33,6.51,8.42,0.7005,1.0,0.7005,4000,True
 Senate,"expected points, edge >= 50%",2,6.43,1.49,4.33,6.51,8.42,0.7005,1.0,0.7005,4000,False
 Senate,"expected points, edge >= 100%",1,6.14,1.09,4.62,6.29,7.58,0.6078,1.0,0.6078,4000,False
 Senate,"expected points, edge >= 200%",1,6.14,1.09,4.62,6.29,7.58,0.6078,1.0,0.6078,4000,False
 All,Kalshi favorite,0,48.84,1.94,46.32,48.92,51.26,0.0,5.0,0.0,4000,False
 All,model favorite,5,51.8,2.79,48.15,52.03,55.15,0.907,5.0,0.2868,4000,False
-All,"expected points, edge >= 0%",28,56.92,8.78,46.32,56.02,68.76,0.7917,5.0,0.5823,4000,False
-All,"expected points, edge >= 10%",25,56.92,8.74,46.15,56.23,68.73,0.7935,5.0,0.5795,4000,False
-All,"expected points, edge >= 25%",21,56.6,8.08,46.47,56.15,67.3,0.8067,5.0,0.579,4000,True
-All,"expected points, edge >= 50%",18,56.3,7.13,47.36,56.0,65.7,0.829,5.0,0.5773,4000,False
-All,"expected points, edge >= 100%",13,55.3,5.58,48.18,55.0,62.74,0.859,5.0,0.5565,4000,False
+All,"expected points, edge >= 0%",17,56.21,7.27,46.89,55.9,65.77,0.8287,5.0,0.5863,4000,False
+All,"expected points, edge >= 10%",17,56.21,7.27,46.89,55.9,65.77,0.8287,5.0,0.5863,4000,False
+All,"expected points, edge >= 25%",17,56.21,7.27,46.89,55.9,65.77,0.8287,5.0,0.5863,4000,True
+All,"expected points, edge >= 50%",15,55.96,6.49,47.57,55.82,64.38,0.839,5.0,0.574,4000,False
+All,"expected points, edge >= 100%",12,55.15,5.34,48.3,54.97,62.08,0.857,5.0,0.554,4000,False
 All,"expected points, edge >= 200%",8,54.11,4.81,47.78,54.1,60.47,0.8642,5.0,0.4935,4000,False

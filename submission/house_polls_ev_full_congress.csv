@@ -9,7 +9,7 @@ GA-SEN,Senate,D,Jon Ossoff,0.9997
 IA-SEN,Senate,R,Ashley Hinson,0.607
 ID-SEN,Senate,R,Jim Risch,0.9996
 IL-SEN,Senate,D,Juliana Stratton,1.0
-KS-SEN,Senate,R,Roger Marshall,0.3946
+KS-SEN,Senate,D,Adam Hamilton,0.6054
 KY-SEN,Senate,R,Andy Barr,1.0
 LA-SEN,Senate,R,Julia Letlow,0.9659
 MA-SEN,Senate,D,Ed Markey,1.0
@@ -19,7 +19,7 @@ MN-SEN,Senate,D,Peggy Flanagan,0.9953
 MS-SEN,Senate,R,Cindy Hyde-Smith,0.9909
 MT-SEN,Senate,R,Kurt Alme,0.9989
 NC-SEN,Senate,D,Roy Cooper,0.9997
-NE-SEN,Senate,I,Dan Osborn,0.2383
+NE-SEN,Senate,R,Pete Ricketts,0.7617
 NH-SEN,Senate,D,Chris Pappas,0.9935
 NJ-SEN,Senate,D,Cory Booker,1.0
 NM-SEN,Senate,D,Ben Ray Luján,1.0
@@ -30,7 +30,7 @@ RI-SEN,Senate,D,Jack Reed,1.0
 SC-SEN,Senate,R,Darline Graham,0.893
 SD-SEN,Senate,R,Mike Rounds,0.9999
 TN-SEN,Senate,R,Bill Hagerty,1.0
-TX-SEN,Senate,R,Ken Paxton,0.2423
+TX-SEN,Senate,D,James Talarico,0.7577
 VA-SEN,Senate,D,Mark Warner,1.0
 WV-SEN,Senate,R,Shelley Moore Capito,1.0
 WY-SEN,Senate,R,Harriet Hageman,1.0
@@ -114,7 +114,7 @@ CO-04,House,R,Lauren Boebert,0.942
 CO-05,House,R,Jeff Crank,0.5906
 CO-06,House,D,Jason Crow,0.9999
 CO-07,House,D,Brittany Pettersen,0.9999
-CO-08,House,R,Gabe Evans,0.0814
+CO-08,House,D,Manny Rutinel,0.9186
 CT-01,House,D,Luke Bronin,1.0
 CT-02,House,D,Joe Courtney,0.9996
 CT-03,House,D,Rosa DeLauro,0.9999
@@ -167,7 +167,7 @@ HI-01,House,D,Ed Case,1.0
 HI-02,House,D,Jill Tokuda,1.0
 IA-01,House,R,Mariannette Miller-Meeks,0.1139
 IA-02,House,R,Joe Mitchell,0.3161
-IA-03,House,R,Zach Nunn,0.09
+IA-03,House,D,Sarah Trone Garriott,0.91
 IA-04,House,R,Chris McGowan,0.9997
 ID-01,House,R,Russ Fulcher,1.0
 ID-02,House,R,Mike Simpson,0.9995
@@ -254,7 +254,7 @@ MN-06,House,R,Tom Emmer,0.9986
 MN-07,House,R,Michelle Fischbach,0.9999
 MN-08,House,R,Pete Stauber,0.9809
 MO-01,House,D,Wesley Bell,1.0
-MO-02,House,D,Fred Wellman,0.3572
+MO-02,House,R,Ann Wagner,0.6428
 MO-03,House,R,Bob Onder,0.9995
 MO-04,House,R,Mark Alford,1.0
 MO-05,House,D,Emanuel Cleaver,1.0
@@ -340,7 +340,7 @@ OH-05,House,R,Bob Latta,0.9992
 OH-06,House,R,Michael Rulli,0.9999
 OH-07,House,R,Max Miller,0.1546
 OH-08,House,R,Warren Davidson,0.9962
-OH-09,House,R,Derek Merrin,0.1287
+OH-09,House,D,Marcy Kaptur,0.8713
 OH-10,House,R,Mike Turner,0.7912
 OH-11,House,D,Shontel Brown,1.0
 OH-12,House,R,Troy Balderson,0.9997
@@ -365,9 +365,9 @@ PA-04,House,D,Madeleine Dean,0.9999
 PA-05,House,D,Mary Gay Scanlon,1.0
 PA-06,House,D,Chrissy Houlahan,0.9998
 PA-07,House,D,Bob Brooks,0.951
-PA-08,House,R,Rob Bresnahan,0.1153
+PA-08,House,D,Paige Cognetti,0.8847
 PA-09,House,R,Dan Meuser,0.9999
-PA-10,House,R,Scott Perry,0.1087
+PA-10,House,D,Janelle Stelson,0.8913
 PA-11,House,R,Lloyd Smucker,0.9986
 PA-12,House,D,Summer Lee,0.9999
 PA-13,House,R,John Joyce,1.0
@@ -427,7 +427,7 @@ TX-30,House,D,Frederick Haynes III,1.0
 TX-31,House,R,John Carter,0.9987
 TX-32,House,R,Jace Yarbrough,0.9941
 TX-33,House,D,Colin Allred,1.0
-TX-34,House,R,Eric Flores,0.0775
+TX-34,House,D,Vicente Gonzalez,0.9225
 TX-35,House,R,Carlos De La Cruz,0.5062
 TX-36,House,R,Brian Babin,0.9994
 TX-37,House,D,Greg Casar,1.0
@@ -450,7 +450,7 @@ VA-11,House,D,James Walkinshaw,1.0
 VT-AL,House,D,Becca Balint,1.0
 WA-01,House,D,Suzan DelBene,1.0
 WA-02,House,D,Rick Larsen,1.0
-WA-03,House,R,John Braun,0.1014
+WA-03,House,D,Marie Gluesenkamp Perez,0.8986
 WA-04,House,R,Amanda McKinney,0.9978
 WA-05,House,R,Michael Baumgartner,0.973
 WA-06,House,D,Emily Randall,0.9999

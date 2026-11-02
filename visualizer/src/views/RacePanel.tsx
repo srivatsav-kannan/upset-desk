@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { marketProbability, pointsFor, type PastRace } from "../data/forecast";
+import { isStrategic, marketProbability, type PastRace } from "../data/forecast";
 import type { Party } from "../data/models";
 import type { RaceView } from "../data/races";
 import { fillOf } from "../map/scale";
@@ -84,49 +84,31 @@ function Matchup({ view }: { view: RaceView }) {
   );
 }
 
-function OurCall({ view }: { view: RaceView }) {
+/**
+ * Shown only where our submitted pick is not the candidate our forecast favors. Everywhere else
+ * the panel is the forecast alone.
+ */
+const possessive = (name: string) => (name.endsWith("s") ? `${name}'` : `${name}'s`);
+
+function PickNote({ view }: { view: RaceView }) {
   const { race, extras } = view;
   const { call, market, candidates } = extras;
-  if (!call) return null;
-  const last = lastName(call.name);
-  const p = call.probability;
-  let headline: string;
-  let body: string;
-  if (!market) {
-    headline = `We pick ${call.name}`;
-    body = "No prediction market covers this race, so we pick the likely winner.";
-  } else {
-    const pm = marketProbability(market, call.party);
-    const pts = pointsFor(pm).toFixed(2);
-    if (call.party !== race.winner) {
-      const fav = race.winner === "R" ? candidates.r : candidates.other;
-      const favPts = pointsFor(marketProbability(market, race.winner)).toFixed(2);
-      const favLast = fav ? lastName(fav) : PARTY_LONG[race.winner];
-      headline = `A calculated long shot: ${call.name}`;
-      body =
-        p >= pm * 1.15
-          ? `Our forecast favors ${favLast}, but the market prices ${last} at just ${pct(pm)}. We think ${last}'s real chance is ` +
-            `${pct(p)}, ${(p / pm).toFixed(1)}× the market's, and a win would earn ${pts} points instead of ${favPts}, ` +
-            `so across many races, bets like this come out ahead.`
-          : `${favLast} is the favorite in our forecast and in the market. A ${last} win would earn ${pts} points against ` +
-            `${favPts} for ${favLast}, so even at our ${pct(p)} chance (the market says ${pct(pm)}), ${last} is worth more ` +
-            `points on average, which makes this a cheap ticket worth holding.`;
-    } else if (call.party !== market.favorite) {
-      headline = `Against the market: ${call.name}`;
-      body = `We give ${last} a ${pct(p)} chance and the market gives ${pct(pm)}, so a ${last} win earns ${pts} points.`;
-    } else {
-      headline = `We pick ${call.name}`;
-      body = `The market agrees at ${pct(pm)}, so a correct call earns ${pts} points.`;
-    }
-  }
-  const upset = !!market && call.party !== market.favorite;
+  if (!call || !market || !isStrategic(view)) return null;
+  const pick = lastName(call.name);
+  const fav = race.winner === "R" ? candidates.r : candidates.other;
+  const favorite = fav ? lastName(fav) : PARTY_LONG[race.winner];
   return (
-    <section className={upset ? "call call-upset" : "call"} aria-label="Our submitted pick">
-      <div className="call-eyebrow">{upset ? "Upset call" : "Our call"}</div>
-      <div className="call-headline">
-        <Dot party={call.party} /> {headline}
+    <section className="pick-note" aria-label="Why our pick differs from the forecast">
+      <div className="pick-note-eyebrow">Our pick differs from the forecast</div>
+      <div className="pick-note-headline">
+        <Dot party={call.party} /> We picked {call.name}
       </div>
-      <p>{body}</p>
+      <p>
+        The challenge scores every pick against the betting market's odds, so a correct call on an unlikely winner counts for much
+        more than a correct call on a favorite. The market puts {possessive(pick)} chances at {pct(marketProbability(market, call.party))},
+        and we put them at {pct(call.probability)}. Because we rate {pick} above the market and the bet comes out ahead on average, we
+        backed {pick} even though our forecast still expects {favorite} to win.
+      </p>
     </section>
   );
 }
@@ -306,8 +288,8 @@ export function RacePanel({ view, redrawn, onClose }: Props) {
           )}
         </div>
         <Matchup view={view} />
-        <OurCall view={view} />
         <Factors view={view} />
+        <PickNote view={view} />
         <Past view={view} redrawn={redrawn} />
       </div>
     </aside>
