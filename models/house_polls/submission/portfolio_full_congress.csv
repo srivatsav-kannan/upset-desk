@@ -266,7 +266,7 @@ MS-02,House,D,Bennie Thompson,1.0
 MS-03,House,R,Michael Guest,0.9997
 MS-04,House,R,Mike Ezell,1.0
 MT-01,House,D,Sam Forstag,0.7535
-MT-02,House,D,Brian Miller,0.0061
+MT-02,House,R,Troy Downing,0.9939
 NC-01,House,R,Laurie Buckhout,0.2395
 NC-02,House,D,Deborah Ross,1.0
 NC-03,House,R,Greg Murphy,0.9769
@@ -293,7 +293,7 @@ NJ-03,House,D,Herb Conaway,0.9997
 NJ-04,House,R,Chris Smith,0.9997
 NJ-05,House,D,Josh Gottheimer,0.9991
 NJ-06,House,D,Frank Pallone,0.9996
-NJ-07,House,R,Thomas Kean Jr.,0.0378
+NJ-07,House,D,Rebecca Bennett,0.9622
 NJ-08,House,D,Rob Menendez,1.0
 NJ-09,House,D,Nellie Pou,0.9974
 NJ-10,House,D,LaMonica McIver,1.0

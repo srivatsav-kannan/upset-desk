@@ -293,7 +293,7 @@ NJ-03,House,D,Herb Conaway,0.9997
 NJ-04,House,R,Chris Smith,0.9997
 NJ-05,House,D,Josh Gottheimer,0.9991
 NJ-06,House,D,Frank Pallone,0.9996
-NJ-07,House,R,Thomas Kean Jr.,0.0378
+NJ-07,House,D,Rebecca Bennett,0.9622
 NJ-08,House,D,Rob Menendez,1.0
 NJ-09,House,D,Nellie Pou,0.9974
 NJ-10,House,D,LaMonica McIver,1.0
@@ -421,7 +421,7 @@ TX-24,House,R,Beth Van Duyne,0.9945
 TX-25,House,R,Roger Williams,0.9993
 TX-26,House,R,Brandon Gill,0.9993
 TX-27,House,R,Michael Cloud,0.9986
-TX-28,House,R,Tano Tijerina,0.046
+TX-28,House,D,Henry Cuellar,0.954
 TX-29,House,D,Sylvia Garcia,1.0
 TX-30,House,D,Frederick Haynes III,1.0
 TX-31,House,R,John Carter,0.9987
@@ -437,7 +437,7 @@ UT-02,House,R,Blake Moore,0.9997
 UT-03,House,R,Celeste Maloy,1.0
 UT-04,House,R,Mike Kennedy,0.9998
 VA-01,House,R,Rob Wittman,0.4536
-VA-02,House,R,Jen Kiggans,0.0481
+VA-02,House,D,Elaine Luria,0.9519
 VA-03,House,D,Bobby Scott,1.0
 VA-04,House,D,Jennifer McClellan,1.0
 VA-05,House,R,John McGuire,0.895

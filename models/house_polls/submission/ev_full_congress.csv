@@ -102,7 +102,7 @@ CA-44,House,D,Nanette Barragán,1.0
 CA-45,House,D,Derek Tran,0.9984
 CA-46,House,D,Lou Correa,0.9999
 CA-47,House,D,Dave Min,0.9998
-CA-48,House,R,Jim Desmond,0.0231
+CA-48,House,D,Marni von Wilpert,0.9769
 CA-49,House,D,Mike Levin,0.9998
 CA-50,House,D,Scott Peters,0.9999
 CA-51,House,D,Sara Jacobs,0.9999
@@ -266,7 +266,7 @@ MS-02,House,D,Bennie Thompson,1.0
 MS-03,House,R,Michael Guest,0.9997
 MS-04,House,R,Mike Ezell,1.0
 MT-01,House,D,Sam Forstag,0.7535
-MT-02,House,D,Brian Miller,0.0061
+MT-02,House,R,Troy Downing,0.9939
 NC-01,House,R,Laurie Buckhout,0.2395
 NC-02,House,D,Deborah Ross,1.0
 NC-03,House,R,Greg Murphy,0.9769
@@ -285,7 +285,7 @@ ND-AL,House,R,Julie Fedorchak,0.9999
 NE-01,House,R,Mike Flood,0.9524
 NE-02,House,D,Denise Powell,0.9953
 NE-03,House,R,Adrian Smith,1.0
-NH-01,House,R,Anthony DiLorenzo,0.0198
+NH-01,House,D,Stefany Shaheen,0.9802
 NH-02,House,D,Maggie Goodlander,0.9938
 NJ-01,House,D,Donald Norcross,0.9999
 NJ-02,House,R,Jeff Van Drew,0.9725
@@ -293,14 +293,14 @@ NJ-03,House,D,Herb Conaway,0.9997
 NJ-04,House,R,Chris Smith,0.9997
 NJ-05,House,D,Josh Gottheimer,0.9991
 NJ-06,House,D,Frank Pallone,0.9996
-NJ-07,House,R,Thomas Kean Jr.,0.0378
+NJ-07,House,D,Rebecca Bennett,0.9622
 NJ-08,House,D,Rob Menendez,1.0
 NJ-09,House,D,Nellie Pou,0.9974
 NJ-10,House,D,LaMonica McIver,1.0
 NJ-11,House,D,Analilia Mejia,0.9997
 NJ-12,House,D,Adam Hamawy,1.0
 NM-01,House,D,Melanie Stansbury,0.9962
-NM-02,House,R,Greg Cunningham,0.0367
+NM-02,House,D,Gabe Vasquez,0.9633
 NM-03,House,D,Teresa Leger Fernández,0.9942
 NV-01,House,D,Dina Titus,0.9948
 NV-02,House,R,David Flippo,0.8401
@@ -437,7 +437,7 @@ UT-02,House,R,Blake Moore,0.9997
 UT-03,House,R,Celeste Maloy,1.0
 UT-04,House,R,Mike Kennedy,0.9998
 VA-01,House,R,Rob Wittman,0.3709
-VA-02,House,R,Jen Kiggans,0.0421
+VA-02,House,D,Elaine Luria,0.9579
 VA-03,House,D,Bobby Scott,1.0
 VA-04,House,D,Jennifer McClellan,1.0
 VA-05,House,R,John McGuire,0.895

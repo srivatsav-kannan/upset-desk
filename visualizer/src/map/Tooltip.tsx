@@ -74,7 +74,7 @@ function TooltipBody({ region, chamber, mode, year, views }: Omit<Props, "anchor
             <span className="tooltip-num">{pct(race.winProbability)}</span>
           </div>
           <div className="tooltip-meta">{ratingOf(race)}</div>
-          <div className="tooltip-hint">Click to explore {region.stateName}</div>
+          <div className="tooltip-hint">Click to explore {region.stateName} in 3D</div>
         </>
       ) : (
         <div className="tooltip-meta">{chamber === "Senate" ? "No Senate race in 2026" : "No forecast"}</div>

@@ -80,7 +80,7 @@ function Outlook({ chamber, active, onClick }: { chamber: Chamber; active: boole
         chance {dem ? (chamber === "Senate" ? "Democrats and allied independents win" : "Democrats win") : "Republicans keep"} control
       </span>
       <span className="outlook-seats">
-        {o.median} seats in the typical outcome · {o.low}–{o.high} in 9 of 10
+        Typically {o.median} seats, and {o.low} to {o.high} in 9 of 10 simulations
       </span>
     </button>
   );
@@ -167,29 +167,6 @@ export function App() {
             <div className="hero">
               <Outlook chamber="House" active={view.chamber === "House" && mode === "forecast"} onClick={() => setView((v) => ({ ...v, chamber: "House", mode: "forecast" }))} />
               <Outlook chamber="Senate" active={view.chamber === "Senate"} onClick={() => setView((v) => ({ ...v, chamber: "Senate", mode: "forecast" }))} />
-              <div className="hero-tools">
-                <button
-                  type="button"
-                  className="toggle"
-                  aria-pressed={mode === "redistricting"}
-                  disabled={!!linesError}
-                  onClick={() => setView((v) => ({ ...v, chamber: "House", mode: v.mode === "redistricting" ? "forecast" : "redistricting" }))}
-                >
-                  <span className="toggle-track" aria-hidden="true">
-                    <span />
-                  </span>
-                  Redrawn districts
-                </button>
-                {shownLines && (
-                  <div className="segmented" role="group" aria-label="District lines">
-                    {LINES_YEARS.map((y) => (
-                      <button key={y} type="button" aria-pressed={y === year} onClick={() => setView((v) => ({ ...v, year: y }))}>
-                        {y} map
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
             </div>
           )}
           <div className={view.state ? "workspace workspace-full" : "workspace"}>
@@ -199,6 +176,16 @@ export function App() {
               ) : view.state ? (
                 <StateView stateId={view.state} geo={geo} views={views} selectedId={view.race} onSelect={openRace} onBack={closeState} />
               ) : (
+                <>
+                {mode === "forecast" && (
+                  <div className="map-cue" aria-hidden="true">
+                    <svg viewBox="0 0 20 20">
+                      <path d="M10 2.5l6.5 3.75v7.5L10 17.5l-6.5-3.75v-7.5L10 2.5z" />
+                      <path d="M3.5 6.25L10 10l6.5-3.75M10 10v7.5" />
+                    </svg>
+                    Click any state to explore it in 3D
+                  </div>
+                )}
                 <ElectionMap
                   geo={geo}
                   chamber={view.chamber}
@@ -208,12 +195,29 @@ export function App() {
                   views={views}
                   onState={openState}
                 />
+                </>
               )}
             </main>
             {ready && !view.state && (
               <aside className="sidebar">
                 {shownLines ? (
                   <>
+                    <div className="lines-head">
+                      <button type="button" className="back-link" onClick={() => setView((v) => ({ ...v, mode: "forecast" }))}>
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                          <path d="M10 3L5 8l5 5" />
+                        </svg>
+                        Back to the forecast
+                      </button>
+                      <h2>How the House map was redrawn</h2>
+                      <div className="segmented" role="group" aria-label="Which map">
+                        {LINES_YEARS.map((y) => (
+                          <button key={y} type="button" aria-pressed={y === year} onClick={() => setView((v) => ({ ...v, year: y }))}>
+                            {y} map
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <RedistrictingLegend regions={regions} redistricting={shownLines} year={year} />
                     <details className="lines-table">
                       <summary>Every redrawn district</summary>
@@ -221,7 +225,22 @@ export function App() {
                     </details>
                   </>
                 ) : (
-                  <Legend regions={regions} chamber={view.chamber} />
+                  <>
+                    <Legend regions={regions} chamber={view.chamber} />
+                    {!linesError && redistricting && view.chamber === "House" && (
+                      <button
+                        type="button"
+                        className="story-card"
+                        onClick={() => setView((v) => ({ ...v, chamber: "House", mode: "redistricting" }))}
+                      >
+                        <span className="story-eyebrow">New district lines</span>
+                        <span className="story-title">
+                          {redistricting.states.length} states redrew {redistricting.states.reduce((n, s) => n + s.redrawn, 0)} House districts for 2026
+                        </span>
+                        <span className="story-link">Compare the old and new maps →</span>
+                      </button>
+                    )}
+                  </>
                 )}
               </aside>
             )}

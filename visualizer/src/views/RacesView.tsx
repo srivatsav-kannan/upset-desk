@@ -1,24 +1,18 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { marketProbability } from "../data/forecast";
 import type { Party } from "../data/models";
-import { closeness, readingOrder, type RaceView } from "../data/races";
+import { readingOrder, type RaceView } from "../data/races";
 import { bucketOf, fillOf } from "../map/scale";
 import { PARTY_LONG, lastName, pct, ratingOf } from "../ui/words";
 
 type Chamber = "All" | "Senate" | "House";
 type Filter = "all" | "close" | "upsets" | "flips";
-type Sort = "state" | "close" | "upset";
 
 const FILTERS: [Filter, string][] = [
   ["all", "All races"],
   ["close", "Competitive"],
   ["flips", "Changing party"],
   ["upsets", "Our upset calls"],
-];
-const SORTS: [Sort, string][] = [
-  ["state", "By state"],
-  ["close", "Closest first"],
-  ["upset", "Biggest upset calls"],
 ];
 
 const partyVar = (p: Party) => (p === "R" ? "var(--r-likely)" : "var(--d-likely)");
@@ -29,8 +23,6 @@ const flips = (v: RaceView) => {
   const last = lastWinner(v);
   return !!last && (last === "R") !== (v.race.winner === "R");
 };
-const upsetPoints = (v: RaceView) =>
-  isUpset(v) && v.extras.market && v.extras.call ? 1 - marketProbability(v.extras.market, v.extras.call.party) : 0;
 
 function nameOf(v: RaceView, side: "r" | "other"): string {
   const n = v.extras.candidates[side];
@@ -52,7 +44,7 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
   const [query, setQuery] = useState("");
   const [chamber, setChamber] = useState<Chamber>("All");
   const [filter, setFilter] = useState<Filter>("all");
-  const [sort, setSort] = useState<Sort>("state");
+  const [descending, setDescending] = useState(false);
   const q = useDeferredValue(query.trim().toLowerCase());
   const all = useMemo(() => [...views.values()], [views]);
   const index = useMemo(() => new Map(all.map((v) => [v.id, haystack(v)])), [all]);
@@ -68,10 +60,9 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
           (filter === "flips" && flips(v))) &&
         terms.every((t) => index.get(v.id)?.includes(t)),
     );
-    return out.sort(
-      sort === "close" ? (a, b) => closeness(a) - closeness(b) : sort === "upset" ? (a, b) => upsetPoints(b) - upsetPoints(a) : readingOrder,
-    );
-  }, [all, index, q, chamber, filter, sort]);
+    // Z to A flips the states only: within a state the Senate race still comes first.
+    return out.sort(descending ? (a, b) => b.stateName.localeCompare(a.stateName) || readingOrder(a, b) : readingOrder);
+  }, [all, index, q, chamber, filter, descending]);
 
   const counts = useMemo(
     () => ({ upsets: all.filter(isUpset).length, flips: all.filter(flips).length }),
@@ -105,16 +96,6 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
             </button>
           ))}
         </div>
-        <label className="sort">
-          <span className="visually-hidden">Sort</span>
-          <select value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
-            {SORTS.map(([s, label]) => (
-              <option key={s} value={s}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
 
       <div className="races-scroll">
@@ -122,7 +103,15 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
           <caption className="visually-hidden">2026 races, {rows.length} shown</caption>
           <thead>
             <tr>
-              <th scope="col">Race</th>
+              <th scope="col" aria-sort={descending ? "descending" : "ascending"}>
+                <button type="button" className="sort-head" onClick={() => setDescending((d) => !d)}>
+                  Race
+                  <svg viewBox="0 0 12 12" aria-hidden="true" className={descending ? "sort-arrow sort-arrow-down" : "sort-arrow"}>
+                    <path d="M6 2.5v7M3 5.5l3-3 3 3" />
+                  </svg>
+                  <span className="visually-hidden">{descending ? "sorted Z to A" : "sorted A to Z"}</span>
+                </button>
+              </th>
               <th scope="col">Matchup and our forecast</th>
               <th scope="col">Rating</th>
               <th scope="col">Prediction market</th>
@@ -151,10 +140,18 @@ export function RacesView({ views, onSelect, selectedId }: Props) {
                   <td>
                     <div className="mini-matchup">
                       <span className={race.winner === "R" ? "mm-name mm-lead" : "mm-name"}>
-                        {r ? lastName(r) : "—"} <b>{pct(1 - race.pD)}</b>
+                        {r && (
+                          <>
+                            {lastName(r)} <b>{pct(1 - race.pD)}</b>
+                          </>
+                        )}
                       </span>
                       <span className={race.winner !== "R" ? "mm-name mm-lead mm-right" : "mm-name mm-right"}>
-                        <b>{pct(race.pD)}</b> {o ? lastName(o) : "—"}
+                        {extras.candidates.other && (
+                          <>
+                            <b>{pct(race.pD)}</b> {lastName(o)}
+                          </>
+                        )}
                       </span>
                     </div>
                     <div className="split split-thin" aria-hidden="true">

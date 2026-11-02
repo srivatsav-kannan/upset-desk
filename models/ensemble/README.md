@@ -116,9 +116,9 @@ Data snapshot: Wikipedia ratings and polls and the generic ballot (mean of 5 agg
 |---|---|---|---|
 | Kalshi favorite everywhere | 0 | 48.8 | 43.2 |
 | Our favorite | 5 | 53.4 | 43.8 |
-| **Expected-points rule** | **33** | **59.4** | **48.7** |
+| **Expected-points rule** | **30** | **59.2** | **48.2** |
 
-The ensemble agrees with the market far more than v2 did. v2 made 222 underdog picks, 20 of them Senate long shots resting on a House-fitted tail. The ensemble makes 33, 5 of them in the Senate (AK, KS, OH and TX for R; NE for Osborn). Its Senate tail is fit on the Senate, and it is thin: the long shots the rule picked under the df-4 tail (CO, GA, NC, NH and VA for R) now have model probabilities below 1%, under their Kalshi prices.
+The ensemble agrees with the market far more than v2 did. v2 made 222 underdog picks, 20 of them Senate long shots resting on a House-fitted tail. The ensemble makes 30, 5 of them in the Senate (AK, KS, OH and TX for R; NE for Osborn). No upset is called below a 5% chance for us (`MIN_CALL_P` in `decide.py`), which drops NJ-07, TX-28 and VA-02. Its Senate tail is fit on the Senate, and it is thin: the long shots the rule picked under the df-4 tail (CO, GA, NC, NH and VA for R) now have model probabilities below 1%, under their Kalshi prices.
 
 Its biggest bets against the market:
 - **TX-15:** De La Cruz (R), 56% for us against 11% on Kalshi. ([`house_polls`](../house_polls/) brings this down to 25% with the district polls.)

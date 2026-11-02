@@ -37,6 +37,13 @@ function PointsCurve() {
             {Math.round(t * 100)}%
           </text>
         ))}
+        <defs>
+          <linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" className="curve-fill-top" />
+            <stop offset="100%" className="curve-fill-bottom" />
+          </linearGradient>
+        </defs>
+        <path d={`${path}L${x(0.995).toFixed(1)},${y(0).toFixed(1)}L${x(0.005).toFixed(1)},${y(0).toFixed(1)}Z`} fill="url(#curve-fill)" />
         <path d={path} className="curve" />
         {marks.map(([p, label]) => (
           <g key={p} className="mark">
@@ -172,9 +179,6 @@ function UpsetScatter({ views }: { views: RaceView[] }) {
           </text>
         ))}
         <line className="diagonal" x1={x(0)} y1={y(0)} x2={x(0.5)} y2={y(0.5)} />
-        <text className="diagonal-label" x={x(0.5)} y={y(0.5) + 34} textAnchor="end">
-          same as the market
-        </text>
         <path className="break-even" d={breakEven} />
         <text className="break-even-label" x={x(0.2)} y={y(0.2 * 0.62) + 26}>
           worth the bet above this line
@@ -193,7 +197,7 @@ function UpsetScatter({ views }: { views: RaceView[] }) {
           Market's chance for our pick
         </text>
       </svg>
-      <figcaption>Our {pts.length} upset calls: our chance for the candidate (up) against the market's (across). Red: Republican, blue: Democrat.</figcaption>
+      <figcaption>Our {pts.length} upset calls, with our chance for each candidate going up and the market's going across. The gray line marks where we agree with the market, and the gold line is where an upset call starts to pay off under our rule.</figcaption>
     </figure>
   );
 }
@@ -209,67 +213,71 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
     <article className="method">
       <header className="method-hero">
         <div className="eyebrow">How it works</div>
-        <h2>Forecasting 470 races, then betting where the market is wrong</h2>
+        <h2>How we forecast every race, and where we bet against the market</h2>
         <p className="lede">
-          We predict every House and Senate race on the 2026 ballot. Then we decide which candidate to pick in each one. Those aren't the
-          same thing, and the difference is where the points are.
+          We forecast all 470 House and Senate races on the 2026 ballot and then choose a candidate to back in each one. Usually that's the
+          favorite, but the scoring pays far more for a correct upset than for a safe call, so in a handful of races we back the underdog on
+          purpose.
         </p>
       </header>
 
       <section>
+        <div className="eyebrow">The scoring</div>
         <h3>The game</h3>
         <p>
-          A correct pick scores more the less likely the prediction market thought it was. Calling a 90% favorite earns 0.15 points. A coin
-          flip earns 1, and a 25% underdog earns 2. A wrong pick earns nothing. So the goal isn't only to be right. It's to be right where
-          the market isn't.
+          Each correct pick earns points based on how unlikely the Kalshi prediction market thought it was on November 1, and a wrong pick
+          earns nothing. A 90% favorite is worth 0.15 points, a coin flip is worth 1 and a 25% underdog is worth 2, so most of the points on
+          offer sit in the races where the market might be wrong.
         </p>
         <PointsCurve />
       </section>
 
       <section>
+        <div className="eyebrow">The evidence</div>
         <h3>Four kinds of evidence</h3>
         <div className="steps">
           <div className="step">
             <span className="step-n">1</span>
             <h4>How the place votes</h4>
             <p>
-              Each district's 2024 presidential vote on its new 2026 lines, shifted by this year's national mood (Democrats lead the
-              generic ballot by about 9 points), plus a boost for incumbents running again.
+              We start with how each district voted for president in 2024, redrawn onto its 2026 lines, then shift it by this year's
+              national mood (Democrats lead the generic congressional ballot by about 9 points) and give incumbents running again a boost.
             </p>
           </div>
           <div className="step">
             <span className="step-n">2</span>
             <h4>Expert forecasters</h4>
             <p>
-              Up to 11 professional race ratings per race, from Cook, Sabato's Crystal Ball, Inside Elections and others. They see
-              candidate quality, money and local polls that the vote history can't.
+              We average up to 11 professional ratings per race from Cook, Sabato's Crystal Ball, Inside Elections and others. They pick
+              up candidate quality, fundraising and local polling, which the vote history misses.
             </p>
           </div>
           <div className="step">
             <span className="step-n">3</span>
             <h4>Polls</h4>
             <p>
-              Every public poll from the last four weeks, for each Senate race and the 57 House districts that have them, weighted toward
-              recent, larger polls of the actual two finalists.
+              We use every public poll from the last four weeks in each Senate race and in the 57 House districts that have them, giving
+              more weight to recent and larger polls of the two candidates actually on the ballot.
             </p>
           </div>
           <div className="step">
             <span className="step-n">4</span>
             <h4>Candidates and news</h4>
             <p>
-              We researched 105 competitive races for scandals, recruits and late news, and scored each on a fixed checklist. It can nudge
-              a race by a point or two, never more.
+              We researched the 105 most competitive races for scandals, strong recruits and late news, and scored each one on a fixed
+              checklist. This moves a race by a point or two at most.
             </p>
           </div>
         </div>
       </section>
 
       <section>
+        <div className="eyebrow">The track record</div>
         <h3>Weighed by what has worked before</h3>
         <p>
-          We don't choose how much each kind of evidence counts. History does. We fit the weights on every House and Senate race from 2010
-          to 2022, and to keep ourselves honest, we predicted each year using only the other years. Expert ratings turned out to be the
-          strongest single signal; polls add the most in well-polled Senate races.
+          The weight each kind of evidence gets comes from history. We fit the weights on every House and Senate race from 2010 to 2022,
+          and to keep the test honest, each year was predicted using only the other years. Expert ratings turned out to be the strongest
+          single signal, and polls help most in well-polled Senate races.
         </p>
         <div className="stats">
           <div className="stat">
@@ -290,18 +298,21 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
           </div>
         </div>
         <p>
-          Calling most races right is easy; most aren't close. What matters for scoring is whether our odds mean what they say: if we give
-          a hundred underdogs a 10% chance each, about ten of them should win. In every band, the upsets landed close to what we expected.
+          Most races are lopsided, so calling them right is the easy part. For scoring, what matters is whether our odds can be taken at face
+          value: if we give a hundred underdogs a 10% chance each, about ten of them should win. The chart groups past races by the chance
+          we gave the underdog and compares the upsets we expected with the ones that happened, and in every group the two land close
+          together.
         </p>
         <Calibration chamber="House" />
       </section>
 
       {OUTLOOK.House && OUTLOOK.Senate && (
         <section>
+          <div className="eyebrow">The simulation</div>
           <h3>Simulating the election {OUTLOOK.House.simulations.toLocaleString()} times</h3>
           <p>
-            Polls and forecasts tend to miss in the same direction in the same year, so we simulate whole elections, not single races.
-            Every simulation draws one national surprise shared by every race, plus local surprises.
+            Polls and forecasts tend to miss in the same direction in the same year, so we simulate whole elections at once. Each run draws
+            one national surprise that every race shares, plus a smaller local surprise for each race.
           </p>
           <div className="duo">
             <div>
@@ -321,16 +332,18 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
       )}
 
       <section>
+        <div className="eyebrow">The picks</div>
         <h3>From forecast to picks</h3>
         <p>
-          In most races we pick the favorite. But long shots pay far more when they hit, and that changes the math. If the market's odds
-          were exactly right, an underdog would always be worth more points on average than the favorite. What keeps us from picking every
-          underdog is that our forecast is often far more confident in the favorite than the market is.
+          Long shots pay much more when they hit, and under this scoring an underdog the market prices fairly is worth more points on average
+          than the favorite. We still pick the favorite in almost every race because our forecast is usually more confident in the favorite
+          than the market is, which makes the safe call the better bet.
         </p>
         <p>
-          So we take the long shot only where our own odds make it clearly worth it: its expected points must beat the favorite's by at least
-          a quarter. That leaves {upsets} upset calls. Some are races where we think the market badly underrates the underdog; others are
-          cheap tickets where we roughly agree with the market but a win pays three to six times as much.
+          We back an underdog only when our own odds make it clearly worth it. Its expected points have to beat the favorite's by at least a
+          quarter, and we have to give it at least a 1 in 20 chance, so every upset call is a candidate with a realistic path to winning. That
+          leaves {upsets} upset calls. In some of them we think the market badly underrates the underdog, and the rest are cheap tickets where
+          we roughly agree with the market but a win pays three or four times as much.
         </p>
         <UpsetScatter views={list} />
         {SCORE.ours && SCORE.favorites && (
@@ -348,37 +361,38 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
           </div>
         )}
         <p className="muted">
-          Our upset calls lean Republican because the market leans further toward Democrats than our forecast does in those races. They tend
-          to win or lose together, which is why we keep only the strongest ones.
+          Most of our upset calls are Republicans, because in those races the market leans further toward the Democrat than our forecast
+          does. They tend to win or lose together, which is why we keep only the strongest ones.
         </p>
       </section>
 
       <section>
+        <div className="eyebrow">The risks</div>
         <h3>What could go wrong</h3>
         <ul className="risks">
           <li>
-            <strong>One national surprise moves everything.</strong> If Democrats outperform, most of our upset calls miss at once.
+            <strong>A single national surprise moves every race.</strong> If Democrats beat their polls, most of our upset calls miss
+            together.
           </li>
           <li>
-            <strong>Seven elections of history.</strong> A national mood this strong for one party is rarer than most of what we trained
-            on.
+            <strong>We learned from seven elections.</strong> A national mood this favorable to one party is rarer than most of what the
+            model trained on.
           </li>
           <li>
-            <strong>Most House races have no polls.</strong> 378 districts rest on vote history and expert ratings alone.
+            <strong>Most House races have no polls,</strong> so 378 districts rely on vote history and expert ratings alone.
           </li>
           <li>
-            <strong>Alaska's Senate race.</strong> Our biggest Senate upset call is Dan Sullivan, but Mary Peltola led the August primary
-            49.5% to 41.4%, which our model doesn't use.
+            <strong>Alaska's Senate race is our biggest Senate upset call.</strong> We back Dan Sullivan, while Mary Peltola led the August
+            primary 49.5% to 41.4%, a result our model doesn't take into account.
           </li>
         </ul>
       </section>
 
       <footer className="method-foot">
         <p>
-          Built for Stanford Democracy Day's Model Citizens challenge. Every number on this site is
-          regenerated from code and public data: past results from the MIT Election Lab and FiveThirtyEight, district lines from the
-          Census Bureau, presidential results by district from The Downballot, ratings and polls from Wikipedia, and market odds from Kalshi
-          on November 1.
+          Built for Stanford Democracy Day's Model Citizens challenge. Every number on this site is regenerated from our code and public
+          data: past results from the MIT Election Lab and FiveThirtyEight, district lines from the Census Bureau, presidential results by
+          district from The Downballot, ratings and polls from Wikipedia, and market odds from Kalshi on November 1.
         </p>
         <p>
           <a href={REPO}>Code and full method on GitHub</a>

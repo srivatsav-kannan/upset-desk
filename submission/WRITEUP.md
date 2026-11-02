@@ -17,7 +17,7 @@ For probabilities we stacked every signal in one regression instead of averaging
 
 Weights are fit on every 2010–2022 House and Senate race with leave-one-cycle-out CV, and a Student-t turns margins into probabilities. Out of sample, House log loss is 0.077 against 0.139 for fundamentals alone, and calibration holds in every probability bin. Ideas that lost in the backtest stay out: a flat "Democrats are overstated" correction, a partisan-poll correction, and blending the baseline back in.
 
-For picks, we simulated 4,000 correlated elections and kept the rule with the best chance of finishing first: take an underdog only when its expected points beat the favorite's by 25%. That gives 23 upset calls.
+For picks, we simulated 4,000 correlated elections and scored several rules. We take an underdog only when its expected points beat the favorite's by 25% and we give it at least a 5% chance, which gives 21 upset calls.
 
 ## Which data points did you include? (200 words)
 

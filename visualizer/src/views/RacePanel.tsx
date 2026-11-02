@@ -94,7 +94,7 @@ function OurCall({ view }: { view: RaceView }) {
   let body: string;
   if (!market) {
     headline = `We pick ${call.name}`;
-    body = "No prediction market covers this race, so there are no odds to beat. We pick the likely winner.";
+    body = "No prediction market covers this race, so we pick the likely winner.";
   } else {
     const pm = marketProbability(market, call.party);
     const pts = pointsFor(pm).toFixed(2);
@@ -106,17 +106,17 @@ function OurCall({ view }: { view: RaceView }) {
       body =
         p >= pm * 1.15
           ? `Our forecast favors ${favLast}, but the market prices ${last} at just ${pct(pm)}. We think ${last}'s real chance is ` +
-            `${pct(p)}, ${(p / pm).toFixed(1)}× the market's, and a win would earn ${pts} points instead of ${favPts}. ` +
-            `Bets like this come out ahead across many races.`
-          : `${favLast} is the favorite, by our forecast and the market's. But a ${last} win would earn ${pts} points against ` +
-            `${favPts} for ${favLast}, so even at our ${pct(p)} chance (the market says ${pct(pm)}), ${last} is worth more points ` +
-            `on average. It's a cheap ticket.`;
+            `${pct(p)}, ${(p / pm).toFixed(1)}× the market's, and a win would earn ${pts} points instead of ${favPts}, ` +
+            `so across many races, bets like this come out ahead.`
+          : `${favLast} is the favorite in our forecast and in the market. A ${last} win would earn ${pts} points against ` +
+            `${favPts} for ${favLast}, so even at our ${pct(p)} chance (the market says ${pct(pm)}), ${last} is worth more ` +
+            `points on average, which makes this a cheap ticket worth holding.`;
     } else if (call.party !== market.favorite) {
       headline = `Against the market: ${call.name}`;
-      body = `We give ${last} a ${pct(p)} chance; the market gives ${pct(pm)}. If ${last} wins, the call earns ${pts} points.`;
+      body = `We give ${last} a ${pct(p)} chance and the market gives ${pct(pm)}, so a ${last} win earns ${pts} points.`;
     } else {
       headline = `We pick ${call.name}`;
-      body = `The market agrees, at ${pct(pm)}, so a correct call earns ${pts} points.`;
+      body = `The market agrees at ${pct(pm)}, so a correct call earns ${pts} points.`;
     }
   }
   const upset = !!market && call.party !== market.favorite;
@@ -147,7 +147,7 @@ function Factors({ view }: { view: RaceView }) {
     {
       label: "Expert forecasters",
       value: (f.rating ?? 0) / 3,
-      text: f.rating === null ? "Not rated: the forecasters see it as safe for the favorite." : `${f.raters} forecasters rate it ${expertLabel(f.rating, nonR)} on average.`,
+      text: f.rating === null ? "Not rated, which means the forecasters consider it safe for the favorite." : `${f.raters} forecasters rate it ${expertLabel(f.rating, nonR)} on average.`,
     },
     {
       label: "Polls",
@@ -187,8 +187,9 @@ function Factors({ view }: { view: RaceView }) {
       </ul>
       {race.margin !== null && (
         <p className="factor-total">
-          Weighed together by how well each has predicted past races: <strong>{marginLabel(race.margin, nonR)}</strong>, a{" "}
-          <strong>{pct(race.winProbability)}</strong> chance for the {PARTY_LONG[race.winner]}.
+          With each input weighted by how well it has predicted past races, the forecast comes to{" "}
+          <strong>{marginLabel(race.margin, nonR)}</strong>, which gives the {PARTY_LONG[race.winner]} a{" "}
+          <strong>{pct(race.winProbability)}</strong> chance.
         </p>
       )}
     </section>

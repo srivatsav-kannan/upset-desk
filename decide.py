@@ -8,8 +8,8 @@ results/model_vs_kalshi.csv, results/strategy_summary.csv, and submission/favori
 A model that also writes results/simulated_outcomes.csv (each race's winner in every one of
 its seeded, correlated simulated elections) gets a portfolio step: pick strategies are scored
 in every simulated election, giving the spread of the total score, not just its mean
-(results/portfolio_summary.csv), and the strategy most likely to beat a strong rival entry is
-written as submission/portfolio_*.csv.
+(results/portfolio_summary.csv), and the chosen one (CHOSEN_EDGE) is written as
+submission/portfolio_*.csv.
 """
 
 import datetime as dt
@@ -26,12 +26,21 @@ KALSHI_API = "https://api.elections.kalshi.com/trade-api/v2"
 # Series that hold 2026 congressional winner markets (one event per race).
 KALSHI_SERIES = re.compile(r"^(KX)?SENATE[A-Z]{2}S?$|^KXHOUSERACE$|^(KX)?HOUSE[A-Z]{2}(\d{1,2}|AL)$")
 KALSHI_FLOOR = 0.01  # scoring floors Kalshi's probability at 1%
+# An underdog is only called when we give it at least this chance. Below it the expected-points edge
+# is a rounding error (MT-02: 0.6% for us, 2% on Kalshi, 0.005 points) and the model's far tail
+# is the part we can check least, so the favorite is picked instead.
+MIN_CALL_P = 0.05
 # Party-named Kalshi markets ("Republican party") carry no candidate; their names, and those of races
 # with no market, come from data/overrides/candidate_names.csv.
 PARTY_NAMED = re.compile(r"^(Democratic|Republican|Independent) party$", re.I)
 # Portfolio strategies: the expected-points rule, keeping an underdog pick only when its expected
 # points beat the Kalshi favorite's by at least this share (0 = the plain rule).
 EDGE_THRESHOLDS = [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
+# The submitted strategy. In the simulations, edges from 0% to 50% are indistinguishable (chance of
+# beating the rival within 0.005 of each other, under one standard error at 4,000 runs), so the
+# choice is fixed rather than re-picked on noise: 25% costs almost nothing in mean and keeps out
+# the thinnest calls. The other strategies are still scored in portfolio_summary.csv.
+CHOSEN_EDGE = 0.25
 # The rival entry to beat: one that picks every Kalshi favorite and, from lucky upsets, scores this
 # many points more in the same election. A field mostly picking favorites clusters near that
 # entry, so its best teams sit a few points above it. An assumption, not an estimate.
@@ -148,7 +157,7 @@ def decide(p_d_model: float, market) -> dict:
     model = {"R": p_r, non_r: 1 - p_r}
     fav = "R" if p_r > 0.5 else non_r
     ev = {c: model.get(c, 0.0) * points(cands[c]["p"]) for c in cands}
-    pick = max(ev, key=ev.get)
+    pick = max((c for c in ev if c == fav or model.get(c, 0.0) >= MIN_CALL_P), key=ev.get)
     kalshi_fav = max(cands, key=lambda c: cands[c]["p"])
     return {
         "pick": pick, "pick_model_p": model.get(pick, 0.0), "model_favorite": fav,
@@ -209,7 +218,7 @@ def portfolio(compare: list, market: dict, sims_path: Path) -> tuple:
                             "p_beat_rival": round(sum(a > b + RIVAL_LEAD[scope] for a, b in zip(s, rival)) / n, 4),
                             "simulations": n})
         rs = [x for x in summary if x["scope"] == scope]
-        best[scope] = max(rs, key=lambda x: (x["p_beat_rival"], x["mean"]))["strategy"]
+        best[scope] = f"expected points, edge >= {CHOSEN_EDGE:.0%}"
         for x in rs:
             x["chosen"] = x["strategy"] == best[scope]
     return summary, {scope: strategies[label] for scope, label in best.items()}

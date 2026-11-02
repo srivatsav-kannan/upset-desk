@@ -134,7 +134,7 @@ export function StateView({ stateId, geo, views, selectedId, onSelect, onBack }:
           </svg>
         )}
         <div className="state-hint" aria-hidden="true">
-          {gl ? "Drag to turn · scroll to zoom · taller means a bigger projected win" : "Click a district for details"}
+          {gl ? "Drag to turn, scroll to zoom, and click a district for details" : "Click a district for details"}
         </div>
         {hovered && hover && (
           <div className="float-tip" style={{ transform: `translate(${hover.x + 14}px, ${hover.y + 14}px)` }}>

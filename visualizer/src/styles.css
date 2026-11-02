@@ -2283,3 +2283,241 @@ button:disabled {
     padding-top: 28px;
   }
 }
+
+/* ---------------------------------------------------------------- map cue, redistricting entry */
+
+.map-cue {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px 9px 13px;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-size: 14px !important;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+  animation: rise 500ms 300ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.map-cue svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  animation: turn 3.2s ease-in-out 1s infinite;
+}
+
+@keyframes turn {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0);
+  }
+  80% {
+    transform: rotate(-18deg);
+  }
+  90% {
+    transform: rotate(10deg);
+  }
+}
+
+.story-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  height: auto;
+  margin-top: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--surface-raised);
+  text-align: left;
+}
+
+.story-card:hover:not(:disabled) {
+  border-color: var(--control-border);
+  background-image: none;
+  box-shadow: var(--shadow);
+}
+
+.story-eyebrow {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.story-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.story-link {
+  margin-top: 4px;
+  color: var(--ink-d);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.lines-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.lines-head h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.back-link:hover:not(:disabled) {
+  background-image: none;
+  color: var(--text-primary);
+}
+
+.back-link svg,
+.sort-arrow {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sort-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.sort-head:hover:not(:disabled) {
+  background-image: none;
+}
+
+.sort-arrow {
+  width: 12px;
+  height: 12px;
+  transition: transform 160ms ease;
+}
+
+.sort-arrow-down {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 640px) {
+  .map-cue {
+    top: 6px;
+    padding: 6px 12px 6px 9px;
+    font-size: 12px !important;
+  }
+}
+
+/* ---------------------------------------------------------------- how it works: polish */
+
+.method section > .eyebrow {
+  margin-bottom: 6px;
+  color: var(--gold);
+}
+
+.method .chart {
+  margin: 22px 0 10px;
+  padding: 18px 18px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 18px;
+  background: var(--surface-raised);
+}
+
+.method .duo .chart {
+  margin-top: 10px;
+}
+
+.curve-fill-top {
+  stop-color: var(--gold);
+  stop-opacity: 0.22;
+}
+
+.curve-fill-bottom {
+  stop-color: var(--gold);
+  stop-opacity: 0;
+}
+
+.method .step {
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.method .step:hover {
+  border-color: var(--control-border);
+  box-shadow: var(--shadow);
+}
+
+.method .stat strong {
+  color: var(--text-primary);
+}
+
+.method .risks {
+  padding: 0;
+  list-style: none;
+}
+
+.method .risks li {
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 22px;
+}
+
+.method .risks li::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.method h3 + p,
+.method .eyebrow + h3 {
+  margin-top: 0;
+}
