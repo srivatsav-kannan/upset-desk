@@ -39,7 +39,7 @@ The site shows the **submission model**: whichever model's `portfolio_full_congr
   - **2024 map / 2026 map:** switches between the old and new lines. The other map's district lines are drawn dashed, only where they moved. A click zooms into a state, so you can flip back and forth on it.
   - **Sidebar:** seats each candidate carried among the redrawn districts on the shown map, the national total (Trump carried 230 seats on the 2024 lines and 234 on the 2026 lines), the change by state, and a table of every redrawn district.
   - **Data:** The Downballot's 2024 presidential results by district on the [2024 lines and the 2026 lines](https://www.the-downballot.com/p/the-downballots-calculations-of-presidential), read from the newest `data/raw/downballot/downballot_{2024,2026}_lines_*.csv`. A district counts as redrawn when its vote totals differ between the two sheets, the same test as `uniform_swing`'s `lines_changed`.
-- **Top and bottom bars:** the team name sits between a blue and a red dot, with a small arrow pointing to the strategy page. A bar along the bottom of every page lists the team with LinkedIn and GitHub links (`src/ui/TeamBar.tsx`; a missing link shows as a dimmed icon).
+- **Top and bottom bars:** the team name sits between a blue and a red dot, with a small arrow pointing to the strategy page. A bar along the bottom of every page lists the team with LinkedIn and GitHub links (`src/ui/TeamBar.tsx`).
 - **Links:** the whole view lives in the URL (`?state=TX&race=TX-15`, `?tab=races`, `?view=redistricting&lines=2024`), so a link reopens exactly what you were looking at.
 
 ## Data it reads

@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 /** The team, with LinkedIn and GitHub links. A missing link shows as a dimmed icon until it's filled in. */
 const TEAM: { name: string; linkedin?: string; github?: string }[] = [
   { name: "Srivatsav Kannan", linkedin: "https://www.linkedin.com/in/srivatsav-kannan-2bb543200", github: "https://github.com/srivatsav-kannan" },
-  { name: "Ray Li", github: "https://github.com/heruirayli" },
-  { name: "Krish Wu", github: "https://github.com/KrishWu" },
+  { name: "Ray Li", linkedin: "https://www.linkedin.com/in/heruirayli/", github: "https://github.com/heruirayli" },
+  { name: "Krish Wu", linkedin: "https://www.linkedin.com/in/krishjwu/", github: "https://github.com/KrishWu" },
 ];
 
 const LinkedIn = () => (
