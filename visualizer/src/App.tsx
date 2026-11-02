@@ -157,11 +157,11 @@ export function App() {
               </button>
               {t === "method" && view.tab !== "method" && (
                 <span className="tab-hint" aria-hidden="true">
-                  <svg viewBox="0 0 14 22">
-                    <path d="M7 20V3" />
-                    <path d="M2.5 7.5L7 3l4.5 4.5" />
-                  </svg>
                   how we did it
+                  <svg viewBox="0 0 36 36">
+                    <path d="M3 31c12 0 22-8 26-25" />
+                    <path d="M23.5 10.5L29.2 5l3.2 7" />
+                  </svg>
                 </span>
               )}
             </span>
