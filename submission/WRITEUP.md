@@ -8,39 +8,21 @@ Track: **Full Congress.** CSV: [`house_polls_portfolio_full_congress.csv`](house
 
 ## Thought process behind your model (200 words)
 
-Scoring is −log₂ of Kalshi's price for whoever we pick, so we split the problem in two: first honest probabilities, then picks. Kalshi only enters the pick step, never the model.
+We treated this as two problems: getting honest odds for every race, then deciding who to pick given how the contest is scored. Kalshi's prices only come in at the second step, so the forecast stays our own opinion.
 
-For probabilities we stacked every signal in one regression instead of averaging models by hand. Per race, the inputs are:
-- a fundamentals margin: the 2024 presidential margin on the 2026 lines, the generic-ballot swing and incumbency;
-- the mean of up to 11 expert ratings;
-- Senate and House district polls from the last four weeks.
+For the forecast, we combined three signals in a single regression: how each district voted in 2024 on its new 2026 lines (shifted by the generic ballot and adjusted for incumbents running again), the average of up to 11 expert ratings, and polls from the last four weeks. We let history set the weights, fitting on every House and Senate race from 2010 to 2022 and predicting each year without the model seeing it. That version called 96.7% of House races and 92.6% of Senate races correctly, and its underdogs won about as often as its odds said they would.
 
-Weights are fit on every 2010–2022 House and Senate race with leave-one-cycle-out CV, and a Student-t turns margins into probabilities. Out of sample, House log loss is 0.077 against 0.139 for fundamentals alone, and calibration holds in every probability bin. Ideas that lost in the backtest stay out, such as a flat "Democrats are overstated" correction.
-
-For picks, we usually take our forecast's favorite, which already disagrees with the market in 5 races. In 12 more we back a candidate our forecast expects to lose: only when we rate them above the market, give them at least a 5% chance, and the bet beats the favorite's by 25% in expected points.
+For the picks, we back our forecast's favorite almost everywhere, which already puts us against the market in 5 races. In 12 more we back a candidate we expect to lose, but only when we rate them above the market, give them at least a 1 in 20 chance, and the bet is clearly worth more on average.
 
 ## Which data points did you include? (200 words)
 
-- **Past results:** MIT Election Lab House and Senate results, 2010–2024, are the training labels. The Downballot's 2024 presidential results on the 2026 district lines cover the mid-decade redraws in TX, CA, NC, OH and UT.
-- **Expert ratings:** up to 11 raters per race (Cook, Sabato, Inside Elections and others), historical for training and current for 2026. Our strongest input: it cut log loss about 40%.
-- **Polls:** for training, the FiveThirtyEight archive, 2010–2022. For 2026, Wikipedia race pages: the polled Senate races plus 57 polled House districts. We use the last 28 days, weighted by recency and sample size, and only polls of the actual top-two matchup.
-- **National environment:** a generic-ballot average across 5 aggregators (D+8.9).
-- **Incumbency and retirements:** from Wikipedia.
-- **Candidate quality and news:** LLM-assisted research on 105 competitive races, scored on a fixed protocol, frozen to a CSV. It's centered, so it can't move the national picture, and it moves a single race by about 2 points at most.
-- **Kalshi, Nov 1:** used only to choose picks.
-
-Left out: FEC money and demographics. Lean and ratings already carry most of that signal.
+The model learns from past results: the MIT Election Lab's House and Senate returns from 2010 to 2024. Because Texas, California, North Carolina, Ohio and Utah redrew their maps for 2026, we used The Downballot's 2024 presidential results recalculated on the new district lines. Expert ratings from up to 11 forecasters per race (Cook, Sabato's Crystal Ball, Inside Elections and others) were our strongest input, cutting the model's error by about 40%. For polls, we trained on FiveThirtyEight's archive and used Wikipedia's race pages for 2026, keeping only the last four weeks and only polls of the two candidates actually on the ballot, which covers the polled Senate races and 57 House districts. We also used a generic ballot average across five aggregators (Democrats +8.9) and incumbency and retirement data from Wikipedia. On top of that sits a small layer of candidate and news research on 105 competitive races, scored on a fixed checklist and saved to a file so the run is reproducible. Kalshi's November 1 prices are used only to choose picks. We left out fundraising and demographics, since district lean and the ratings already capture most of what they would add.
 
 ## Risks and limitations
 
-- **Our strategic picks are correlated.** All 12 are Republicans in seats where Kalshi favors the Democrat, so they hit or miss together on one national error. In our simulations the score's 10th–90th percentile is 47–66.
-- **Seven training cycles.** The national error is estimated from 2010–2022. A D+9 generic ballot is bigger than most of those years.
-- **We lean on the raters.** If they herd, so do we.
-- **The news layer isn't backtested.** You can't rerun LLM research on 2018 without leaking the result. It's capped small for that reason.
-- **Thin House polling.** Only 57 of 435 districts have recent polls. The other 378 run on lean, incumbency and ratings.
-- **No market in 9 races.** These are California same-party races, so we don't know how they're scored. The party pick is locked anyway, and we name the primary leader.
-- **AK-SEN cuts against us.** Our biggest disagreement with the market in the Senate is Sullivan (R) at 61%, but Peltola led the top-four primary 49.5% to 41.4%. Primary results aren't a model input, so the model hasn't seen that.
-- **Odd systems.** Alaska's RCV and Nebraska's independent (Osborn) are modelled as one non-Republican against the Republican.
+The biggest risk is that our strategic picks move together. All 12 are Republicans in seats where the market favors the Democrat, so a strong night for Democrats could sink nearly all of them at once, and in 8 out of 10 of our simulated elections the total score lands between about 47 and 66 points. We also learned from only seven elections, and a national environment this lopsided is rarer than most of what the model trained on.
+
+Most House races have no recent polls, so 378 districts rest entirely on vote history and expert ratings, and if the raters move as a herd, so do we. The news research is a judgment layer we can't backtest, because rerunning it on past years would leak their results, which is why it can only move a race by a point or two. Alaska's Senate race cuts against us: our forecast favors Dan Sullivan, while Mary Peltola led the August primary 49.5% to 41.4%, and primary results aren't something the model uses. Finally, nine same-party California races have no market at all, and in Alaska and Nebraska we model the race as one non-Republican against the Republican, which simplifies ranked-choice voting and Dan Osborn's independent bid.
 
 ## Link to visualization, slides, or extra explanation (optional)
 
@@ -50,13 +32,14 @@ No slide deck is required. The site is our explanation: an interactive map of al
 
 ## Anything else you want to tell us?
 
-Everything reproduces from code: `python3 forecast.py` regenerates every CSV in about 2 minutes. It uses the standard library only, every simulation is seeded, and raw data is cached by retrieval date in `data/raw/`. The model never reads Kalshi, and a unit test enforces that.
+Everything reproduces from code. Running `python3 forecast.py` regenerates every CSV in about two minutes using only Python's standard library, every simulation is seeded, and the raw data is saved by download date in `data/raw/`. The model never reads Kalshi's prices, and a unit test checks that it can't.
 
 ---
 
 ## Checklist before hitting submit
 
-- [ ] Upload `house_polls_portfolio_full_congress.csv` to Google Drive and set it to "anyone with the link can view".
+- [x] Upload the CSV to Google Drive ("The Upset Desk - full_congress_predictions (final).csv"; the link is already in the form).
+- [ ] Share that Drive file with dwgan@stanford.edu and arsalem@stanford.edu.
 - [ ] Make the repo public, or add dwgan@stanford.edu and arsalem@stanford.edu as collaborators. **It's private right now.**
 - [ ] Team name, full names and Stanford emails of all three of us, in the same order.
 - [ ] Turn on GitHub Pages (Settings → Pages → Source: GitHub Actions; needs the repo public, or GitHub Pro), then check the link above loads.
