@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { OUTLOOK, SUBMISSION_ID } from "./data/forecast";
 import { MODELS, MODEL_ERRORS, type Chamber } from "./data/models";
 import { raceViews } from "./data/races";
@@ -151,20 +151,20 @@ export function App() {
         </a>
         <nav className="tabs" aria-label="Sections">
           {TABS.map(([t, label]) => (
-            <Fragment key={t}>
-              {t === "method" && view.tab !== "method" && (
-                <span className="tab-hint" aria-hidden="true">
-                  how we did it
-                  <svg viewBox="0 0 34 14">
-                    <path d="M2 9c8-6 18-7 28-2" />
-                    <path d="M25 3.5l5.5 3.5-5 4" />
-                  </svg>
-                </span>
-              )}
+            <span key={t} className="tab-wrap">
               <button type="button" aria-current={t === view.tab ? "page" : undefined} onClick={() => setView((v) => ({ ...v, tab: t, race: null }))}>
                 {label}
               </button>
-            </Fragment>
+              {t === "method" && view.tab !== "method" && (
+                <span className="tab-hint" aria-hidden="true">
+                  <svg viewBox="0 0 14 22">
+                    <path d="M7 20V3" />
+                    <path d="M2.5 7.5L7 3l4.5 4.5" />
+                  </svg>
+                  how we did it
+                </span>
+              )}
+            </span>
           ))}
         </nav>
       </header>
