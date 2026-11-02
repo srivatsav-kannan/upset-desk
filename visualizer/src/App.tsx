@@ -143,14 +143,10 @@ export function App() {
     <div className="app">
       <header className="topbar">
         <a className="brand" href={window.location.pathname} onClick={(e) => (e.preventDefault(), setView((v) => ({ ...v, tab: "map", state: null, race: null })))}>
-          <span className="brand-mark" aria-hidden="true">
-            <span />
-            <span />
-          </span>
-          <span className="brand-text">
-            <strong>2026 Congress</strong>
-            <span>Model Citizens forecast</span>
-          </span>
+          <span className="brand-dot brand-dot-d" aria-hidden="true" />
+          <strong className="brand-name">The Upset Desk</strong>
+          <span className="brand-dot brand-dot-r" aria-hidden="true" />
+          <span className="brand-sub">2026 Congress forecast</span>
         </a>
         <nav className="tabs" aria-label="Sections">
           {TABS.map(([t, label]) => (

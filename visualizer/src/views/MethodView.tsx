@@ -170,10 +170,19 @@ function picksAgainstMarket(views: RaceView[]): Dot[] {
   });
 }
 
+/** A short sample of a rule's line, drawn exactly as on the chart. */
+function RuleSample({ kind }: { kind: "edge" | "market" | "floor" }) {
+  return (
+    <svg className="rule-sample" viewBox="0 0 28 10" aria-hidden="true">
+      <line className={`rule rule-${kind}`} x1={2} x2={26} y1={5} y2={5} />
+    </svg>
+  );
+}
+
 function PicksChart({ dots }: { dots: Dot[] }) {
   const W = 580;
   const H = 380;
-  const pad = { l: 46, r: 18, t: 18, b: 44 };
+  const pad = { l: 46, r: 78, t: 18, b: 44 };
   const X1 = 0.5;
   const Y1 = 0.85;
   const x = (m: number) => pad.l + (m / X1) * (W - pad.l - pad.r);
@@ -199,7 +208,7 @@ function PicksChart({ dots }: { dots: Dot[] }) {
     for (const side of ["start", "end"] as const) {
       const [x0, x1] = side === "start" ? [cx + 8, cx + 8 + LABEL_W] : [cx - 8 - LABEL_W, cx - 8];
       const clear =
-        x0 > pad.l - 20 &&
+        x0 > 2 &&
         x1 < W &&
         placed.every((q) => Math.abs(q.y - cy) > 14 || q.x1 < x0 || q.x0 > x1) &&
         others.every((o) => Math.abs(y(o.p) - cy) > 8 || x(o.m) < x0 - 4 || x(o.m) > x1 + 4);
@@ -244,20 +253,16 @@ function PicksChart({ dots }: { dots: Dot[] }) {
         <path className="rule rule-market" d={line((m) => m)} />
         <path className="rule rule-edge" d={line(breakEven)} />
         <line className="rule rule-floor" x1={x(0)} x2={x(X1)} y1={y(FLOOR)} y2={y(FLOOR)} />
-        <g className="rule-tags">
-          <g transform={`translate(${x(0.44)},${y(0.44) - 12})`}>
-            <circle r={8} className="tag tag-market" />
-            <text textAnchor="middle" y={3.5}>2</text>
-          </g>
-          <g transform={`translate(${x(0.47)},${y(breakEven(0.47)) + 16})`}>
-            <circle r={8} className="tag tag-edge" />
-            <text textAnchor="middle" y={3.5}>1</text>
-          </g>
-          <g transform={`translate(${x(0.485)},${y(FLOOR) - 11})`}>
-            <circle r={8} className="tag tag-floor" />
-            <text textAnchor="middle" y={3.5}>3</text>
-          </g>
-        </g>
+        {/* Each rule is labelled at the right end of its line, in the margin, clear of the dots. */}
+        <text className="line-label" x={x(X1) + 8} y={y(breakEven(X1)) + 4}>
+          1 · pays off
+        </text>
+        <text className="line-label" x={x(X1) + 8} y={y(X1) + 6}>
+          2 · market
+        </text>
+        <text className="line-label" x={x(X1) + 8} y={y(FLOOR) + 4}>
+          3 · 1 in 20
+        </text>
         {dots.map((d) => (
           <g key={d.v.id} className={`pick-dot pick-dot-${d.kind}`}>
             <circle cx={x(d.m)} cy={y(d.p)} r={d.kind === "left" ? 4.5 : 5.5} />
@@ -280,15 +285,30 @@ function PicksChart({ dots }: { dots: Dot[] }) {
         </text>
       </svg>
       <figcaption className="picks-legend">
-        <span>
-          <i className="key-dot key-dot-strategic" /> Strategic pick ({count("strategic")})
-        </span>
-        <span>
-          <i className="key-dot key-dot-forecast" /> Our forecast's favorite, the market's underdog ({count("forecast")})
-        </span>
-        <span>
-          <i className="key-dot key-dot-left" /> Left out by rule 2 ({count("left")})
-        </span>
+        <div className="legend-col">
+          <div className="legend-head">Races</div>
+          <span>
+            <i className="key-dot key-dot-strategic" /> Strategic pick: our forecast expects them to lose, but we back them ({count("strategic")})
+          </span>
+          <span>
+            <i className="key-dot key-dot-forecast" /> Our forecast's favorite, who the market sees as the underdog ({count("forecast")})
+          </span>
+          <span>
+            <i className="key-dot key-dot-left" /> Would pay off, but the market rates them as highly as we do, so we pass ({count("left")})
+          </span>
+        </div>
+        <div className="legend-col">
+          <div className="legend-head">Rules a strategic pick has to clear</div>
+          <span>
+            <RuleSample kind="edge" /> 1 · Backing them pays off on average, by a clear margin
+          </span>
+          <span>
+            <RuleSample kind="market" /> 2 · We rate them above the market
+          </span>
+          <span>
+            <RuleSample kind="floor" /> 3 · We give them at least a 1 in 20 chance
+          </span>
+        </div>
       </figcaption>
     </figure>
   );
@@ -440,21 +460,30 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
         </p>
         <ol className="rules">
           <li>
-            <span className="rule-n rule-n-edge">1</span>
+            <span className="rule-badge">
+              <span className="rule-n">1</span>
+              <RuleSample kind="edge" />
+            </span>
             <span>
               <strong>It pays off on average, by a clear margin.</strong> Our chance for the underdog, times what a correct pick is worth,
               comes to at least a quarter more than the same sum for the favorite.
             </span>
           </li>
           <li>
-            <span className="rule-n rule-n-market">2</span>
+            <span className="rule-badge">
+              <span className="rule-n">2</span>
+              <RuleSample kind="market" />
+            </span>
             <span>
               <strong>We rate the underdog above the market.</strong> The scoring is generous enough that a long shot can pay off even at a
               fair price, so this keeps every strategic pick a real disagreement with the market.
             </span>
           </li>
           <li>
-            <span className="rule-n rule-n-floor">3</span>
+            <span className="rule-badge">
+              <span className="rule-n">3</span>
+              <RuleSample kind="floor" />
+            </span>
             <span>
               <strong>The underdog has a real chance.</strong> We give them at least a 1 in 20 shot, so we never back a candidate with no
               realistic path to winning.
@@ -463,9 +492,10 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
         </ol>
         <PicksChart dots={dots} />
         <p>
-          Each dot is a race where we pick against the market. The strategic picks sit in the gold band, which is everything above all
-          three rules and below even odds. The hollow circles are bets that clear rules 1 and 3 but where the market rates the underdog at
-          least as highly as we do, so we stay with the favorite.
+          Read each dot by where it sits. Going across is the market's chance for the candidate, and going up is ours, so anything above
+          the dashed line is a candidate we like more than the market does. A strategic pick has to sit above all three lines and below
+          even odds, which is the gold band. Above even odds our forecast already favors the candidate, so those picks need no special
+          rule. The hollow circles would pay off on average, but they sit on or under the dashed line, so we stay with the favorite.
         </p>
         {SCORE.ours && SCORE.favorites && (
           <div className="stats">
