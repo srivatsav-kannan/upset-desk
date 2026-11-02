@@ -542,7 +542,7 @@ export function MethodView({ views }: { views: Map<string, RaceView> }) {
       <footer className="method-foot">
         <p>
           Built for Stanford Democracy Day's Model Citizens challenge. Every number on this site is regenerated from our code and public
-          data: past results from the MIT Election Lab and FiveThirtyEight, district lines from the Census Bureau, presidential results by
+          data: past results from FiveThirtyEight's archive, district lines from the Census Bureau, presidential results by
           district from The Downballot, ratings and polls from Wikipedia, and market odds from Kalshi on November 1.
         </p>
         <p>

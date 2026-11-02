@@ -69,7 +69,7 @@ Every model change should report the following, using leave-one-cycle-out CV on 
 
 - **2026 district lines differ from 2024 in several states** because of mid-decade redistricting (TX, CA, NC, OH, UT; VA is contested; Missouri's 2025 map was blocked for 2026, so MO stays on its 2022 lines). District lean must be computed on the 2026 lines.
 - **Top-two states (CA, WA)** can have same-party general elections. **AK and ME** use ranked-choice voting. **NE-SEN** has a competitive independent. **GA** has runoffs.
-- **Uncontested races** and races without a Kalshi market need explicit handling. Check the README's open questions before guessing.
+- **Uncontested races** and races without a Kalshi market need explicit handling (see the README's special cases).
 - **Kalshi data is messy.** Events can be candidate-named or party-named, and series tickers are inconsistent (`SENATEXX`, `SENATEPARTYXX`, `KXHOUSE…`). Validate the race-to-market mapping against Ballotpedia and fail loudly when something doesn't match.
 
 ## Before you open a PR

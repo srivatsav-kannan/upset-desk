@@ -67,15 +67,7 @@ Every step was checked against color-blindness simulation. D and R stay distinct
 
 ## Publishing on GitHub Pages
 
-[`.github/workflows/pages.yml`](../.github/workflows/pages.yml) builds the site on every push to `main` that touches `visualizer/`, a model's `predictions.csv`, `README.md` or result files, `submission/`, or The Downballot's sheets. It then publishes the map to **https://srivatsav-kannan.github.io/upset-desk/**. You can also run it by hand: Actions → Deploy election map → Run workflow.
-
-**One-time setup, by the repo owner:** Settings → Pages → Build and deployment → Source: **GitHub Actions**. Until that's done, the workflow still builds the site, so every push gets a free type-check, and it skips the deploy with a notice instead of failing.
-
-**Before turning it on, note two things:**
-- **A private repo needs a paid plan for Pages.** For a personal account that's GitHub Pro, which is free for students through GitHub Education. Making the repo public also works.
-- **The site is public even if the repo is private.** Anyone with the link can see the forecast and our picks.
-
-The build uses relative paths, so it works under the `/upset-desk/` subfolder. That was tested by serving a clean `npm ci` build from that path.
+[`.github/workflows/pages.yml`](../.github/workflows/pages.yml) builds the site on every push to `main` that touches `visualizer/`, a model's outputs, `submission/` or The Downballot's sheets, and publishes it to **https://srivatsav-kannan.github.io/upset-desk/** (Settings → Pages → Source: GitHub Actions). It can also be run by hand from the Actions tab. The build uses relative paths, so it works from the `/upset-desk/` subfolder.
 
 ## Map geometry
 

@@ -1,193 +1,108 @@
 # The Upset Desk: 2026 US Congress Forecast
 
-The Upset Desk is our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
+Our entry for Stanford Democracy Day's **Model Citizens** challenge, Full Congress track. We forecast all 470 House and Senate races on the November 3, 2026 ballot, then choose a candidate in each one to score as many points as possible against Kalshi's November 1 odds.
 
-> **Status:** Final. We submit [`submission/house_polls_portfolio_full_congress.csv`](submission/house_polls_portfolio_full_congress.csv) (Full Congress track), built from the Nov 1 Kalshi snapshot. The model is [`house_polls`](models/house_polls/), which is [`ensemble`](models/ensemble/) plus House district polls. `ensemble` takes fundamentals, 11 expert ratings per race, Senate polls and a researched news layer, and stacks them with a regression fit on every 2010–2022 House and Senate race, calibrated out of sample. Out-of-sample log loss: House 0.077, Senate 0.126, against 0.139 in the House for the [`uniform_swing`](models/uniform_swing/) baseline. The form write-up is in [`submission/WRITEUP.md`](submission/WRITEUP.md). See [Models](#models).
+- **Predictions:** [`submission/house_polls_portfolio_full_congress.csv`](submission/house_polls_portfolio_full_congress.csv)
+- **Write-up:** [`submission/WRITEUP.md`](submission/WRITEUP.md)
+- **Interactive site:** [srivatsav-kannan.github.io/upset-desk](https://srivatsav-kannan.github.io/upset-desk/), built from [`visualizer/`](visualizer/)
 
-## The challenge
+## At a glance
 
-| | Senate track | Full Congress track |
-|---|---|---|
-| Races | 35 (33 regular seats + OH and FL specials) | 470 (435 House + 35 Senate) |
-| Template | [`submission/templates/senate_track_template.csv`](submission/templates/senate_track_template.csv) | [`submission/templates/full_congress_track_template.csv`](submission/templates/full_congress_track_template.csv) |
+| | |
+|---|---|
+| House | Democrats favored in 237 seats (225 to 248 in 9 of 10 simulations), with a 99.8% chance of a majority |
+| Senate | Democrats and allied independents at 52 seats (49 to 55), with a 77% chance of a majority |
+| Accuracy, out of sample, 2010–2022 | 96.7% of House races and 92.6% of Senate races called correctly; underdogs won about as often as our odds said |
+| Picks against the market | 17 of the 461 races with a Kalshi market: 5 where our forecast favors the market's underdog, and 12 strategic picks |
+| Expected score | 56.2 points across 4,000 simulated elections, against 48.8 for picking every market favorite |
 
-There is also a **bonus award for the best explanation or visualization**. It is judged on clarity, not accuracy.
+## How the forecast works
 
-**Submission** ([form](https://forms.gle/E9xeDRjsqm2TwFuu7), due **Nov 2, 11:59pm**, one submission per team, one track):
-1. A Google Drive link to the predictions CSV in the official template format (`race_id, chamber, predicted_winner_party, candidate_name, win_probability`), shared so the organizers can open it.
-2. This GitHub repo, public or shared with the organizers, with all the code needed to reproduce the predictions and a README covering data, method and how to run it.
-3. A write-up in three fields: thought process (200 words), data used (200 words), and risks and limitations. Ours is in [`submission/WRITEUP.md`](submission/WRITEUP.md).
-4. Optional: a link to a visualization, slides or extra explanation (for the bonus award). No slide deck is required.
+Every race gets three inputs:
+- **How the place votes:** the 2024 presidential margin inside the 2026 district lines, shifted by this year's generic ballot (Democrats +8.9) and adjusted for incumbents running again.
+- **Expert ratings:** the average of up to 11 professional race ratings.
+- **Polls:** a recency-weighted average of the last four weeks wherever there are polls (most Senate races and 57 House districts), counting only polls of the two candidates on the ballot.
 
-Organizer contacts: dwgan@stanford.edu, arsalem@stanford.edu.
+A regression combines them, with weights fit on every House and Senate race from 2010 to 2022 (2,897 races) and each year predicted without the model seeing it. A Student-t distribution turns the projected margin into a win probability. A small candidate and news layer, researched on a fixed checklist for 105 competitive races, can move a race by a point or two. Finally, 4,000 seeded simulated elections, each with one national error shared by every race, give the seat totals.
 
-## Scoring, and why it changes the strategy
+Expert ratings are the strongest single input. Ideas that made the backtest worse were left out, including a flat "Democrats are overstated" correction, a partisan-poll correction, and averaging in a simpler baseline model. The details are in [`models/ensemble/`](models/ensemble/) and [`models/house_polls/`](models/house_polls/).
 
-- A correct pick earns **−log₂(p)** points, where *p* is **Kalshi's probability for the candidate we picked, pulled November 1**. A wrong pick earns 0.
-- *p* is floored at 1%, so the most one race can be worth is 6.64 points.
-- The highest total score wins. Models must have real technical substance: "always pick the Democrat" doesn't count.
+## How we pick
 
-| Kalshi favorite at | Points if favorite wins | Points if underdog wins | Pick the underdog when our P(underdog) exceeds |
-|---|---|---|---|
-| 55% | 0.86 | 1.15 | 42.8% |
-| 60% | 0.74 | 1.32 | 35.8% |
-| 70% | 0.51 | 1.74 | 22.9% |
-| 80% | 0.32 | 2.32 | 12.2% |
-| 90% | 0.15 | 3.32 | 4.4% |
-| 95% | 0.07 | 4.32 | 1.7% |
-| 99% | 0.01 | 6.64 | 0.2% |
+A correct pick earns −log₂(p) points, where p is Kalshi's November 1 probability for that candidate (floored at 1%), and a wrong pick earns nothing. A 90% favorite is worth 0.15 points and a 25% underdog is worth 2, so a well-chosen upset is worth many safe calls.
 
-**What this means for us:**
+We pick our forecast's favorite in almost every race. In 5 races that candidate is the market's underdog. In 12 more we back a candidate our forecast expects to lose, and only when three things are all true:
+1. Backing them is worth at least 25% more on average than backing the favorite: our chance times the points for a win, against the same for the favorite.
+2. We rate them strictly higher than the market does.
+3. We give them at least a 5% chance.
 
-1. **The decision rule is separate from the model.** For each race we pick the candidate with the highest expected points, `P_model(c) × −log₂(max(p_Kalshi(c), 0.01))`. The pick is *not* simply whoever our model favors. Slide 10's "Upset Finder" uses exactly this formula.
-2. **The rule leans heavily toward underdogs.** If Kalshi were perfectly calibrated, the underdog would have the higher expected value in *every* race. So the model's real job is to separate races that are truly locked (our underdog probability is below the break-even in the table) from races where the market is overconfident.
-3. **This is a tournament.** A field that picks favorites ends up clustered at similar scores. On a Kalshi snapshot from Oct 21 (Senate, if the market is treated as the truth), picking every favorite averages about 4.7 points. Calling a few well-chosen upsets is the only way to finish first. We should tune how much variance we take on, not only the expected value.
-4. **Calibration of the market matters.** Prediction markets tend to overprice longshots (the favorite–longshot bias). We will measure this against historical market data where we can find it.
+Kalshi's prices are used only in this step ([`decide.py`](decide.py)). The models never read them, and a test enforces that, so the forecast stays an independent opinion.
 
-## Strategy
+## Special cases
 
-The plan is deterministic first and AI later. Each phase has to beat the previous one in a backtest before we adopt it.
+- **Redistricting.** Nine states redrew for 2026 (AL, CA, FL, LA, NC, OH, TN, TX, UT, 145 districts in all), so every House forecast uses its district's 2026 lines. Missouri's 2025 map was blocked by the courts for this election, so Missouri stays on its 2022 lines.
+- **Same-party races.** Nine California races are top-two contests between two candidates of the same party, with no Kalshi market. The party is settled, and we name the June primary leader.
+- **Louisiana** holds an open all-party primary on November 3, with a December runoff if nobody wins a majority. Kalshi prices the party, and for the two open seats with no single nominee the candidate is listed as the Republican field.
+- **Independents and ranked choice.** Each race is modeled as the strongest non-Republican against the Republican, which covers Dan Osborn in Nebraska and Alaska's ranked-choice general.
+- **Candidate names** come from Kalshi's markets. Where a market names only a party, the name comes from [`data/overrides/candidate_names.csv`](data/overrides/candidate_names.csv), with a source for every row.
 
-| Phase | What | Why |
-|---|---|---|
-| **0. Baselines** | (a) Kalshi as-is. (b) Expert ratings (Cook, Sabato, Inside) mapped to probabilities. | Gives us the floor to beat and a sanity check. |
-| **1. Fundamentals** | A regression that predicts the **two-party vote margin** from district lean on current lines, incumbency, open seat, the midterm penalty for the president's party, the generic ballot, presidential approval, fundraising share and uncontested status. Win probability comes from the residual error. Trained on 2010–2024 with leave-one-cycle-out validation, with midterms weighted up. | Covers all 435 House seats, most of which have no polls. Fully reproducible. |
-| **2. Polls + simulation** | A weighted poll average (by recency, sample size and pollster quality) blended with the Phase 1 prior when polls are sparse. Then 10,000 seeded Monte Carlo runs with a shared national error term. | Gets the Senate and swing House seats right, where most of the points are. |
-| **3. Decision layer** | The expected-points pick against the Nov 1 Kalshi prices, plus a tunable appetite for variance. | Turns probabilities into a score. |
-| **4. ML / AI (optional)** | A gradient-boosted upset classifier. LLM-extracted features such as candidate quality, scandals and late news. | Only if it improves the Phase 2/3 backtest. |
+## Data
 
-**The market is never a model feature.** Kalshi prices are used only in the decision layer, so our probabilities stay an independent opinion. Our edge comes from the races where we disagree with the market.
+| Source | Used for |
+|---|---|
+| [FiveThirtyEight's election archive](https://github.com/fivethirtyeight/election-results) (pinned commits) | House, Senate and presidential results, the training labels, plus historical generic-ballot averages and polls for the backtest |
+| [The Downballot](https://www.the-downballot.com/p/the-downballots-calculations-of-presidential) | Presidential results inside each congressional district, on the 2024 and 2026 lines (and earlier lines for the backtest) |
+| Wikipedia race and ratings pages | Expert ratings for 2010–2026, 2026 polls, the generic ballot average, incumbents and retirements |
+| Candidate and news research | 105 competitive races, scored on the protocol in [`models/ensemble/news_protocol.md`](models/ensemble/news_protocol.md) and saved in `data/raw/llm_news/` |
+| [Kalshi](https://kalshi.com/category/elections) | November 1 market odds, used only to choose picks |
+| [Census TIGER/Line](https://www2.census.gov/geo/tiger/) | District shapes for the site |
 
-### Special cases to handle
+Every download is cached in `data/raw/` with its retrieval date and never edited by hand. Hand fixes live in `data/overrides/`, each with a source.
 
-- **Mid-decade redistricting.** New maps for 2026 in TX, CA (Prop 50), NC, OH, UT and others, and the status of MO and VA is contested. District lean must be recomputed on the **new lines**. Old-district results don't carry over directly.
-  - **Missouri: settled, the 2022 lines.** Census's 2026 lines (TIGER/Line `cd120`) carry Missouri's 2025 map, but courts blocked it for November. The Missouri Supreme Court ruled on Sep 3, 2026 that the referendum petition suspends the map, and the U.S. Supreme Court stayed the federal orders that would have revived it (Sep 10 and 25). The Secretary of State [directed](https://abc17news.com/news/missouri/2026/09/10/hoskins-pledges-to-use-2022-missouri-congressional-map-after-u-s-supreme-court-ruling/) election authorities to use the 2022 map. The 2025 map is on the Nov 3 ballot as Proposition A, for 2028 onward. The Downballot's sheet, our predictions and the [visualizer](visualizer/) all already use the 2022 lines, so nothing changes.
-- **Top-two primaries (CA, WA).** Some generals pit two candidates from the same party against each other. The party pick is then trivial and the candidate pick is what matters.
-- **Ranked-choice / top-four (AK, ME).** NE-SEN has a strong independent (Osborn).
-- **GA runoff rules, and uncontested seats.** Uncontested seats are effectively locked.
-- **Missing Kalshi markets.** Only about 75 House races have Kalshi markets. We need to ask the organizers what *p* is for the others.
+## Reproducing it
 
-## Data sources
-
-| Need | Source | Notes |
-|---|---|---|
-| Benchmark odds | [Kalshi](https://kalshi.com/category/elections). The public API at `api.elections.kalshi.com/trade-api/v2` needs no key for market data. | Snapshot daily until the official **Nov 1** pull. All 35 Senate races are listed, but only about 75 House races. Rate-limited, so requests need backoff. |
-| Past results | [MIT Election Data + Science Lab](https://electionlab.mit.edu/data) | House and Senate results 1976–2024. The training labels. |
-| District lean on new lines | [Cook PVI](https://www.cookpolitical.com/cook-pvi). Also 2024 presidential results by congressional district (The Downballot / Dave's Redistricting App). | The single strongest House predictor. Must match the 2026 maps. |
-| 2026 polls | [FiftyPlusOne](https://fiftyplusone.news) | Race polls, generic ballot and approval. |
-| Historical polls | [FiveThirtyEight data archive](https://github.com/fivethirtyeight/data) | Polls and forecasts before 2025, for backtests and pollster weights. |
-| Money | [FEC / OpenFEC API](https://www.fec.gov/data) | Receipts and cash on hand per candidate. A free API key from api.data.gov goes in `.env`. |
-| Candidates | [Ballotpedia](https://ballotpedia.org) | Who is on the ballot, incumbents, open seats, uncontested races. |
-| Expert ratings | [Sabato's Crystal Ball](https://centerforpolitics.org/crystalball), [Inside Elections](https://insideelections.com), Cook | Current ratings, plus historical ratings (from Wikipedia race pages) for the backtest. |
-| Demographics | [Census ACS](https://data.census.gov) | Income, education and age by district. Lowest priority: mostly captured by lean already. |
-| Map shapes | [Census TIGER/Line 2026](https://www2.census.gov/geo/tiger/TIGER2026/CD/) congressional districts (`cd120`), plus [2025](https://www2.census.gov/geo/tiger/TIGER2025/CD/) (`cd119`) for the 2024 lines of redrawn states | The 2026 and 2024 lines, public domain. Used only by the [visualizer](visualizer/). |
-
-The slides warn that "sometimes, too much data is noise". Ranked by expected value, the order is district lean → incumbency/open seat → national environment → polls → money → ratings → everything else.
-
-## Repo layout
-
-```
-forecast.py               # runner: runs each model (dependencies first), then the decision step on its predictions
-common.py                 # shared data layer: downloads, raw-data cache, parsers, CSV helpers
-decide.py                 # the only code that reads Kalshi: expected-points pick + submission CSVs
-models/<name>/            # one folder per model (see models/README.md)
-  model.py                #   run(args) writes predictions.csv
-  predictions.csv         #   the model's output, one row per race (shared format)
-  results/                #   diagnostics, backtests, model_vs_kalshi.csv, strategy_summary.csv
-  submission/             #   favorite_*.csv and ev_*.csv in the official template format
-data/raw/                 # downloaded source files, cached with retrieval date, never edited by hand
-                          #   (llm_news/: the frozen news research the ensemble reads)
-tests/                    # unittest suite for parsers, backtest leakage, calibration and outputs
-submission/                # the team's submission CSVs (copied from the submission model by forecast.py)
-  templates/              #   the official templates
-visualizer/               # the public site: React + TypeScript map, race panels, strategy page (see visualizer/README.md)
-```
-
-## How to run
-
-Requires Python 3.9+ and only the standard library.
+Requires Python 3.9 or newer and nothing outside the standard library.
 
 ```bash
-python3 forecast.py                        # every model in models/, using cached data in data/raw/
-python3 forecast.py --model uniform_swing  # one model (repeatable)
-python3 forecast.py --refresh              # re-downloads the source data first
-python3 forecast.py --swing 0              # uniform_swing: overrides the national swing (0 = pure 2024 replay)
-python3 forecast.py --ensemble-d-correction  # ensemble: apply the generic-ballot D correction (worse in the backtest)
-python3 -m unittest discover tests         # 26 tests: parsers, leakage, calibration, outputs, no Kalshi in models
+python3 forecast.py
 ```
 
-A full run takes about 1¾ minutes, most of it the two leave-one-cycle-out backtests.
+This runs every model on the cached data and rewrites every CSV in about two minutes. Add `--refresh` to download the sources again.
 
-**Map of the predictions.** The [visualizer](visualizer/) needs Node.js 20+. It reads every `models/*/predictions.csv`, so run the pipeline first:
+```bash
+python3 -m unittest discover tests
+```
+
+The 27 tests cover the parsers, the backtest (a held-out year's results can't change its own forecast), calibration, the output formats, and the rule that no model reads Kalshi.
+
+The site needs Node.js 20 or newer:
 
 ```bash
 cd visualizer && npm install && npm run dev
 ```
 
-A workflow can also publish the map to GitHub Pages on every push to `main`. It needs a one-time setup by the repo owner, and the site would be public. See [Publishing on GitHub Pages](visualizer/README.md#publishing-on-github-pages).
+```
+forecast.py      runs each model, then the pick step
+common.py        downloads, cache, parsers, CSV checks
+decide.py        the pick step: the only code that reads Kalshi
+models/          one folder per model, each with its README, predictions and results
+submission/      the submitted CSVs, the official templates and the write-up
+data/raw/        cached source files
+data/overrides/  sourced hand fixes
+tests/           the test suite
+visualizer/      the interactive site
+```
 
 ## Models
 
-Every model writes `models/<name>/predictions.csv` in one shared format ([`models/README.md`](models/README.md)). The decision step then turns it into picks and submission CSVs inside the same folder, so models can be compared side by side.
-
-| Model | Status | Out-of-sample log loss, 2010–2022 |
+| Model | What it is | House log loss, out of sample |
 |---|---|---|
-| [`ensemble`](models/ensemble/) | Built; `house_polls` builds on it | House **0.080**, Senate **0.126** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
-| [`house_polls`](models/house_polls/) | **Built, submission model** | House **0.0769** (the ensemble plus House district polls; Senate as the ensemble). Adds pick strategies scored against correlated simulated elections. |
-| [`uniform_swing`](models/uniform_swing/) | Built (v2), baseline | House 0.139 (Student-t + incumbent running / open seat). v1 was 0.197. |
-| [`expert_ratings`](models/expert_ratings/) | Folded into `ensemble` | |
-| [`fundamentals`](models/fundamentals/) | Partly in `ensemble` (no FEC money yet) | |
-| [`polls_simulation`](models/polls_simulation/) | Folded into `ensemble` (Senate polls + seat simulation) | |
-| [`upset_classifier`](models/upset_classifier/) | Planned (Phase 4, optional) | |
+| [`house_polls`](models/house_polls/) (submitted) | The ensemble plus House district polls, with the seat simulation and pick strategies | 0.077 |
+| [`ensemble`](models/ensemble/) | Vote history, expert ratings, Senate polls and the news layer, combined by regression | 0.080 |
+| [`uniform_swing`](models/uniform_swing/) | Baseline: the 2024 vote on the new lines, a national swing and incumbency | 0.139 |
 
-**`ensemble` in brief.** For each race the inputs are:
-- fundamentals (from `uniform_swing`);
-- the mean of up to 11 expert ratings;
-- for the Senate, a recency-weighted average of the last 4 weeks of polls.
-
-A regression fit on 2,655 House and 242 Senate races, leave-one-cycle-out, combines them. A Student-t turns the margin into a probability. A news layer, researched for 105 competitive races and centred so it can't move the national environment, adds at most a couple of points.
-
-The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 77% chance of a non-R Senate majority. On the Nov 1 prices, the expected-points rule (with the 5% floor and the market clause described under `house_polls`) makes 20 picks against the market and expects 46.4 points if Kalshi is right, against 43.2 for picking every Kalshi favorite.
-
-A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 77% → 50%) instead of being applied. Averaging the stack with the deterministic baseline afterwards was also worse at every weight (House 0.080 → 0.086 at 20%), because the stack already weights the fundamentals. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
-
-**`house_polls` in brief.** The ensemble, plus each House district's general-election polls from the last 28 days where there are any (57 districts in 2026). Fit on the 506 polled House races of 2010–2022, the polls cut log loss on those races from 0.295 to 0.276 and change 2 calls (TX-15 and ME-02 to D). Partisan polls lean about 5 points toward their sponsor, but subtracting that made the backtest worse, so it isn't applied. The model also writes 4,000 seeded simulated elections that share one national error. `decide.py` scores pick strategies in each one: we pick against our own forecast only when the bet beats the favorite's by 25% in expected points, we give the candidate at least a 5% chance, and we rate them above the market. That gives 17 picks against the market: 5 where our forecast favors the market's underdog and 12 strategic picks. Full write-up: [`models/house_polls/README.md`](models/house_polls/README.md).
-
-**`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.5 swing (generic ballot D+8.9 on Oct 30, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
-
-The result is House D 231 / R 204 and 15 of 35 Senate seats for Democrats. Against Kalshi, the expected-points rule makes 222 underdog picks and expects 74.3 points if the market is right, against 45.3 for picking every Kalshi favorite. 20 of those underdog picks are Senate long shots that rest on a House-fitted tail; the ensemble fits its tail on the Senate instead.
-
-The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/README.md): redistricting effects, the swing, the Kalshi comparison and the [backtest](models/uniform_swing/README.md#backtest-is-σ-calibrated-in-the-tails).
-
-## Roadmap
-
-- [ ] Confirm the open questions with the organizers (below)
-- [x] Baseline v0: 2024 presidential results on the 2026 map ([Baseline v0](models/uniform_swing/README.md#baseline-v0-2024-replayed-on-the-2026-map))
-- [x] Baseline v1: uniform national swing from the generic ballot ([Baseline v1](models/uniform_swing/README.md#baseline-v1-adding-the-national-environment))
-- [x] Kalshi snapshot + model-vs-market comparison + expected-points pick
-- [x] Backtest tail calibration (σ) on historical House results, 2010–2024 ([Backtest](models/uniform_swing/README.md#backtest-is-σ-calibrated-in-the-tails))
-- [x] One folder per model, with a shared predictions format and decision step ([models/](models/))
-- [x] Interactive map of each model's predictions on the 2026 lines ([visualizer/](visualizer/))
-- [x] Redistricting view: each redrawn House district on its 2024 and 2026 lines, by 2024 presidential margin ([visualizer/](visualizer/README.md#what-it-shows))
-- [x] Resolve the Missouri map mismatch (2022 lines are in force) (see [Special cases](#special-cases-to-handle))
-- [x] Baseline v2: Student-t + incumbent running / open seat, with 2026 incumbents and retirements from Wikipedia ([v2](models/uniform_swing/README.md#baseline-v2-student-t--incumbency))
-- [x] Senate backtest of the tail before trusting Senate long-shot picks (the ensemble's Senate backtest, 242 races)
-- [x] Ensemble: expert ratings + Senate polls + fundamentals, stacked and backtested on 2010–2022 House and Senate, with a news layer and a seat simulation ([ensemble](models/ensemble/))
-- [x] Test suite (`python3 -m unittest discover tests`)
-- [ ] Phase 1 fundamentals: FEC money
-- [x] House district polls ([house_polls](models/house_polls/))
-- [x] Pick strategies scored against correlated simulated elections ([house_polls](models/house_polls/README.md#pick-strategies-against-simulated-elections))
-- [x] Phase 3 decision layer, then the final run after the Nov 1 Kalshi pull
-- [x] Write-up ([`submission/WRITEUP.md`](submission/WRITEUP.md)); visualization for the bonus award is the [visualizer](visualizer/)
-
-## Open questions for the organizers
-
-1. ~~What is the submission deadline?~~ Nov 2, 11:59pm (the form).
-2. For House races with no Kalshi market, what *p* is used?
-3. Is scoring by `predicted_winner_party`, by `candidate_name`, or both? What applies in same-party top-two races and for independents (NE-SEN)?
-4. Is `win_probability` scored, or informational only?
-5. Which Kalshi price counts: last trade, midpoint or bid/ask, and at what time on Nov 1?
+Lower is better. In the Senate, `ensemble` and `house_polls` share a log loss of 0.126.
 
 ## Team
 
-[@srivatsav-kannan](https://github.com/srivatsav-kannan) · [@KrishWu](https://github.com/KrishWu) · [@heruirayli](https://github.com/heruirayli)
+Srivatsav Kannan ([@srivatsav-kannan](https://github.com/srivatsav-kannan)), Ray Li ([@heruirayli](https://github.com/heruirayli)) and Krish Wu ([@KrishWu](https://github.com/KrishWu)).
