@@ -79,9 +79,20 @@ So the risk lives in the **variance**, as the shared national error, not in a sh
 - **Stress-test scenario.** The simulation reports what happens if Democrats are overstated by the historical average (below).
 - **Flag.** `--ensemble-d-correction` applies the generic-ballot correction to the forecast if we decide to anyway.
 
+### Blending in the deterministic baseline: tested, not applied
+
+The obvious next move is to average the stack's probability with a plain deterministic model: `uniform_swing` v2 for the House, the fundamentals-only fit for the Senate (v2 has no Senate backtest). [`results/backtest_blend.csv`](results/backtest_blend.csv) scores that average out of sample at several weights:
+
+| Weight on the baseline | 0 (chosen) | 0.1 | 0.2 | 0.3 | 0.5 | 1 |
+|---|---|---|---|---|---|---|
+| House log loss | **0.080** | 0.083 | 0.086 | 0.089 | 0.098 | 0.139 |
+| Senate log loss | **0.126** | 0.131 | 0.136 | 0.142 | 0.157 | 0.229 |
+
+**Every weight is worse.** The stack already has the fundamentals as an input, and its regression picked their weight out of sample. Averaging them in again counts them twice. On the Nov 1 prices, a 20% blend would flip 29 House picks. Almost all of those flips come from v2's wider tails, which make underdogs look likelier than the backtest supports. They don't reflect real information about those races.
+
 ## 2026 forecast
 
-Data snapshot: Wikipedia ratings and polls, the generic ballot (mean of 5 aggregators: D+8.9) and Kalshi, all retrieved 2026-10-30.
+Data snapshot: Wikipedia ratings and polls and the generic ballot (mean of 5 aggregators: D+8.9), retrieved 2026-10-30. Kalshi retrieved 2026-11-01, 7:10pm PT.
 
 | | Central | If the generic ballot overstates D by 2.0 |
 |---|---|---|
@@ -99,22 +110,22 @@ Data snapshot: Wikipedia ratings and polls, the generic ballot (mean of 5 aggreg
 
 **House.** Democrats are favoured in 235 seats. The closest are FL-22, ME-02, MT-01, TX-15, TX-35, VA-01 and WI-01. 12 calls differ from `uniform_swing` v2, nearly all because the ratings disagree with lean plus incumbency (e.g. IA-01, PA-08, WI-03 to D; AL-02 to R).
 
-**Against Kalshi (Oct 30 snapshot):**
+**Against Kalshi (Nov 1 snapshot):**
 
 | Strategy | Underdog picks | E[points], by our model | E[points], if Kalshi is right |
 |---|---|---|---|
-| Kalshi favorite everywhere | 0 | 51.1 | 45.3 |
-| Our favorite | 5 | 55.1 | 45.9 |
-| **Expected-points rule** | **32** | **60.8** | **50.8** |
+| Kalshi favorite everywhere | 0 | 48.8 | 43.2 |
+| Our favorite | 5 | 53.4 | 43.8 |
+| **Expected-points rule** | **33** | **59.4** | **48.7** |
 
-The ensemble agrees with the market far more than v2 did. v2 made 222 underdog picks, 20 of them Senate long shots resting on a House-fitted tail. The ensemble makes 32, 3 of them in the Senate (AK, OH and TX, all R). Its Senate tail is fit on the Senate, and it is thin: the long shots the rule picked under the df-4 tail (CO, GA, NC, NH and VA for R) now have model probabilities below 1%, under their Kalshi prices.
+The ensemble agrees with the market far more than v2 did. v2 made 222 underdog picks, 20 of them Senate long shots resting on a House-fitted tail. The ensemble makes 33, 5 of them in the Senate (AK, KS, OH and TX for R; NE for Osborn). Its Senate tail is fit on the Senate, and it is thin: the long shots the rule picked under the df-4 tail (CO, GA, NC, NH and VA for R) now have model probabilities below 1%, under their Kalshi prices.
 
 Its biggest bets against the market:
-- **TX-15:** De La Cruz (R), 56% for us against 11% on Kalshi.
-- **TX-35:** R, 51% vs 27%.
-- **OH-07:** Miller (R), 34% vs 16%.
-- **AK-SEN:** R, 61% vs 32%.
-- **FL-22:** R, 47% vs 29%.
+- **TX-15:** De La Cruz (R), 56% for us against 11% on Kalshi. ([`house_polls`](../house_polls/) brings this down to 25% with the district polls.)
+- **AK-SEN:** R, 61% vs 29%.
+- **TX-23:** Herrera (R), 80% vs 50%.
+- **TX-35:** R, 51% vs 25%.
+- **FL-22:** R, 47% vs 28%.
 
 Submission files are in [`submission/`](submission/):
 - `ev_*.csv` uses the expected-points rule.
@@ -129,7 +140,7 @@ Submission files are in [`submission/`](submission/):
 | `results/race_explain.csv` | The same, in words, for the map's tooltip |
 | `results/senate_polls_2026.csv` | Every poll used, with its date, sample and margin |
 | `results/parameters.csv` | Fitted weights and Student-t parameters per pattern (`normal` = normal tails) |
-| `results/backtest_*.csv` | Scores, calibration, per-cycle national error, per-race out-of-sample forecasts |
+| `results/backtest_*.csv` | Scores, calibration, per-cycle national error, per-race out-of-sample forecasts, the baseline-blend test |
 | `results/simulation_summary.csv`, `results/seat_distribution.csv` | Seat distributions, central and stress-test scenarios |
 | `news_protocol.md` | The exact brief the news researchers followed, and how the scores are used |
 

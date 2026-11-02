@@ -114,7 +114,7 @@ CO-04,House,R,Lauren Boebert,0.942
 CO-05,House,R,Jeff Crank,0.5906
 CO-06,House,D,Jason Crow,0.9999
 CO-07,House,D,Brittany Pettersen,0.9999
-CO-08,House,D,Manny Rutinel,0.9186
+CO-08,House,R,Gabe Evans,0.0814
 CT-01,House,D,Luke Bronin,1.0
 CT-02,House,D,Joe Courtney,0.9996
 CT-03,House,D,Rosa DeLauro,0.9999
@@ -254,7 +254,7 @@ MN-06,House,R,Tom Emmer,0.9986
 MN-07,House,R,Michelle Fischbach,0.9999
 MN-08,House,R,Pete Stauber,0.9809
 MO-01,House,D,Wesley Bell,1.0
-MO-02,House,D,Fred Wellman,0.3572
+MO-02,House,R,Ann Wagner,0.6428
 MO-03,House,R,Bob Onder,0.9995
 MO-04,House,R,Mark Alford,1.0
 MO-05,House,D,Emanuel Cleaver,1.0
@@ -266,7 +266,7 @@ MS-02,House,D,Bennie Thompson,1.0
 MS-03,House,R,Michael Guest,0.9997
 MS-04,House,R,Mike Ezell,1.0
 MT-01,House,D,Sam Forstag,0.7535
-MT-02,House,R,Troy Downing,0.9939
+MT-02,House,D,Brian Miller,0.0061
 NC-01,House,R,Laurie Buckhout,0.2395
 NC-02,House,D,Deborah Ross,1.0
 NC-03,House,R,Greg Murphy,0.9769
@@ -285,7 +285,7 @@ ND-AL,House,R,Julie Fedorchak,0.9999
 NE-01,House,R,Mike Flood,0.9524
 NE-02,House,D,Denise Powell,0.9953
 NE-03,House,R,Adrian Smith,1.0
-NH-01,House,R,Anthony DiLorenzo,0.0198
+NH-01,House,D,Stefany Shaheen,0.9802
 NH-02,House,D,Maggie Goodlander,0.9938
 NJ-01,House,D,Donald Norcross,0.9999
 NJ-02,House,R,Jeff Van Drew,0.9725
@@ -332,7 +332,7 @@ NY-23,House,R,Nick Langworthy,0.9986
 NY-24,House,R,Claudia Tenney,0.9992
 NY-25,House,D,Joseph Morelle,0.9999
 NY-26,House,D,Tim Kennedy,0.9999
-OH-01,House,R,Eric Conroy,0.0244
+OH-01,House,D,Greg Landsman,0.9756
 OH-02,House,R,David Taylor,1.0
 OH-03,House,D,Joyce Beatty,1.0
 OH-04,House,R,Jim Jordan,1.0

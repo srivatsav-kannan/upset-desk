@@ -11,7 +11,7 @@ ID-SEN,Senate,R,Jim Risch,0.9943
 IL-SEN,Senate,R,Don Tracy,0.0131
 KS-SEN,Senate,R,Roger Marshall,0.9248
 KY-SEN,Senate,D,Charles Booker,0.0156
-LA-SEN,Senate,D,Jamie Davis,0.0523
+LA-SEN,Senate,R,Julia Letlow,0.9477
 MA-SEN,Senate,D,Ed Markey,0.9974
 ME-SEN,Senate,D,Troy Jackson,0.9437
 MI-SEN,Senate,D,Abdul El-Sayed,0.9217
@@ -32,37 +32,37 @@ SD-SEN,Senate,R,Mike Rounds,0.9882
 TN-SEN,Senate,D,Marquita Bradshaw,0.0111
 TX-SEN,Senate,R,Ken Paxton,0.7612
 VA-SEN,Senate,R,Bert Mizusawa,0.0154
-WV-SEN,Senate,R,Shelley Moore Capito,0.9964
-WY-SEN,Senate,R,Harriet Hageman,0.9965
+WV-SEN,Senate,D,Rachel Fetty Anderson,0.0036
+WY-SEN,Senate,D,James Byrd,0.0035
 AK-AL,House,R,Nick Begich III,0.8701
 AL-01,House,D,Clyde Jones,0.0098
 AL-02,House,D,Shomari Figures,0.5847
-AL-03,House,D,Lee McInnis,0.0025
+AL-03,House,R,Mike Rogers,0.9975
 AL-04,House,R,Robert Aderholt,0.9992
 AL-05,House,D,Andrew Sneed,0.0119
 AL-06,House,D,Maurice Mercer,0.0067
-AL-07,House,D,Terri Sewell,0.9954
-AR-01,House,R,Rick Crawford,0.9972
+AL-07,House,R,Ammie Akin,0.0046
+AR-01,House,D,Terri Yarbrough Green,0.0028
 AR-02,House,R,French Hill,0.9165
 AR-03,House,D,Robb Ryerse,0.0197
-AR-04,House,R,Bruce Westerman,0.9958
+AR-04,House,D,James Russell,0.0042
 AZ-01,House,R,Jay Feely,0.177
 AZ-02,House,R,Eli Crane,0.9076
 AZ-03,House,D,Yassamin Ansari,0.9989
 AZ-04,House,R,Zuhdi Jasser,0.0139
 AZ-05,House,D,Elizabeth Lee,0.074
 AZ-06,House,R,Juan Ciscomani,0.2311
-AZ-07,House,D,Adelita Grijalva,0.9967
-AZ-08,House,R,Abe Hamadeh,0.9275
+AZ-07,House,R,Daniel Francis Butierez Sr.,0.0033
+AZ-08,House,D,Bernadette Greene-Placentia,0.0725
 AZ-09,House,D,Dani Sterbinsky,0.0096
 CA-01,House,R,James Gallagher,0.0252
-CA-02,House,D,Jared Huffman,0.9973
+CA-02,House,R,Robin Littau,0.0027
 CA-03,House,D,Ami Bera,0.9906
 CA-04,House,D,,0.9938
 CA-05,House,D,Michael Masuda,0.0355
 CA-06,House,R,Republican party,0.0212
 CA-07,House,D,,0.9928
-CA-08,House,D,John Garamendi,0.9985
+CA-08,House,R,Rudy Recile,0.0015
 CA-09,House,R,John McBride,0.0083
 CA-10,House,D,Mark DeSaulnier,0.9985
 CA-11,House,D,,0.9996
@@ -72,13 +72,13 @@ CA-14,House,D,,0.9986
 CA-15,House,D,Kevin Mullin,0.9993
 CA-16,House,D,Sam Liccardo,0.9993
 CA-17,House,D,Ro Khanna,0.9989
-CA-18,House,R,Shane Lewis,0.0021
-CA-19,House,D,Jimmy Panetta,0.9986
+CA-18,House,D,Zoe Lofgren,0.9979
+CA-19,House,R,Peter Verbica,0.0014
 CA-20,House,D,Sandra Van Scotter,0.0085
 CA-21,House,D,Jim Costa,0.9849
 CA-22,House,R,David Valadao,0.2832
 CA-23,House,D,Tessa Lynn Hodge,0.0434
-CA-24,House,D,Salud Carbajal,0.9973
+CA-24,House,R,Bob Smith,0.0027
 CA-25,House,R,Joe Males,0.0154
 CA-26,House,D,Jacqui Irwin,0.9918
 CA-27,House,R,Jason Gibbs,0.0099
@@ -90,7 +90,7 @@ CA-32,House,R,Larry Thompson,0.0026
 CA-33,House,R,Stephanie Vargas,0.0098
 CA-34,House,D,,0.9994
 CA-35,House,R,Mike Cargile,0.0122
-CA-36,House,D,Ted Lieu,0.9989
+CA-36,House,R,Houston Brignano,0.0011
 CA-37,House,D,,0.9996
 CA-38,House,R,Pedro Antonio Casas,0.0131
 CA-39,House,R,Steve Manos,0.0101
@@ -100,7 +100,7 @@ CA-42,House,R,Brian Burley,0.007
 CA-43,House,D,Maxine Waters,0.9993
 CA-44,House,D,Nanette Barragán,0.9986
 CA-45,House,D,Derek Tran,0.9805
-CA-46,House,D,Lou Correa,0.9947
+CA-46,House,R,David Pan,0.0053
 CA-47,House,R,Jenny Le Roux,0.0095
 CA-48,House,R,Jim Desmond,0.0543
 CA-49,House,R,Armen Kurdian,0.0077
@@ -113,11 +113,11 @@ CO-03,House,R,Jeff Hurd,0.7522
 CO-04,House,R,Lauren Boebert,0.9478
 CO-05,House,R,Jeff Crank,0.7211
 CO-06,House,D,Jason Crow,0.9961
-CO-07,House,D,Brittany Pettersen,0.9941
+CO-07,House,R,Tim Bennett,0.0059
 CO-08,House,R,Gabe Evans,0.2819
 CT-01,House,R,Amy Chai,0.0041
 CT-02,House,R,George Austin,0.0123
-CT-03,House,D,Rosa DeLauro,0.9936
+CT-03,House,R,Christopher Lancia,0.0064
 CT-04,House,D,Jim Himes,0.997
 CT-05,House,R,Chris Shea,0.0158
 DE-AL,House,R,Joseph Arminio,0.006
@@ -126,13 +126,13 @@ FL-02,House,D,Amanda Green,0.1058
 FL-03,House,D,Seth Harp,0.0334
 FL-04,House,D,LaShonda Holloway,0.1661
 FL-05,House,D,Rachel Grage,0.0318
-FL-06,House,R,Randy Fine,0.9893
+FL-06,House,D,Eric Yonce,0.0107
 FL-07,House,D,Bale Dalton,0.2983
 FL-08,House,D,Jennifer Jenkins,0.0739
 FL-09,House,D,Darren Soto,0.3634
 FL-10,House,D,Maxwell Frost,0.9962
 FL-11,House,D,James Pericola,0.1637
-FL-12,House,R,Gus Bilirakis,0.9144
+FL-12,House,D,Kimberly Overman,0.0856
 FL-13,House,R,Anna Paulina Luna,0.8746
 FL-14,House,R,Mike Beltran,0.2122
 FL-15,House,D,Robert People,0.0404
@@ -155,9 +155,9 @@ GA-03,House,R,Brian Jack,0.9889
 GA-04,House,D,Hank Johnson,0.9994
 GA-05,House,D,Nikema Williams,0.9997
 GA-06,House,D,Lucy McBath,0.9993
-GA-07,House,R,Rich McCormick,0.9709
+GA-07,House,D,Anthony Kozycki,0.0291
 GA-08,House,D,Kelly Esti,0.0101
-GA-09,House,R,Andrew Clyde,0.9929
+GA-09,House,D,Caitlyn Gegen,0.0071
 GA-10,House,D,Pamela DeLancy,0.0643
 GA-11,House,D,Chris Harden,0.0422
 GA-12,House,D,Ceretta Smith,0.1072
@@ -181,7 +181,7 @@ IL-07,House,D,La Shawn Ford,0.9996
 IL-08,House,R,Jennifer Davis,0.0216
 IL-09,House,D,Daniel Biss,0.9984
 IL-10,House,D,Brad Schneider,0.9967
-IL-11,House,D,Bill Foster,0.9917
+IL-11,House,R,Jeff Walter,0.0083
 IL-12,House,R,Mike Bost,0.9968
 IL-13,House,R,Jeff Wilson,0.0091
 IL-14,House,R,James Marter,0.0166
@@ -190,7 +190,7 @@ IL-16,House,D,Paul Nolley,0.0266
 IL-17,House,R,Dillan Vancil,0.0176
 IN-01,House,R,Barb Regnitz,0.0317
 IN-02,House,D,Jamee Decio,0.0161
-IN-03,House,R,Marlin Stutzman,0.9905
+IN-03,House,D,Kelly Thompson,0.0095
 IN-04,House,D,Drew Cox,0.0116
 IN-05,House,R,Victoria Spartz,0.9333
 IN-06,House,D,Cynthia Wirth,0.0083
@@ -209,21 +209,21 @@ KY-05,House,R,Hal Rogers,0.9991
 KY-06,House,R,Ralph Alvarado,0.8144
 LA-01,House,R,Republican party,0.9951
 LA-02,House,D,Democratic party,0.9993
-LA-03,House,R,Republican party,0.9941
+LA-03,House,D,Democratic party,0.0059
 LA-04,House,R,Republican party,0.993
 LA-05,House,D,Democratic party,0.0105
 LA-06,House,D,Democratic party,0.0233
 MA-01,House,R,Republican party,0.0067
 MA-02,House,R,Republican party,0.0039
 MA-03,House,D,Lori Trahan,0.9958
-MA-04,House,D,Jake Auchincloss,0.9961
+MA-04,House,R,Tom Stalcup,0.0039
 MA-05,House,D,Katherine Clark,0.999
 MA-06,House,D,Dan Koh,0.995
 MA-07,House,D,Ayanna Pressley,0.9996
 MA-08,House,D,Stephen Lynch,0.9976
 MA-09,House,R,Tyler MacAllister,0.0089
 MD-01,House,R,Andy Harris,0.9346
-MD-02,House,D,Johnny Olszewski,0.9956
+MD-02,House,R,Dave Wallace,0.0044
 MD-03,House,D,Sarah Elfreth,0.9971
 MD-04,House,D,Glenn Ivey,0.9997
 MD-05,House,D,Adrian Boafo,0.998
@@ -242,7 +242,7 @@ MI-07,House,R,Tom Barrett,0.2552
 MI-08,House,R,Thomas J. Smith,0.0456
 MI-09,House,D,Ray Pooley,0.0084
 MI-10,House,R,Michael Bouchard Jr.,0.3334
-MI-11,House,D,Jeremy Moss,0.9924
+MI-11,House,R,Ethan Baker,0.0076
 MI-12,House,D,Rashida Tlaib,0.9988
 MI-13,House,D,Donavan McKinney,0.9988
 MN-01,House,R,Brad Finstad,0.8389
@@ -258,11 +258,11 @@ MO-02,House,D,Fred Wellman,0.3432
 MO-03,House,D,Bethany Mann,0.0157
 MO-04,House,R,Mark Alford,0.9965
 MO-05,House,D,Emanuel Cleaver,0.997
-MO-06,House,R,Chris Stigall,0.9936
+MO-06,House,D,Josh Smead,0.0064
 MO-07,House,R,Eric Burlison,0.9966
 MO-08,House,R,Jason Smith,0.9984
-MS-01,House,R,Trent Kelly,0.9946
-MS-02,House,R,Ron Eller,0.0037
+MS-01,House,D,Cliff Johnson,0.0054
+MS-02,House,D,Bennie Thompson,0.9963
 MS-03,House,D,Michael Chiaradio,0.0118
 MS-04,House,R,Mike Ezell,0.9966
 MT-01,House,R,Aaron Flint,0.6499
@@ -286,7 +286,7 @@ NE-01,House,R,Mike Flood,0.8677
 NE-02,House,R,Brinker Harding,0.0445
 NE-03,House,R,Adrian Smith,0.9984
 NH-01,House,R,Anthony DiLorenzo,0.0441
-NH-02,House,D,Maggie Goodlander,0.9796
+NH-02,House,R,Lily Tang Williams,0.0204
 NJ-01,House,D,Donald Norcross,0.9957
 NJ-02,House,R,Jeff Van Drew,0.8549
 NJ-03,House,R,Michael McGuire,0.0115
@@ -307,7 +307,7 @@ NV-02,House,R,David Flippo,0.7718
 NV-03,House,R,Martin O'Donnell,0.0376
 NV-04,House,R,Cody Whipple,0.0241
 NY-01,House,D,Chris Gallant,0.2337
-NY-02,House,R,Andrew Garbarino,0.888
+NY-02,House,D,Patrick Halpin,0.112
 NY-03,House,R,Mike LiPetri,0.0669
 NY-04,House,D,Laura Gillen,0.9721
 NY-05,House,D,Gregory Meeks,0.999
@@ -331,13 +331,13 @@ NY-22,House,R,Kailee Buller,0.0124
 NY-23,House,D,Aaron Gies,0.0339
 NY-24,House,D,Alissa Ellman,0.0251
 NY-25,House,R,Virginia McIntyre,0.0044
-NY-26,House,D,Tim Kennedy,0.9959
+NY-26,House,R,Dennis Hannon,0.0041
 OH-01,House,R,Eric Conroy,0.0504
 OH-02,House,R,David Taylor,0.9965
 OH-03,House,D,Joyce Beatty,0.9989
 OH-04,House,R,Jim Jordan,0.9966
 OH-05,House,D,Brian Shaver,0.023
-OH-06,House,R,Michael Rulli,0.9933
+OH-06,House,D,Elizabeth Kirtley,0.0067
 OH-07,House,R,Max Miller,0.807
 OH-08,House,D,Vanessa Enoch,0.0821
 OH-09,House,R,Derek Merrin,0.215
@@ -349,17 +349,17 @@ OH-14,House,D,Maria Jukic,0.0374
 OH-15,House,R,Mike Carey,0.765
 OK-01,House,D,John Croisant,0.0566
 OK-02,House,R,Josh Brecheen,0.9986
-OK-03,House,R,Frank Lucas,0.9973
-OK-04,House,R,Tom Cole,0.9923
+OK-03,House,D,Suzie Byrd,0.0027
+OK-04,House,D,Mitchell Jacob,0.0077
 OK-05,House,D,Jena Nelson,0.057
 OR-01,House,D,Suzanne Bonamici,0.9988
 OR-02,House,D,Chris Beck,0.0149
 OR-03,House,D,Maxine Dexter,0.9992
 OR-04,House,D,Val Hoyle,0.9922
-OR-05,House,R,Patti Adair,0.0112
-OR-06,House,D,Andrea Salinas,0.9917
+OR-05,House,D,Janelle Bynum,0.9888
+OR-06,House,R,David Russ,0.0083
 PA-01,House,D,Bob Harvie,0.8112
-PA-02,House,D,Brendan Boyle,0.9987
+PA-02,House,R,Jessica Arriaga,0.0013
 PA-03,House,D,Chris Rabb,0.9997
 PA-04,House,D,Madeleine Dean,0.9945
 PA-05,House,D,Mary Gay Scanlon,0.9979
@@ -369,27 +369,27 @@ PA-08,House,R,Rob Bresnahan,0.6904
 PA-09,House,R,Dan Meuser,0.995
 PA-10,House,R,Scott Perry,0.487
 PA-11,House,D,Nancy Mannion,0.0322
-PA-12,House,D,Summer Lee,0.9959
-PA-13,House,R,John Joyce,0.9973
+PA-12,House,R,James Hayes,0.0041
+PA-13,House,D,Beth Farnham,0.0027
 PA-14,House,R,Guy Reschenthaler,0.9924
 PA-15,House,R,Glenn Thompson,0.995
 PA-16,House,D,Justin Wagner,0.0263
 PA-17,House,R,Tony Guy,0.016
 RI-01,House,D,Gabe Amo,0.9967
-RI-02,House,D,Seth Magaziner,0.9863
+RI-02,House,R,Victor Mellor,0.0137
 SC-01,House,R,Jenny Costa Honeycutt,0.729
 SC-02,House,D,Zyon Khalifa,0.1123
 SC-03,House,R,Sheri Biggs,0.9967
 SC-04,House,D,Courtney McClain,0.0235
 SC-05,House,D,Mallory Dittmer,0.0462
-SC-06,House,D,Jim Clyburn,0.9969
+SC-06,House,R,John Peterson,0.0031
 SC-07,House,D,John Vincent,0.0164
 SD-AL,House,D,Nicole Gronli,0.0184
 TN-01,House,R,Diana Harshbarger,0.9987
 TN-02,House,R,Tim Burchett,0.9928
-TN-03,House,R,Chuck Fleischmann,0.9939
+TN-03,House,D,Anna Golladay,0.0061
 TN-04,House,D,Victoria Broderick,0.0224
-TN-05,House,R,Charlie Hatcher,0.956
+TN-05,House,D,Chaz Molder,0.044
 TN-06,House,D,Mike Croley,0.0263
 TN-07,House,D,Darden Copeland,0.0277
 TN-08,House,D,Heidi Kuhn,0.0386
@@ -434,14 +434,14 @@ TX-37,House,D,Greg Casar,0.9995
 TX-38,House,D,Melissa McDonough,0.0628
 UT-01,House,D,Ben McAdams,0.9957
 UT-02,House,R,Blake Moore,0.988
-UT-03,House,R,Celeste Maloy,0.9962
+UT-03,House,D,Kent Udell,0.0038
 UT-04,House,R,Mike Kennedy,0.9917
 VA-01,House,R,Rob Wittman,0.468
 VA-02,House,R,Jen Kiggans,0.2103
 VA-03,House,D,Bobby Scott,0.9986
 VA-04,House,D,Jennifer McClellan,0.9984
 VA-05,House,R,John McGuire,0.8472
-VA-06,House,R,Ben Cline,0.9774
+VA-06,House,D,Beth Macy,0.0226
 VA-07,House,R,Doug Ollivant,0.0224
 VA-08,House,D,Don Beyer,0.9993
 VA-09,House,R,Morgan Griffith,0.9969
@@ -453,13 +453,13 @@ WA-02,House,D,Rick Larsen,0.9971
 WA-03,House,R,John Braun,0.0566
 WA-04,House,D,John Duresky,0.0655
 WA-05,House,D,Carmela Conroy,0.2032
-WA-06,House,D,Emily Randall,0.9959
+WA-06,House,R,Teresa Fox,0.0041
 WA-07,House,D,Pramila Jayapal,0.9997
 WA-08,House,R,Spencer Meline,0.0155
 WA-09,House,D,Adam Smith,0.999
-WA-10,House,D,Marilyn Strickland,0.9955
+WA-10,House,R,Chris D. Chung,0.0045
 WI-01,House,D,Mitchell Berman,0.5604
-WI-02,House,D,Mark Pocan,0.9987
+WI-02,House,R,Republican party,0.0013
 WI-03,House,R,Derrick Van Orden,0.6267
 WI-04,House,D,Gwen Moore,0.9994
 WI-05,House,D,Andrew Beck,0.0287

@@ -4,8 +4,8 @@ Each model lives in its own folder and produces one file that everything else re
 
 | Folder | Phase | Status |
 |---|---|---|
-| [`ensemble/`](ensemble/) | 1–3 | **Done, submission model.** Fundamentals + expert ratings + Senate polls, stacked by a regression backtested on 2010–2022 House and Senate, a researched news layer, and a seeded seat simulation. Reads `uniform_swing`'s outputs (`DEPENDS_ON`). |
-| [`house_polls/`](house_polls/) | 2–3 | **Done.** The ensemble plus House district polls (538 archive for the backtest, Wikipedia state pages for 2026): House log loss 0.0769 against the ensemble's 0.0804. Writes 4,000 correlated simulated elections, which `decide.py` uses to score pick strategies by the spread of the score (`portfolio_*.csv`). Reads `ensemble`'s outputs (`DEPENDS_ON`). |
+| [`ensemble/`](ensemble/) | 1–3 | **Done.** Fundamentals + expert ratings + Senate polls, stacked by a regression backtested on 2010–2022 House and Senate, a researched news layer, and a seeded seat simulation. Reads `uniform_swing`'s outputs (`DEPENDS_ON`). |
+| [`house_polls/`](house_polls/) | 2–3 | **Done, submission model.** The ensemble plus House district polls (538 archive for the backtest, Wikipedia state pages for 2026): House log loss 0.0769 against the ensemble's 0.0804. Writes 4,000 correlated simulated elections, which `decide.py` uses to score pick strategies by the spread of the score (`portfolio_*.csv`). Reads `ensemble`'s outputs (`DEPENDS_ON`). |
 | [`uniform_swing/`](uniform_swing/) | Baseline v2 | **Done.** The 2024 vote on the 2026 map, a generic-ballot swing and incumbency, with Student-t probabilities. Has a 2010–2024 House backtest. |
 | [`expert_ratings/`](expert_ratings/) | 0b | Folded into `ensemble` (ratings are its strongest input). |
 | [`fundamentals/`](fundamentals/) | 1 | Partly in `ensemble`; FEC money still to do. |

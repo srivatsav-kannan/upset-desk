@@ -52,21 +52,22 @@ Subtracting it from each side's polls made the out-of-sample scores **worse**, b
 
 The expected-points rule maximises the **mean** score, but its underdog picks are correlated: they share one national environment. So this model also writes 4,000 seeded simulated elections ([`results/simulated_outcomes.csv`](results/simulated_outcomes.csv): each race's winner in each one). Every election draws one national error shared by every race (sd 2.22 points, the backtest's chamber-cycle RMS) plus a local error per race. The simulated win rates match `p_d` (a test checks).
 
-[`decide.py`](../../decide.py), the only code that sees the market, scores a family of strategies in every simulated election: the expected-points rule keeping an underdog only when its expected points beat the favorite's by at least 0%, 10%, 25%, 50%, 100% or 200%, plus Kalshi's favorite and our favorite everywhere. [`results/portfolio_summary.csv`](results/portfolio_summary.csv) has each strategy's mean, spread and chance of beating a rival entry. Oct 30 Kalshi snapshot:
+[`decide.py`](../../decide.py), the only code that sees the market, scores a family of strategies in every simulated election: the expected-points rule keeping an underdog only when its expected points beat the favorite's by at least 0%, 10%, 25%, 50%, 100% or 200%, plus Kalshi's favorite and our favorite everywhere. [`results/portfolio_summary.csv`](results/portfolio_summary.csv) has each strategy's mean, spread and chance of beating a rival entry. Nov 1 Kalshi snapshot (the one we're scored on):
 
 | Full Congress (461 races with a market) | Underdogs | Mean | 10th–90th percentile | P(beat rival) |
 |---|---|---|---|---|
-| Kalshi favorite everywhere | 0 | 51.1 | 48.5–53.5 | 0 |
-| Our favorite | 5 | 53.5 | 50.1–56.7 | 0.06 |
-| Expected points (edge ≥ 0%) | 36 | 58.2 | 47.7–70.3 | 0.53 |
-| **Expected points, edge ≥ 25% (chosen)** | **24** | **58.3** | **48.8–68.2** | **0.55** |
-| Expected points, edge ≥ 100% | 13 | 56.6 | 50.0–63.6 | 0.49 |
+| Kalshi favorite everywhere | 0 | 48.8 | 46.3–51.3 | 0 |
+| Our favorite | 5 | 51.8 | 48.2–55.2 | 0.29 |
+| Expected points (edge ≥ 0%) | 34 | 56.9 | 45.9–69.2 | 0.57 |
+| **Expected points, edge ≥ 25% (chosen)** | **23** | **56.7** | **46.4–67.6** | **0.58** |
+| Expected points, edge ≥ 100% | 13 | 55.3 | 48.2–62.7 | 0.56 |
 
 *The rival picks every Kalshi favorite and scores 5 points more in the same election (1 point on the Senate track): a stand-in for the best of a field that mostly picks favorites.*
 
-- **Dropping the thinnest 12 underdog picks costs almost nothing in mean** (58.3 vs 58.2) and narrows the downside, so it raises the chance of beating the rival.
-- **The choice depends on the rival you assume** (`RIVAL_LEAD` in `decide.py`). To beat an all-favorites entry by any margin, our favorite everywhere is best (88%). For a rival 2.5–5 points ahead, edge ≥ 25%. For a rival 10–15 points ahead, edge ≥ 10% (more upsets).
-- **Senate track:** edge ≥ 25% too (2 underdogs, AK-SEN and OH-SEN for R; P(beat rival) 0.70 against 0.36 for the plain rule).
+- **Dropping the thinnest 11 underdog picks costs almost nothing in mean** (56.7 vs 56.9) and narrows the downside, so it raises the chance of beating the rival.
+- **The choice depends on the rival you assume** (`RIVAL_LEAD` in `decide.py`). To beat an all-favorites entry by any margin, our favorite everywhere is best (91%). For a rival a few points ahead, edge ≥ 25% is best. On Oct 30 prices, a rival 10–15 points ahead favored edge ≥ 10%, which takes more upsets.
+- **Senate track:** edge ≥ 25% too (2 underdogs, AK-SEN and OH-SEN for R; P(beat rival) 0.70 against 0.59 for the plain rule).
+- **Nov 1 vs Oct 30.** Five full-congress picks changed with the new prices. CO-08 (Evans, R) and MT-02 (Miller, D, a lottery ticket: 0.6% for us at a 2% price) became underdog picks. NH-01, OH-01 and MO-02 went back to the Kalshi favorite.
 
 `submission/portfolio_*.csv` holds the chosen strategy's picks; `ev_*.csv` and `favorite_*.csv` are written as for every model.
 

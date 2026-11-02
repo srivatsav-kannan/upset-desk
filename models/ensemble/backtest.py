@@ -34,6 +34,7 @@ SAFE_CROSSOVER = 10.0  # points of hostile lean within which an unrated incumben
 CLIP = 40.0           # landslide margins are clipped when fitting the stack (they carry no win information)
 SIGN = {"D": 1, "I": 1, "R": -1}
 UPSET_BINS = [0.0, 0.0025, 0.01, 0.03, 0.10, 0.25, 0.5000001]
+BLEND_WEIGHTS = [0.0, 0.1, 0.2, 0.3, 0.5, 1.0]  # weight on the deterministic baseline in backtest_blend.csv
 
 # Stack variants, each adding one component. FINAL is the one the 2026 forecast uses.
 VARIANTS = {
@@ -260,6 +261,20 @@ def run_backtest(refresh: bool, d_correction: bool = False) -> dict:
         if rs and rs[0]["chamber"] == "House":
             rows.append({"scope": scope, "variant": "uniform_swing v2", **score(rs, "p_d_v2")})
     write_csv(RESULTS / "backtest_scores.csv", rows, ["scope", "variant", "races", "log_loss", "brier", "wrong_calls"])
+
+    # Post-hoc blend: final variant averaged with a deterministic baseline (uniform_swing v2 in
+    # the House, the fundamentals-only fit in the Senate, where v2 has no backtest). Weight 0 is
+    # the ensemble as submitted. The stack already weights the fundamentals, so this double-counts them.
+    blend = []
+    for scope, keep, base in [("House", scopes[0][1], "p_d_v2"), ("Senate", scopes[1][1], "p_fundamentals")]:
+        rs = [r for r in races if keep(r)]
+        for w in BLEND_WEIGHTS:
+            for r in rs:
+                r["p_blend"] = w * r[base] + (1 - w) * r["p_" + FINAL]
+            blend.append({"scope": scope, "baseline": base, "baseline_weight": w, **score(rs, "p_blend")})
+    for r in races:
+        r.pop("p_blend", None)
+    write_csv(RESULTS / "backtest_blend.csv", blend, list(blend[0].keys()))
 
     # Calibration of the final variant: binned by the model's probability that its pick loses.
     calib = []

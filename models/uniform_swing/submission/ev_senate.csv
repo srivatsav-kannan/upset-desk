@@ -11,7 +11,7 @@ ID-SEN,Senate,R,Jim Risch,0.9943
 IL-SEN,Senate,R,Don Tracy,0.0131
 KS-SEN,Senate,R,Roger Marshall,0.9248
 KY-SEN,Senate,D,Charles Booker,0.0156
-LA-SEN,Senate,D,Jamie Davis,0.0523
+LA-SEN,Senate,R,Julia Letlow,0.9477
 MA-SEN,Senate,D,Ed Markey,0.9974
 ME-SEN,Senate,D,Troy Jackson,0.9437
 MI-SEN,Senate,D,Abdul El-Sayed,0.9217
@@ -32,5 +32,5 @@ SD-SEN,Senate,R,Mike Rounds,0.9882
 TN-SEN,Senate,D,Marquita Bradshaw,0.0111
 TX-SEN,Senate,R,Ken Paxton,0.7612
 VA-SEN,Senate,R,Bert Mizusawa,0.0154
-WV-SEN,Senate,R,Shelley Moore Capito,0.9964
-WY-SEN,Senate,R,Harriet Hageman,0.9965
+WV-SEN,Senate,D,Rachel Fetty Anderson,0.0036
+WY-SEN,Senate,D,James Byrd,0.0035

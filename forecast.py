@@ -20,8 +20,8 @@ import decide
 from common import MODELS, TEMPLATES
 
 # The model whose picks are the team's submission: after it runs, its submission CSVs are
-# copied to submission/ as <model>_<rule>_<track>.csv (both pick rules, until we choose one).
-SUBMISSION_MODEL = "ensemble"
+# copied to submission/ as <model>_<rule>_<track>.csv (every pick rule; we submit portfolio_full_congress).
+SUBMISSION_MODEL = "house_polls"
 
 
 def available() -> list:

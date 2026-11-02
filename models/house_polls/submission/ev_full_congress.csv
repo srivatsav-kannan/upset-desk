@@ -9,7 +9,7 @@ GA-SEN,Senate,D,Jon Ossoff,0.9997
 IA-SEN,Senate,R,Ashley Hinson,0.607
 ID-SEN,Senate,R,Jim Risch,0.9996
 IL-SEN,Senate,D,Juliana Stratton,1.0
-KS-SEN,Senate,D,Adam Hamilton,0.6054
+KS-SEN,Senate,R,Roger Marshall,0.3946
 KY-SEN,Senate,R,Andy Barr,1.0
 LA-SEN,Senate,R,Julia Letlow,0.9659
 MA-SEN,Senate,D,Ed Markey,1.0
@@ -19,7 +19,7 @@ MN-SEN,Senate,D,Peggy Flanagan,0.9953
 MS-SEN,Senate,R,Cindy Hyde-Smith,0.9909
 MT-SEN,Senate,R,Kurt Alme,0.9989
 NC-SEN,Senate,D,Roy Cooper,0.9997
-NE-SEN,Senate,R,Pete Ricketts,0.7617
+NE-SEN,Senate,I,Dan Osborn,0.2383
 NH-SEN,Senate,D,Chris Pappas,0.9935
 NJ-SEN,Senate,D,Cory Booker,1.0
 NM-SEN,Senate,D,Ben Ray Luján,1.0
@@ -111,7 +111,7 @@ CO-01,House,D,Melat Kiros,1.0
 CO-02,House,D,Joe Neguse,1.0
 CO-03,House,R,Jeff Hurd,0.7929
 CO-04,House,R,Lauren Boebert,0.942
-CO-05,House,D,Jessica Killin,0.4094
+CO-05,House,R,Jeff Crank,0.5906
 CO-06,House,D,Jason Crow,0.9999
 CO-07,House,D,Brittany Pettersen,0.9999
 CO-08,House,R,Gabe Evans,0.0814
@@ -145,7 +145,7 @@ FL-21,House,R,Brian Mast,0.9972
 FL-22,House,R,Casey Askar,0.4737
 FL-23,House,D,Lois Frankel,0.9999
 FL-24,House,D,Oliver Gilbert,1.0
-FL-25,House,R,Scott Singer,0.1124
+FL-25,House,D,Jared Moskowitz,0.8876
 FL-26,House,R,Mario Díaz-Balart,0.9979
 FL-27,House,R,Maria Elvira Salazar,0.9409
 FL-28,House,R,Carlos Giménez,0.9994
@@ -277,7 +277,7 @@ NC-07,House,R,David Rouzer,0.9896
 NC-08,House,R,Mark Harris,0.9982
 NC-09,House,R,Richard Hudson,0.971
 NC-10,House,R,Pat Harrigan,0.9977
-NC-11,House,R,Jennifer Balkcom,0.0715
+NC-11,House,D,Jamie Ager,0.9285
 NC-12,House,D,Alma Adams,1.0
 NC-13,House,R,Brad Knott,0.9866
 NC-14,House,R,Tim Moore,0.9949
@@ -332,7 +332,7 @@ NY-23,House,R,Nick Langworthy,0.9986
 NY-24,House,R,Claudia Tenney,0.9992
 NY-25,House,D,Joseph Morelle,0.9999
 NY-26,House,D,Tim Kennedy,0.9999
-OH-01,House,R,Eric Conroy,0.0244
+OH-01,House,D,Greg Landsman,0.9756
 OH-02,House,R,David Taylor,1.0
 OH-03,House,D,Joyce Beatty,1.0
 OH-04,House,R,Jim Jordan,1.0

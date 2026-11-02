@@ -1,0 +1,13 @@
+scope,baseline,baseline_weight,races,log_loss,brier,wrong_calls
+House,p_d_v2,0.0,2655,0.0804,0.0244,92
+House,p_d_v2,0.1,2655,0.0827,0.0249,90
+House,p_d_v2,0.2,2655,0.0857,0.0255,94
+House,p_d_v2,0.3,2655,0.0892,0.0263,101
+House,p_d_v2,0.5,2655,0.0975,0.0287,109
+House,p_d_v2,1.0,2655,0.1392,0.0382,131
+Senate,p_fundamentals,0.0,242,0.1264,0.0434,18
+Senate,p_fundamentals,0.1,242,0.1305,0.0435,18
+Senate,p_fundamentals,0.2,242,0.1356,0.0441,18
+Senate,p_fundamentals,0.3,242,0.1418,0.0453,18
+Senate,p_fundamentals,0.5,242,0.157,0.0491,16
+Senate,p_fundamentals,1.0,242,0.2294,0.0675,20

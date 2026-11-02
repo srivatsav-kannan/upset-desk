@@ -2,7 +2,7 @@
 
 Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
-> **Status:** The submission model is [`ensemble`](models/ensemble/): fundamentals, 11 expert ratings per race, Senate polls and a researched news layer. They're stacked by a regression fit on every 2010–2022 House and Senate race, and it is calibrated out of sample. Out-of-sample log loss is 0.080 in the House, against 0.139 for the [`uniform_swing`](models/uniform_swing/) baseline. Submission CSVs are in [`models/ensemble/submission/`](models/ensemble/submission/). See [Models](#models).
+> **Status:** Final. We submit [`submission/house_polls_portfolio_full_congress.csv`](submission/house_polls_portfolio_full_congress.csv) (Full Congress track), built from the Nov 1 Kalshi snapshot. The model is [`house_polls`](models/house_polls/), which is [`ensemble`](models/ensemble/) plus House district polls. `ensemble` takes fundamentals, 11 expert ratings per race, Senate polls and a researched news layer, and stacks them with a regression fit on every 2010–2022 House and Senate race, calibrated out of sample. Out-of-sample log loss: House 0.077, Senate 0.126, against 0.139 in the House for the [`uniform_swing`](models/uniform_swing/) baseline. The form write-up is in [`submission/WRITEUP.md`](submission/WRITEUP.md). See [Models](#models).
 
 ## The challenge
 
@@ -13,10 +13,11 @@ Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners o
 
 There is also a **bonus award for the best explanation or visualization**. It is judged on clarity, not accuracy.
 
-**Submission needs three things:**
-1. A predictions CSV in the official template format (`race_id, chamber, predicted_winner_party, candidate_name, win_probability`).
-2. This GitHub repo, with all the code needed to reproduce the predictions and a README covering data, method and how to run it.
-3. A one-paragraph write-up covering our thought process, the data we chose and the risks and limitations.
+**Submission** ([form](https://forms.gle/E9xeDRjsqm2TwFuu7), due **Nov 2, 11:59pm**, one submission per team, one track):
+1. A Google Drive link to the predictions CSV in the official template format (`race_id, chamber, predicted_winner_party, candidate_name, win_probability`), shared so the organizers can open it.
+2. This GitHub repo, public or shared with the organizers, with all the code needed to reproduce the predictions and a README covering data, method and how to run it.
+3. A write-up in three fields: thought process (200 words), data used (200 words), and risks and limitations. Ours is in [`submission/WRITEUP.md`](submission/WRITEUP.md).
+4. Optional: a link to a visualization, slides or extra explanation (for the bonus award). No slide deck is required.
 
 Organizer contacts: dwgan@stanford.edu, arsalem@stanford.edu.
 
@@ -131,8 +132,8 @@ Every model writes `models/<name>/predictions.csv` in one shared format ([`model
 
 | Model | Status | Out-of-sample log loss, 2010–2022 |
 |---|---|---|
-| [`ensemble`](models/ensemble/) | **Built, submission model** | House **0.080**, Senate **0.126** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
-| [`house_polls`](models/house_polls/) | Built, candidate submission model | House **0.0769** (the ensemble plus House district polls; Senate as the ensemble). Adds pick strategies scored against correlated simulated elections. |
+| [`ensemble`](models/ensemble/) | Built; `house_polls` builds on it | House **0.080**, Senate **0.126** (fundamentals + ratings + Senate polls, stacked; news layer on top) |
+| [`house_polls`](models/house_polls/) | **Built, submission model** | House **0.0769** (the ensemble plus House district polls; Senate as the ensemble). Adds pick strategies scored against correlated simulated elections. |
 | [`uniform_swing`](models/uniform_swing/) | Built (v2), baseline | House 0.139 (Student-t + incumbent running / open seat). v1 was 0.197. |
 | [`expert_ratings`](models/expert_ratings/) | Folded into `ensemble` | |
 | [`fundamentals`](models/fundamentals/) | Partly in `ensemble` (no FEC money yet) | |
@@ -146,11 +147,11 @@ Every model writes `models/<name>/predictions.csv` in one shared format ([`model
 
 A regression fit on 2,655 House and 242 Senate races, leave-one-cycle-out, combines them. A Student-t turns the margin into a probability. A news layer, researched for 105 competitive races and centred so it can't move the national environment, adds at most a couple of points.
 
-The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 77% chance of a non-R Senate majority. With the expected-points rule it makes 32 underdog picks and expects 50.8 points if Kalshi is right, against 45.3 for picking every Kalshi favorite.
+The forecast is House D 235 (90%: 226–244) and 52 non-R Senate seats (49–55), with a 77% chance of a non-R Senate majority. On the Nov 1 prices, the expected-points rule makes 33 underdog picks and expects 48.7 points if Kalshi is right, against 43.2 for picking every Kalshi favorite.
 
-A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 77% → 50%) instead of being applied. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
+A flat "Democrats are overstated" correction was tested three ways and made the backtest worse every time. It is reported as a stress test (Senate majority 77% → 50%) instead of being applied. Averaging the stack with the deterministic baseline afterwards was also worse at every weight (House 0.080 → 0.086 at 20%), because the stack already weights the fundamentals. Full write-up: [`models/ensemble/README.md`](models/ensemble/README.md).
 
-**`house_polls` in brief.** The ensemble, plus each House district's general-election polls from the last 28 days where there are any (57 districts in 2026). Fit on the 506 polled House races of 2010–2022, the polls cut log loss on those races from 0.295 to 0.276 and change 2 calls (TX-15 and ME-02 to D). Partisan polls lean about 5 points toward their sponsor, but subtracting that made the backtest worse, so it isn't applied. The model also writes 4,000 seeded simulated elections that share one national error. `decide.py` scores pick strategies in each one: keeping only underdogs whose expected points beat the favorite's by 25% (24 underdogs instead of 36) has the same mean and a narrower downside, and the best chance of beating a rival 5 points ahead of an all-favorites entry. Full write-up: [`models/house_polls/README.md`](models/house_polls/README.md).
+**`house_polls` in brief.** The ensemble, plus each House district's general-election polls from the last 28 days where there are any (57 districts in 2026). Fit on the 506 polled House races of 2010–2022, the polls cut log loss on those races from 0.295 to 0.276 and change 2 calls (TX-15 and ME-02 to D). Partisan polls lean about 5 points toward their sponsor, but subtracting that made the backtest worse, so it isn't applied. The model also writes 4,000 seeded simulated elections that share one national error. `decide.py` scores pick strategies in each one: keeping only underdogs whose expected points beat the favorite's by 25% (23 underdogs instead of 34 on Nov 1 prices) has nearly the same mean and a narrower downside, and the best chance of beating a rival 5 points ahead of an all-favorites entry. Full write-up: [`models/house_polls/README.md`](models/house_polls/README.md).
 
 **`uniform_swing` in brief.** Each race takes the 2024 presidential margin on its 2026 lines, plus a D+10.5 swing (generic ballot D+8.9 on Oct 30, against a 2024 presidential national margin of D−1.7). Two incumbency terms are added: +5.1 points for an incumbent running and +1.3 for the party holding an open seat. Win probability comes from a Student-t (df 3, scale 5.56). All four parameters are fit on the 2010–2022 House, and the model is calibrated out of sample.
 
@@ -176,12 +177,12 @@ The full write-up is in [`models/uniform_swing/README.md`](models/uniform_swing/
 - [ ] Phase 1 fundamentals: FEC money
 - [x] House district polls ([house_polls](models/house_polls/))
 - [x] Pick strategies scored against correlated simulated elections ([house_polls](models/house_polls/README.md#pick-strategies-against-simulated-elections))
-- [ ] Phase 3 decision layer, then the final run after the Nov 1 Kalshi pull
-- [ ] Write-up + visualization for the bonus award (the visualizer is a starting point)
+- [x] Phase 3 decision layer, then the final run after the Nov 1 Kalshi pull
+- [x] Write-up ([`submission/WRITEUP.md`](submission/WRITEUP.md)); visualization for the bonus award is the [visualizer](visualizer/)
 
 ## Open questions for the organizers
 
-1. What is the submission deadline? Before or after the Nov 1 pull?
+1. ~~What is the submission deadline?~~ Nov 2, 11:59pm (the form).
 2. For House races with no Kalshi market, what *p* is used?
 3. Is scoring by `predicted_winner_party`, by `candidate_name`, or both? What applies in same-party top-two races and for independents (NE-SEN)?
 4. Is `win_probability` scored, or informational only?
