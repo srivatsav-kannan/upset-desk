@@ -36,16 +36,3 @@ export const fillOf = (race: Race | undefined): string =>
   race ? `var(--${sideOf(race)}-${bucketOf(race)})` : "var(--no-race)";
 
 export const PARTY_NAME: Record<Party, string> = { D: "Democrat", R: "Republican", I: "Independent" };
-
-/** "R+12.3", "D+0.4", "Even"; blank margins fall back to the win probability. */
-export function formatMargin(race: Race): string {
-  if (race.margin === null) return `${race.winner} ${formatProbability(race.winProbability)}`;
-  const m = Math.abs(race.margin);
-  return m < 0.05 ? "Even" : `${race.winner}+${m.toFixed(1)}`;
-}
-
-export function formatProbability(p: number): string {
-  if (p >= 0.995) return ">99%";
-  if (p <= 0.005) return "<1%";
-  return `${Math.round(p * 100)}%`;
-}

@@ -111,9 +111,6 @@ export function raceViews(model: Model): Map<string, RaceView> {
   return out;
 }
 
-/** Closest race first: how far the leader's chance is from a coin flip. */
-export const closeness = (v: RaceView): number => Math.abs(v.race.pD - 0.5);
-
 /** Reading order: by state, the Senate race first, then districts in order. */
 export const readingOrder = (a: RaceView, b: RaceView): number =>
   a.stateName.localeCompare(b.stateName) || (a.chamber === b.chamber ? a.id.localeCompare(b.id) : a.chamber === "Senate" ? -1 : 1);

@@ -252,42 +252,6 @@ button:disabled {
   text-align: center;
 }
 
-.toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-color: var(--hairline);
-}
-
-.toggle-track {
-  position: relative;
-  width: 28px;
-  height: 16px;
-  border-radius: 999px;
-  background: var(--control-border);
-  transition: background-color 160ms ease;
-}
-
-.toggle-track span {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  transition: transform 160ms ease;
-}
-
-.toggle[aria-pressed="true"] .toggle-track {
-  background: var(--text-primary);
-}
-
-.toggle[aria-pressed="true"] .toggle-track span {
-  transform: translateX(12px);
-}
-
 .icon-button {
   display: grid;
   place-items: center;
@@ -383,55 +347,6 @@ button:disabled {
   text-decoration: none;
 }
 
-.brand-mark {
-  position: relative;
-  width: 30px;
-  height: 22px;
-}
-
-.brand-mark span {
-  position: absolute;
-  top: 0;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  mix-blend-mode: multiply;
-}
-
-.brand-mark span:first-child {
-  left: 0;
-  background: var(--d-likely);
-}
-
-.brand-mark span:last-child {
-  right: 0;
-  background: var(--r-likely);
-}
-
-@media (prefers-color-scheme: dark) {
-  .brand-mark span {
-    mix-blend-mode: screen;
-  }
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-}
-
-.brand-text strong {
-  font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.brand-text span {
-  color: var(--text-tertiary);
-  font-size: 12px;
-}
-
 .tabs {
   display: flex;
   gap: 2px;
@@ -515,14 +430,6 @@ button:disabled {
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 400;
-}
-
-.hero-tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
 }
 
 .workspace {
@@ -727,7 +634,6 @@ button:disabled {
   background: var(--surface-raised);
 }
 
-
 /* ---------------------------------------------------------------- legend (sidebar right of the map) */
 
 /* The legend fills the sidebar, so the bar runs nearly the full height of the screen. */
@@ -922,7 +828,6 @@ button:disabled {
     min-height: 0;
   }
 }
-
 
 /* ---------------------------------------------------------------- tooltip */
 
@@ -1351,43 +1256,6 @@ button:disabled {
 
 .panel-note {
   margin: 10px 0 0;
-  color: var(--text-secondary);
-  font-size: 13px;
-}
-
-.call {
-  margin: 18px 0 6px;
-  padding: 14px 16px;
-  border: 1px solid var(--hairline);
-  border-radius: 14px;
-  background: var(--surface-sunk);
-}
-
-.call-upset {
-  border-color: color-mix(in srgb, var(--gold) 35%, transparent);
-  background: var(--gold-wash);
-}
-
-.call-eyebrow {
-  color: var(--text-tertiary);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.call-upset .call-eyebrow {
-  color: var(--gold);
-}
-
-.call-headline {
-  margin-top: 4px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.call p {
-  margin: 6px 0 0;
   color: var(--text-secondary);
   font-size: 13px;
 }
@@ -2021,34 +1889,8 @@ button:disabled {
   font-weight: 600;
 }
 
-.chart .diagonal {
-  stroke: var(--control-border);
-  stroke-dasharray: 4 4;
-}
-
-.chart .diagonal-label,
 .chart .axis-title {
   fill: var(--text-tertiary);
-}
-
-.chart .dot circle {
-  stroke: var(--surface);
-  stroke-width: 1.5;
-}
-
-.chart .dot-R circle {
-  fill: var(--r-likely);
-}
-
-.chart .dot-D circle,
-.chart .dot-I circle {
-  fill: var(--d-likely);
-}
-
-.chart .dot text {
-  fill: var(--text-primary);
-  font-size: 10.5px;
-  font-weight: 500;
 }
 
 .calib {
@@ -2187,10 +2029,6 @@ button:disabled {
     min-width: 0;
   }
 
-  .hero-tools {
-    margin-left: 0;
-  }
-
   .legend-total strong {
     font-size: 20px;
   }
@@ -2203,18 +2041,6 @@ button:disabled {
 /* Two charts side by side render at about two thirds of their drawn size: scale the text back up. */
 .duo .chart text {
   font-size: 15px;
-}
-
-.chart .break-even {
-  fill: none;
-  stroke: var(--gold);
-  stroke-width: 1.6;
-  stroke-dasharray: 5 4;
-}
-
-.chart .break-even-label {
-  fill: var(--gold);
-  font-weight: 600;
 }
 
 .legend-title {
@@ -2269,10 +2095,6 @@ button:disabled {
   .outlook-seats {
     margin-top: 4px;
     font-size: 11px;
-  }
-
-  .hero-tools {
-    grid-column: 1 / -1;
   }
 
   .state-title {
@@ -2583,30 +2405,6 @@ button:disabled {
   border-radius: 50%;
   color: #fff;
   font-size: 13px;
-  font-weight: 700;
-}
-
-.rule-n-edge,
-.chart .tag-edge {
-  background: var(--gold);
-  fill: var(--gold);
-}
-
-.rule-n-market,
-.chart .tag-market {
-  background: var(--text-secondary);
-  fill: var(--text-secondary);
-}
-
-.rule-n-floor,
-.chart .tag-floor {
-  background: var(--text-tertiary);
-  fill: var(--text-tertiary);
-}
-
-.chart .rule-tags text {
-  fill: var(--surface-raised);
-  font-size: 10px;
   font-weight: 700;
 }
 

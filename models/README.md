@@ -20,7 +20,7 @@ models/<name>/
   README.md         # method, data, results, known limits
   predictions.csv   # written by run(): the model's output (format below)
   results/          # the model's own diagnostics and backtests, plus decide.py's model_vs_kalshi.csv / strategy_summary.csv
-                    #   optional race_explain.csv: race_id + labelled columns, shown in the map's tooltip
+                    #   optional race_explain.csv: race_id + labelled columns, a readable per-race summary
   submission/       # written by decide.py: favorite_*.csv (model favorite) and ev_*.csv (expected-points rule)
 ```
 
@@ -28,7 +28,7 @@ A model may also write `results/simulated_outcomes.csv` (`race_id, p_d, p_d_simu
 
 `python3 forecast.py` finds every folder that has a `model.py`. A model that reads another model's outputs names it in `DEPENDS_ON = ["other"]`, and that model runs first. For each one, it runs the model and then [`decide.py`](../decide.py) on the model's `predictions.csv`. A folder with only a README is skipped.
 
-The [visualizer](../visualizer/) maps every `predictions.csv` it finds, so a new model appears there with no extra work. It colors each race by `projected_margin`, falling back to `win_probability` when that's blank, and names the model after the first heading of its README.
+The [visualizer](../visualizer/) shows the submission model and validates every `predictions.csv` it finds; any model can be opened with `?model=<folder>`. It colors each race by `projected_margin`, falling back to `win_probability` when that's blank.
 
 ## `predictions.csv` format
 

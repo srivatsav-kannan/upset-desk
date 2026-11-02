@@ -26,7 +26,7 @@ Most House races have no recent polls, so 378 districts rest entirely on vote hi
 
 ## Link to visualization, slides, or extra explanation (optional)
 
-https://srivatsav-kannan.github.io/election-prediction/ (once GitHub Pages is turned on, see the checklist)
+https://srivatsav-kannan.github.io/upset-desk/ (once GitHub Pages is turned on, see the checklist)
 
 No slide deck is required. The site is our explanation: an interactive map of all 470 races, a 3D view of each state, a panel for every race (who's favored, why, past results, and a short note wherever our pick differs from the forecast), a searchable table, and an "Our prediction strategy" page with the track record and the pick strategy. It's written for a general audience, with no model jargon.
 

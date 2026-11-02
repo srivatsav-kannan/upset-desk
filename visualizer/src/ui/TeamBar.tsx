@@ -48,7 +48,7 @@ export function TeamBar() {
           </li>
         ))}
       </ul>
-      <a className="team-repo" href="https://github.com/srivatsav-kannan/election-prediction" target="_blank" rel="noreferrer">
+      <a className="team-repo" href="https://github.com/srivatsav-kannan/upset-desk" target="_blank" rel="noreferrer">
         Code on GitHub
       </a>
     </footer>

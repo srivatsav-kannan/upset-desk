@@ -25,15 +25,15 @@ The site shows the **submission model**: whichever model's `portfolio_full_congr
   | Likely | 5 to 15 |
   | Safe | 15 or more |
 
-  The sidebar counts seats by shade. Hovering shows the leading candidate and their chance. **Redrawn districts** switches to the redistricting view described below.
+  The sidebar counts seats by shade. Hovering shows the leading candidate and their chance. In the House view, a card under the seat counts opens the redistricting view described below. A chip over the map says that any state can be clicked for the 3D view.
 - **State view.** Click any state. Its House districts rise in 3D, colored as on the map and **as tall as their projected margin**, so safe seats are towers and toss-ups lie nearly flat. The camera swoops in from overhead; drag to turn, scroll to zoom. The state's races are listed beside it, Senate first. Without WebGL the state is drawn flat instead. three.js loads only when a state is opened.
 - **Race panel.** Click a district, a card or a table row. The panel shows:
   - both candidates and their chances;
-  - **our call** and what it's worth: the market's price for that candidate and the points a correct pick earns. Upset calls explain why we took them: either our chance is well above the market's, or it's a cheap ticket where a win pays far more;
   - **what drives the forecast**, in four plain lines: how the area votes, the expert ratings, the polls, and the candidate and news research;
+  - in the 12 races where our submitted pick is not the candidate our forecast favors, a short note saying why we picked them anyway. Everywhere else the panel is the forecast alone, with no mention of picks or scoring;
   - **past results**: the presidential vote inside the 2026 lines, and every general election for that seat since 2012 (Senate: the same seat back to 2002), with a note where the lines changed.
-- **All races.** Every race in one table: search by state, district or candidate; filter to competitive races, seats changing party, or our upset calls; sort by state, closeness, or the size of the upset. Phones get one card per race.
-- **Our prediction strategy.** The method as a short illustrated essay: the scoring rule, the four kinds of evidence, the out-of-sample track record and calibration, the seat simulation, how picks are made (with the break-even line for an upset call), and the main risks. Every number is read from the model's result files.
+- **All races.** Every race in one table: search by state, district or candidate; filter to competitive races, seats changing party, or our strategic picks; click the Race header to sort A to Z or Z to A. Phones get one card per race.
+- **Our prediction strategy.** The method as a short illustrated essay: the scoring rule, the four kinds of evidence, the out-of-sample track record and calibration, the seat simulation, how picks are made (the three rules for a strategic pick, with a chart of every pick against the market), and the main risks. Every number is read from the model's result files.
 - **Redistricting view** (House only): nine states redrew for 2026 (AL, CA, FL, LA, NC, OH, TN, TX, UT), changing 145 districts.
   - **Color:** each redrawn district is shaded by the 2024 presidential margin (Harris − Trump, share of the total vote) inside its lines, in the same buckets and colors. Districts whose lines didn't change are gray.
   - **2024 map / 2026 map:** switches between the old and new lines. The other map's district lines are drawn dashed, only where they moved. A click zooms into a state, so you can flip back and forth on it.
@@ -67,7 +67,7 @@ Every step was checked against color-blindness simulation. D and R stay distinct
 
 ## Publishing on GitHub Pages
 
-[`.github/workflows/pages.yml`](../.github/workflows/pages.yml) builds the site on every push to `main` that touches `visualizer/`, a model's `predictions.csv`, `README.md` or result files, `submission/`, or The Downballot's sheets. It then publishes the map to **https://srivatsav-kannan.github.io/election-prediction/**. You can also run it by hand: Actions → Deploy election map → Run workflow.
+[`.github/workflows/pages.yml`](../.github/workflows/pages.yml) builds the site on every push to `main` that touches `visualizer/`, a model's `predictions.csv`, `README.md` or result files, `submission/`, or The Downballot's sheets. It then publishes the map to **https://srivatsav-kannan.github.io/upset-desk/**. You can also run it by hand: Actions → Deploy election map → Run workflow.
 
 **One-time setup, by the repo owner:** Settings → Pages → Build and deployment → Source: **GitHub Actions**. Until that's done, the workflow still builds the site, so every push gets a free type-check, and it skips the deploy with a notice instead of failing.
 
@@ -75,7 +75,7 @@ Every step was checked against color-blindness simulation. D and R stay distinct
 - **A private repo needs a paid plan for Pages.** For a personal account that's GitHub Pro, which is free for students through GitHub Education. Making the repo public also works.
 - **The site is public even if the repo is private.** Anyone with the link can see the forecast and our picks.
 
-The build uses relative paths, so it works under the `/election-prediction/` subfolder. That was tested by serving a clean `npm ci` build from that path.
+The build uses relative paths, so it works under the `/upset-desk/` subfolder. That was tested by serving a clean `npm ci` build from that path.
 
 ## Map geometry
 

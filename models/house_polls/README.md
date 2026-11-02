@@ -87,7 +87,7 @@ The strategies are the expected-points rule keeping an underdog only when its ex
 | `predictions.csv` | 470 races, shared format |
 | `results/race_changes.csv` | Each polled House race: poll average, ensemble and new probability, whether the call changed |
 | `results/house_polls_2026.csv` | Every 2026 district poll used, with its sponsor |
-| `results/race_explain.csv` | The ensemble's tooltip lines, with district polls filled in |
+| `results/race_explain.csv` | The ensemble's per-race summary in words, with district polls filled in |
 | `results/parameters.csv` | Fitted weights and Student-t parameters per pattern |
 | `results/backtest_*.csv`, `results/sponsor_lean.csv` | Scores, calibration, per-race forecasts of polled races, sponsor lean per fold |
 | `results/simulated_outcomes.csv` | Each race's winner in each of 4,000 simulated elections |

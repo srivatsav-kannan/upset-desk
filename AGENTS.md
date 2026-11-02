@@ -22,11 +22,11 @@ Produce submission CSVs, in the official template format, for the 2026 House and
 1. Create `models/<name>/model.py` with `run(args)`. Add `add_arguments(parser)` if the model has its own flags, and prefix their help text with the model name.
 2. Have `run` write `models/<name>/predictions.csv`: 470 rows in full-congress template order, with unrounded `p_d`.
 3. Write its own diagnostics and backtest to `models/<name>/results/`.
-4. Write `models/<name>/README.md` (method, data, results, limits), and add a row to the Models tables in `models/README.md` and `README.md`. The README's first `# ` heading becomes the model's name in the visualizer's picker.
+4. Write `models/<name>/README.md` (method, data, results, limits), and add a row to the Models tables in `models/README.md` and `README.md`. The site shows only the submission model; any other model can be opened with `?model=<folder>`.
 5. Never write into another model's folder. A model may *read* another's committed outputs if it lists that model in `DEPENDS_ON`, so `forecast.py` runs it first (e.g. `ensemble` reads `uniform_swing`).
-6. Optionally write `models/<name>/results/race_explain.csv` (`race_id` plus labelled columns); the map's tooltip shows those lines.
+6. Optionally write `models/<name>/results/race_explain.csv` (`race_id` plus labelled columns), a readable per-race summary for the team. The site doesn't read it.
 
-Nothing else is needed for the visualizer: it finds the new `predictions.csv` on its own. It does validate the CSV, though. A malformed one is left out of the picker, and the reason is logged to the browser console.
+Nothing else is needed for the visualizer: it finds the new `predictions.csv` on its own. It does validate the CSV, though. A malformed one is skipped, and the reason is logged to the browser console.
 
 **Commit every result**: code changes and the outputs they produce go in the same commit.
 

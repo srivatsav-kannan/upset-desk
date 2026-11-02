@@ -137,7 +137,7 @@ Submission files are in [`submission/`](submission/):
 |---|---|
 | `predictions.csv` | 470 races, shared format |
 | `results/race_components.csv` | Every input, the stacked margin, the news adjustment and the final probability per race, with v2's for comparison |
-| `results/race_explain.csv` | The same, in words, for the map's tooltip |
+| `results/race_explain.csv` | The same, in words |
 | `results/senate_polls_2026.csv` | Every poll used, with its date, sample and margin |
 | `results/parameters.csv` | Fitted weights and Student-t parameters per pattern (`normal` = normal tails) |
 | `results/backtest_*.csv` | Scores, calibration, per-cycle national error, per-race out-of-sample forecasts, the baseline-blend test |

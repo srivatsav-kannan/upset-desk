@@ -21,7 +21,7 @@ RAW = ROOT / "data" / "raw"
 OVERRIDES = ROOT / "data" / "overrides"
 MODELS = ROOT / "models"
 TEMPLATES = ROOT / "submission" / "templates"
-USER_AGENT = "model-citizens-forecast/0.1 (https://github.com/srivatsav-kannan/election-prediction)"
+USER_AGENT = "model-citizens-forecast/0.1 (https://github.com/srivatsav-kannan/upset-desk)"
 
 SHEET_URL = "https://docs.google.com/spreadsheets/d/{id}/export?format=csv&gid={gid}"
 SOURCES = {

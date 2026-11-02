@@ -1,6 +1,6 @@
-# Model Citizens 2026: US Congress Forecast
+# The Upset Desk: 2026 US Congress Forecast
 
-Our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
+The Upset Desk is our entry for **Model Citizens** (Stanford Democracy Day): predict the winners of the November 3, 2026 US congressional elections, scored against Kalshi's market odds.
 
 > **Status:** Final. We submit [`submission/house_polls_portfolio_full_congress.csv`](submission/house_polls_portfolio_full_congress.csv) (Full Congress track), built from the Nov 1 Kalshi snapshot. The model is [`house_polls`](models/house_polls/), which is [`ensemble`](models/ensemble/) plus House district polls. `ensemble` takes fundamentals, 11 expert ratings per race, Senate polls and a researched news layer, and stacks them with a regression fit on every 2010–2022 House and Senate race, calibrated out of sample. Out-of-sample log loss: House 0.077, Senate 0.126, against 0.139 in the House for the [`uniform_swing`](models/uniform_swing/) baseline. The form write-up is in [`submission/WRITEUP.md`](submission/WRITEUP.md). See [Models](#models).
 
@@ -100,7 +100,7 @@ data/raw/                 # downloaded source files, cached with retrieval date,
 tests/                    # unittest suite for parsers, backtest leakage, calibration and outputs
 submission/                # the team's submission CSVs (copied from the submission model by forecast.py)
   templates/              #   the official templates
-visualizer/               # React + TypeScript map of every model's predictions.csv (see visualizer/README.md)
+visualizer/               # the public site: React + TypeScript map, race panels, strategy page (see visualizer/README.md)
 ```
 
 ## How to run

@@ -3,7 +3,7 @@ import { CALIBRATION, OUTLOOK, SCORE, TRACK_RECORD, isStrategic, marketProbabili
 import type { RaceView } from "../data/races";
 import { PARTY_LONG, lastName, pct } from "../ui/words";
 
-const REPO = "https://github.com/srivatsav-kannan/election-prediction";
+const REPO = "https://github.com/srivatsav-kannan/upset-desk";
 
 /** Points for a correct pick against the market's probability for it. */
 function PointsCurve() {
