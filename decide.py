@@ -219,6 +219,7 @@ def run(model_dir: Path, refresh: bool) -> dict:
     """Run the decision step for one model folder and return (snapshot time, coverage, summary)."""
     preds = validate_predictions(model_dir / "predictions.csv")
     retrieved, market = load_kalshi(fetch_kalshi(refresh))
+    names = candidate_names()
     compare = []
     for p in preds:
         rid, mk = p["race_id"], market.get(p["race_id"])
@@ -229,12 +230,16 @@ def run(model_dir: Path, refresh: bool) -> dict:
                "kalshi_p_r": round(mk["cands"].get("R", {"p": 0.0})["p"], 4) if mk else ""}
         if mk:
             row["model_minus_kalshi_r"] = round(row["model_p_r"] - row["kalshi_p_r"], 4)
+        # Both sides' names, for the map: the Republican and the strongest non-Republican.
+        non_r = max((c for party, c in mk["cands"].items() if party != "R"), key=lambda c: c["p"], default=None) if mk else None
+        row["name_r"] = mk["cands"].get("R", {}).get("name", "") if mk else names.get((rid, "R"), "")
+        row["name_non_r"] = non_r["name"] if non_r else names.get((rid, "D"), "")
         row.update({k: round(v, 4) if isinstance(v, float) else v for k, v in decide(p_d, mk).items()})
         compare.append(row)
     fields = ["race_id", "chamber", "projected_margin", "model_p_r", "kalshi_event", "kalshi_p_r",
               "model_minus_kalshi_r", "model_favorite", "kalshi_favorite", "pick", "pick_name",
               "pick_model_p", "pick_kalshi_p", "points_if_right", "ev_pick", "ev_model_favorite",
-              "ev_kalshi_favorite", "underdog_pick"]
+              "ev_kalshi_favorite", "underdog_pick", "name_r", "name_non_r"]
     write_csv(model_dir / "results" / "model_vs_kalshi.csv", compare, fields)
 
     # Expected score of three pick strategies over races with a market, judged two ways:

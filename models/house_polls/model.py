@@ -24,6 +24,7 @@ from pathlib import Path
 from common import (ELECTION_DAY, MODELS, PREDICTION_FIELDS, cdf, fetch_house_ratings, fetch_house_state_page,
                     load_ratings, load_template, load_wiki_house_polls, read_rows, write_csv)
 from models.ensemble import backtest as ens
+from models.ensemble import model as ens_model
 
 from . import backtest
 
@@ -138,6 +139,19 @@ def run(args) -> None:
               [{"race_id": p["race_id"], "p_d": round(float(p["p_d"]), 4), "p_d_simulated": round(o.count("1") / SIMS, 4),
                 "non_r_wins": o} for p, o in zip(preds, outcomes)],
               ["race_id", "p_d", "p_d_simulated", "non_r_wins"])
+    # Seats per simulated election, as in the ensemble's simulation_summary.csv: House seats won by
+    # the non-Republican, and Senate seats plus the non-Republican seats not up this year.
+    senate_base = read_rows(MODELS / "uniform_swing" / "results" / "senate_2024_baseline.csv")
+    holdover = ens_model.SENATE_DEM_CAUCUS_NOW - sum(r["incumbent_party"] in ("D", "I") for r in senate_base)
+    summary = []
+    for ch, need, extra in (("House", 218, 0), ("Senate", 51, holdover)):
+        rows = [o for p, o in zip(preds, outcomes) if p["chamber"] == ch]
+        xs = [extra + sum(o[k] == "1" for o in rows) for k in range(SIMS)]
+        summary.append({"scenario": "central", "chamber": ch, "mean_non_r_seats": round(sum(xs) / SIMS, 1),
+                        "p05": ens_model.quantile(xs, 0.05), "median": ens_model.quantile(xs, 0.5),
+                        "p95": ens_model.quantile(xs, 0.95), "p_non_r_majority": round(sum(x >= need for x in xs) / SIMS, 4),
+                        "majority_needs": need, "simulations": SIMS, "seed": SEED})
+    write_csv(RESULTS / "simulation_summary.csv", summary, list(summary[0].keys()))
     write_csv(RESULTS / "race_changes.csv", changes, list(changes[0].keys()))
     write_csv(RESULTS / "house_polls_2026.csv", poll_rows, list(poll_rows[0].keys()))
     write_csv(RESULTS / "race_explain.csv", explain, list(explain[0].keys()))
